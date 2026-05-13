@@ -29,6 +29,7 @@ export const NAV_GROUPS: NavGroup[] = [
       { href: "/brand", label: "Clients · Brand Brain" },
       { href: "/suggestions", label: "✨ AI Suggestions" },
       { href: "/platforms", label: "Pick a platform" },
+      { href: "/launch/wizard", label: "⚡ 10-Minute Launch Wizard" },
       { href: "/launch-guide", label: "Step-by-step launch" },
       { href: "/generate/campaign-kit", label: "Full Campaign Kit" },
     ],
