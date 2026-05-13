@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 480" width="1200" height="480" role="img" aria-labelledby="arctitle arcdesc">
+  <title id="arctitle">AdForge architecture</title>
+  <desc id="arcdesc">Diagram showing the AdForge browser-only architecture: Next.js app talks directly to LLM providers, Jina Reader for URL ingest, and a local-sync sidecar that persists data to a JSON file in the project folder.</desc>
+
+  <defs>
+    <pattern id="grid2" width="24" height="24" patternUnits="userSpaceOnUse">
+      <path d="M 24 0 L 0 0 0 24" fill="none" stroke="#ffffff" stroke-width="0.5" opacity="0.03"/>
+    </pattern>
+    <style>
+      .box { fill: #16161b; stroke: #222229; stroke-width: 1.5; }
+      .box-accent { fill: #16161b; stroke: #ffb020; stroke-width: 1.5; }
+      .box-external { fill: #101013; stroke: #2a2a32; stroke-width: 1.5; stroke-dasharray: 4 3; }
+      .label { font-family: -apple-system, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif; }
+      .h { font-weight: 700; fill: #e7e7ea; }
+      .sub { fill: #9a9aa3; }
+      .meta { font-family: ui-monospace, Menlo, Consolas, monospace; fill: #6b6b74; font-size: 11px; letter-spacing: 0.5px; }
+      .arrow { stroke: #ffb020; stroke-width: 2; fill: none; marker-end: url(#arr); }
+      .arrow-mute { stroke: #6b6b74; stroke-width: 1.5; fill: none; marker-end: url(#arr-mute); stroke-dasharray: 5 4; }
+    </style>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#ffb020"/>
+    </marker>
+    <marker id="arr-mute" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#6b6b74"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="480" fill="#08080a"/>
+  <rect width="1200" height="480" fill="url(#grid2)"/>
+
+  <!-- Title -->
+  <text x="40" y="42" class="label h" font-style="italic" font-family="Georgia, serif" font-size="28">Architecture</text>
+  <text x="40" y="64" class="label meta">~/adforge · browser-only · BYOK · 100% local data</text>
+
+  <!-- Big browser frame -->
+  <rect x="40" y="92" width="780" height="350" rx="2" fill="#0a0a0d" stroke="#2a2a32" stroke-width="1.5"/>
+  <text x="60" y="118" class="label meta">YOUR BROWSER · localhost:3005</text>
+  <line x1="40" y1="128" x2="820" y2="128" stroke="#2a2a32"/>
+
+  <!-- Next.js app box -->
+  <rect x="70" y="150" width="280" height="100" class="box-accent"/>
+  <text x="86" y="172" class="label h" font-size="16">Next.js App</text>
+  <text x="86" y="194" class="label sub" font-size="13">17 generators · 11 optimizers</text>
+  <text x="86" y="212" class="label sub" font-size="13">9 AI providers · BYOK</text>
+  <text x="86" y="230" class="label meta">app/ · components/ · lib/</text>
+
+  <!-- IndexedDB + localStorage -->
+  <rect x="70" y="280" width="280" height="120" class="box"/>
+  <text x="86" y="302" class="label h" font-size="16">Local browser storage</text>
+  <text x="86" y="324" class="label sub" font-size="13">IndexedDB (Dexie v3)</text>
+  <text x="86" y="342" class="label sub" font-size="13">localStorage (settings + keys)</text>
+  <text x="86" y="360" class="label meta">brains · ads · campaigns · templates</text>
+  <text x="86" y="376" class="label meta">checklists · custom items · prefs</text>
+
+  <!-- Sidecar inside browser frame -->
+  <rect x="500" y="150" width="280" height="100" class="box-accent"/>
+  <text x="516" y="172" class="label h" font-size="16">Local-sync sidecar</text>
+  <text x="516" y="194" class="label sub" font-size="13">Node.js · ~150 lines · zero-dep</text>
+  <text x="516" y="212" class="label sub" font-size="13">127.0.0.1:3006</text>
+  <text x="516" y="230" class="label meta">scripts/local-sync.cjs</text>
+
+  <!-- data file -->
+  <rect x="500" y="280" width="280" height="120" class="box"/>
+  <text x="516" y="302" class="label h" font-size="16">data/snapshot.json</text>
+  <text x="516" y="324" class="label sub" font-size="13">All your work, in one file</text>
+  <text x="516" y="342" class="label sub" font-size="13">Zip the folder · move anywhere</text>
+  <text x="516" y="370" class="label meta">PORTABLE · GITIGNORED</text>
+
+  <!-- External services (right side) -->
+  <text x="870" y="118" class="label meta">EXTERNAL · OUTBOUND ONLY</text>
+
+  <rect x="860" y="138" width="300" height="78" class="box-external"/>
+  <text x="876" y="160" class="label h" font-size="14">LLM provider (your choice)</text>
+  <text x="876" y="180" class="label sub" font-size="12">Claude · OpenAI · Gemini · Groq</text>
+  <text x="876" y="196" class="label sub" font-size="12">Cerebras · OpenRouter · Together</text>
+  <text x="876" y="210" class="label sub" font-size="12">DeepSeek · Mistral</text>
+
+  <rect x="860" y="232" width="300" height="64" class="box-external"/>
+  <text x="876" y="254" class="label h" font-size="14">Jina Reader (free)</text>
+  <text x="876" y="274" class="label sub" font-size="12">URL ingest for Brand Brain</text>
+  <text x="876" y="290" class="label sub" font-size="12">r.jina.ai · CORS-enabled</text>
+
+  <rect x="860" y="312" width="300" height="64" class="box-external"/>
+  <text x="876" y="334" class="label h" font-size="14">Ad-library deep-links</text>
+  <text x="876" y="354" class="label sub" font-size="12">Meta · Google · TikTok · LinkedIn</text>
+  <text x="876" y="370" class="label sub" font-size="12">Opens in YOUR new tab · never proxied</text>
+
+  <!-- Arrows -->
+  <!-- App → IndexedDB -->
+  <path class="arrow" d="M 210 250 L 210 278"/>
+  <!-- App ↔ Sidecar -->
+  <path class="arrow" d="M 350 198 L 498 198"/>
+  <path class="arrow" d="M 498 208 L 350 208"/>
+  <!-- Sidecar → snapshot -->
+  <path class="arrow" d="M 640 250 L 640 278"/>
+  <!-- App → LLM -->
+  <path class="arrow" d="M 350 175 L 858 175"/>
+  <!-- App → Jina -->
+  <path class="arrow" d="M 350 190 C 600 190 700 260 858 260"/>
+  <!-- App → Ad libs -->
+  <path class="arrow-mute" d="M 350 215 C 600 215 700 340 858 340"/>
+
+  <!-- Bottom strip -->
+  <line x1="40" y1="460" x2="1160" y2="460" stroke="#1c1c22"/>
+  <text x="40" y="478" class="label meta">NO BACKEND  ·  NO TELEMETRY  ·  NO ACCOUNTS  ·  MIT  ·  BUILT BY DICECODES</text>
+</svg>

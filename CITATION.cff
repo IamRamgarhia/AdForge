@@ -1,0 +1,35 @@
+cff-version: 1.2.0
+title: "AdForge: Open-source AI Ad Operations Cockpit"
+message: "If you use AdForge in research, education, or commercial work, please cite it."
+type: software
+authors:
+  - name: "Dicecodes"
+    email: "Contact@dicecodes.com"
+    website: "https://dicecodes.com"
+  - name: "AdForge contributors"
+    website: "https://github.com/IamRamgarhia/AdForge/graphs/contributors"
+repository-code: "https://github.com/IamRamgarhia/AdForge"
+url: "https://github.com/IamRamgarhia/AdForge"
+abstract: >
+  AdForge is a browser-only, MIT-licensed AI advertising operations platform that
+  replaces a stack of $49–$499/month SaaS marketing tools (Jasper, AdCreative,
+  Anyword, Pencil, Marpipe) with a single open-source app. Users bring their own
+  AI provider key — free tier (Groq, Cerebras, Gemini, OpenRouter) or paid
+  (Claude, OpenAI, Mistral, DeepSeek) — and get 17 ad generators across Google,
+  Meta, TikTok, YouTube, LinkedIn and X, plus 11 optimization tools (CTR
+  optimizer, Quality Score improver, budget waste analyzer, ad fatigue detector,
+  and more), competitor research, brand intelligence, content calendars, step-by-
+  step launch guides for non-technical users, and a folder-portable data layer.
+keywords:
+  - artificial-intelligence
+  - advertising
+  - marketing
+  - copywriting
+  - open-source
+  - byok
+  - browser-only
+  - nextjs
+  - typescript
+license: MIT
+version: "0.1.0"
+date-released: "2026-05-13"

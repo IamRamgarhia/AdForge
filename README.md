@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="docs/banner.svg" alt="AdForge — open-source AI ad ops cockpit. 17 generators, 11 optimizers, 9 AI providers, browser-only, MIT-licensed, built by Dicecodes." width="100%" />
+
 # AdForge
 
 ### Open-source AI ad ops cockpit · every platform · bring your own AI key · zero subscriptions
@@ -7,11 +9,13 @@
 *Built by [Dicecodes](https://dicecodes.com)*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Version](https://img.shields.io/badge/version-0.1.0-ffb020.svg)](CHANGELOG.md)
 [![Node 18.17+](https://img.shields.io/badge/node-%E2%89%A518.17-brightgreen.svg)](https://nodejs.org)
 [![Next.js 14](https://img.shields.io/badge/Next.js-14-black.svg)](https://nextjs.org)
 [![Built by Dicecodes](https://img.shields.io/badge/built%20by-Dicecodes-ffb020.svg)](https://dicecodes.com)
 [![Browser-only](https://img.shields.io/badge/browser--only-yes-blue.svg)](#privacy--security)
 [![BYOK](https://img.shields.io/badge/BYOK-9%20providers-purple.svg)](#9-ai-providers-supported)
+[![GitHub stars](https://img.shields.io/github/stars/IamRamgarhia/AdForge?style=social)](https://github.com/IamRamgarhia/AdForge/stargazers)
 
 **One tool. Every ad platform. Zero subscriptions.**
 *Your key · your data · your folder.*
@@ -176,6 +180,11 @@ Pick during onboarding · switch any time in Settings · one app, every API.
 
 ## Architecture
 
+<img src="docs/architecture.svg" alt="AdForge architecture diagram. Browser-only Next.js app talks directly to your chosen LLM provider, Jina Reader for URL ingest, and a zero-dependency Node local-sync sidecar that persists all your work to data/snapshot.json in the project folder." width="100%" />
+
+<details>
+<summary>Text version (for screen readers)</summary>
+
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
 │                         YOUR BROWSER                                │
@@ -192,6 +201,8 @@ Pick during onboarding · switch any time in Settings · one app, every API.
 │                                       (portable!)                   │
 └─────────────────────────────────────────────────────────────────────┘
 ```
+
+</details>
 
 **Outbound calls from the running app**:
 1. The LLM provider you configured · for every generation

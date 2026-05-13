@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 320" width="1280" height="320" role="img" aria-labelledby="title desc">
+  <title id="title">AdForge — Open-source AI Ad Ops Cockpit</title>
+  <desc id="desc">Hero banner showing the AdForge name, tagline, and made-by-Dicecodes attribution on a near-black background with a saffron accent block.</desc>
+
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#08080a"/>
+      <stop offset="1" stop-color="#101013"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.18" cy="0.35" r="0.45">
+      <stop offset="0" stop-color="#ffb020" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#ffb020" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="0.85" cy="0.85" r="0.45">
+      <stop offset="0" stop-color="#7aa2ff" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#7aa2ff" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M 32 0 L 0 0 0 32" fill="none" stroke="#ffffff" stroke-width="0.5" opacity="0.03"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1280" height="320" fill="url(#bg)"/>
+  <rect width="1280" height="320" fill="url(#grid)"/>
+  <rect width="1280" height="320" fill="url(#glow)"/>
+  <rect width="1280" height="320" fill="url(#glow2)"/>
+
+  <!-- Top scope-prefix line -->
+  <text x="80" y="62" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="14" fill="#9a9aa3" letter-spacing="0.5">~/adforge · v0.1</text>
+
+  <!-- AdForge logo block -->
+  <rect x="80" y="86" width="80" height="80" fill="#ffb020"/>
+  <text x="120" y="148" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-style="italic" font-size="56" font-weight="700" fill="#08080a">A</text>
+
+  <!-- Title -->
+  <text x="180" y="146" font-family="Georgia, 'Times New Roman', serif" font-style="italic" font-size="84" font-weight="400" fill="#e7e7ea" letter-spacing="-1">AdForge</text>
+
+  <!-- Tagline -->
+  <text x="80" y="208" font-family="-apple-system, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="22" font-weight="600" fill="#e7e7ea">
+    Open-source AI ad ops cockpit · every platform · BYOK · zero subscriptions
+  </text>
+
+  <!-- Feature row -->
+  <g font-family="-apple-system, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" fill="#9a9aa3">
+    <text x="80" y="252"><tspan fill="#ffb020">●</tspan>  17 generators</text>
+    <text x="232" y="252"><tspan fill="#ffb020">●</tspan>  11 optimizers</text>
+    <text x="384" y="252"><tspan fill="#ffb020">●</tspan>  9 AI providers</text>
+    <text x="552" y="252"><tspan fill="#ffb020">●</tspan>  browser-only</text>
+    <text x="708" y="252"><tspan fill="#ffb020">●</tspan>  MIT</text>
+    <text x="800" y="252"><tspan fill="#ffb020">●</tspan>  $0 / month</text>
+  </g>
+
+  <!-- Bottom credit -->
+  <text x="80" y="294" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="13" fill="#6b6b74" letter-spacing="1.2">
+    BUILT BY <tspan fill="#ffb020" font-weight="600">DICECODES</tspan> · DICECODES.COM
+  </text>
+
+  <!-- Right-side decorative shape -->
+  <g opacity="0.9" transform="translate(960 56)">
+    <!-- Mockup card -->
+    <rect width="240" height="210" fill="#16161b" stroke="#222229"/>
+    <rect x="0" y="0" width="240" height="2" fill="#ffb020"/>
+    <rect x="14" y="18" width="36" height="36" fill="#1c1c22"/>
+    <rect x="60" y="22" width="120" height="8" fill="#2a2a32"/>
+    <rect x="60" y="36" width="80" height="6" fill="#1c1c22"/>
+    <rect x="14" y="66" width="212" height="100" fill="#1c1c22"/>
+    <rect x="14" y="66" width="212" height="2" fill="#ffb020" opacity="0.6"/>
+    <text x="120" y="124" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="14" fill="#9a9aa3">[ ad preview ]</text>
+    <rect x="14" y="178" width="120" height="8" fill="#2a2a32"/>
+    <rect x="178" y="174" width="48" height="20" fill="#ffb020"/>
+    <text x="202" y="188" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="10" font-weight="700" fill="#08080a">SHOP</text>
+  </g>
+</svg>
