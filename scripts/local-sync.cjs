@@ -563,6 +563,82 @@ const server = http.createServer(async (req, res) => {
       });
     }
 
+    // --- URL ingest fallback via the sidecar (bypasses Jina rate limits + browser CORS) ---
+    // Browser-side url-ingest calls this when external readers are blocked.
+    // We fetch the target URL server-side (no CORS, no Jina quota) and return
+    // a lightly-stripped text version the AI can read directly.
+    if (req.method === "GET" && url.startsWith("/ingest")) {
+      const u = new URL(req.url || "", `http://127.0.0.1`);
+      const target = u.searchParams.get("url");
+      if (!target) return json(res, 400, { ok: false, error: "Missing url param." });
+      let parsed;
+      try { parsed = new URL(target); } catch { return json(res, 400, { ok: false, error: "Invalid url." }); }
+      if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+        return json(res, 400, { ok: false, error: "Only http/https URLs supported." });
+      }
+      const https = parsed.protocol === "https:" ? require("https") : require("http");
+      let body = "";
+      let redirects = 0;
+      const fetchOnce = (targetUrl) => new Promise((resolve, reject) => {
+        const opts = {
+          headers: {
+            // Pretend to be a real browser — many sites short-circuit non-UA requests.
+            "User-Agent": "Mozilla/5.0 (compatible; AdForge/1.0; +https://github.com/IamRamgarhia/AdForge)",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Language": "en-US,en;q=0.5",
+          },
+          timeout: 15000,
+        };
+        const r = https.get(targetUrl, opts, (resp) => {
+          // Follow up to 5 redirects (Cloudflare and friends frequently bounce).
+          if (resp.statusCode >= 300 && resp.statusCode < 400 && resp.headers.location && redirects < 5) {
+            redirects++;
+            const next = new URL(resp.headers.location, targetUrl).toString();
+            return resolve(fetchOnce(next));
+          }
+          if (resp.statusCode < 200 || resp.statusCode >= 400) {
+            return reject(new Error(`HTTP ${resp.statusCode} from target`));
+          }
+          let raw = "";
+          resp.setEncoding("utf8");
+          resp.on("data", (c) => { raw += c; if (raw.length > 1_500_000) { resp.destroy(); resolve(raw); } });
+          resp.on("end", () => resolve(raw));
+        });
+        r.on("error", reject);
+        r.on("timeout", () => { r.destroy(); reject(new Error("Timeout after 15s")); });
+      });
+      try {
+        body = await fetchOnce(target);
+      } catch (e) {
+        return json(res, 502, { ok: false, error: e?.message || "Fetch failed" });
+      }
+      // Strip HTML to plain text — naive but good enough for AI ingestion.
+      // The browser side does a fancier DOMParser-based version when needed.
+      const text = body
+        .replace(/<script[\s\S]*?<\/script>/gi, "")
+        .replace(/<style[\s\S]*?<\/style>/gi, "")
+        .replace(/<noscript[\s\S]*?<\/noscript>/gi, "")
+        .replace(/<head[\s\S]*?<\/head>/gi, "")
+        .replace(/<[^>]+>/g, " ")
+        .replace(/&nbsp;/g, " ")
+        .replace(/&amp;/g, "&")
+        .replace(/&lt;/g, "<")
+        .replace(/&gt;/g, ">")
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, "'")
+        .replace(/\s+/g, " ")
+        .trim();
+      const MAX = 40000;
+      const trimmed = text.length > MAX ? text.slice(0, MAX) : text;
+      return json(res, 200, {
+        ok: true,
+        url: target,
+        content: trimmed,
+        truncated: text.length > MAX,
+        source: "sidecar",
+      });
+    }
+
     if (req.method === "POST" && url === "/web/rebuild") {
       // Clean rebuild: stop web → wipe .next → start fresh. Fixes
       // "CSS not loading / page renders unstyled" caused by stale chunk refs.

@@ -15,7 +15,7 @@ export interface IngestResult {
   url: string;
   content: string;
   truncated: boolean;
-  source: "jina" | "allorigins";
+  source: "jina" | "allorigins" | "sidecar";
 }
 export interface IngestError {
   ok: false;
@@ -38,6 +38,51 @@ function getJinaKey(): string {
     return window.localStorage.getItem("ados.jina_key") ?? "";
   } catch {
     return "";
+  }
+}
+
+function sidecarOrigin(): string {
+  // The local-sync sidecar runs on the configured ADFORGE_SYNC_PORT (default
+  // 3006). The browser app is on a different port (3005), so we hit
+  // http://127.0.0.1:3006 directly. CORS is allowed by the sidecar.
+  // We can't read env vars in the browser; default to 3006 and trust the
+  // sidecar to be where AdForge launcher put it.
+  return "http://127.0.0.1:3006";
+}
+
+/**
+ * Server-side fetch via the local sidecar — bypasses Jina quotas + browser
+ * CORS sandbox. Most reliable path when external readers are rate-limited
+ * or the user's network blocks them.
+ */
+async function trySidecar(target: string, signal?: AbortSignal): Promise<IngestOutcome> {
+  try {
+    const res = await fetch(
+      `${sidecarOrigin()}/ingest?url=${encodeURIComponent(target)}`,
+      { method: "GET", signal }
+    );
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      return {
+        ok: false,
+        recoverable: true,
+        message: `Sidecar fetch failed: ${body?.error ?? `HTTP ${res.status}`}.`,
+      };
+    }
+    const j = await res.json();
+    if (!j.ok || !j.content || j.content.length < 50) {
+      return { ok: false, recoverable: true, message: "Sidecar returned almost no content. Trying Jina…" };
+    }
+    return {
+      ok: true,
+      url: j.url ?? target,
+      content: j.content,
+      truncated: !!j.truncated,
+      source: "sidecar",
+    };
+  } catch (e: any) {
+    if (e?.name === "AbortError") return { ok: false, recoverable: false, message: "Cancelled." };
+    return { ok: false, recoverable: true, message: "Sidecar unreachable — is the launcher running on port 3006?" };
   }
 }
 
@@ -126,19 +171,30 @@ export async function ingestUrl(rawUrl: string, signal?: AbortSignal): Promise<I
     return { ok: false, recoverable: false, message: "That doesn't look like a valid URL." };
   }
 
-  // Try Jina first
+  // Special case: Jina search URLs (s.jina.ai/<query>) — those have to go
+  // through Jina, the sidecar can't replicate Google search.
+  const isJinaSearch = /^https?:\/\/s\.jina\.ai\//i.test(target);
+
+  // Strategy (most-reliable first):
+  //   1. Local sidecar — no CORS, no quota, no third-party dependency
+  //   2. Jina Reader — best HTML→markdown extraction, occasional rate limits
+  //   3. AllOrigins — last-resort CORS proxy when both above fail
+  // Skip the sidecar for Jina-search URLs since we want Jina to do the search.
+  if (!isJinaSearch) {
+    const sidecar = await trySidecar(target, signal);
+    if (sidecar.ok) return sidecar;
+  }
+
   const jina = await tryJina(target, signal);
   if (jina.ok) return jina;
 
-  // Fallback to AllOrigins
   const ao = await tryAllOrigins(target, signal);
   if (ao.ok) return ao;
 
-  // Both failed — return the more specific error
   return {
     ok: false,
     recoverable: true,
-    message: `Both readers failed. The site may block scrapers or require login. Paste content below instead — copy the page in your browser (Ctrl+A, Ctrl+C) and paste here.`,
+    message: `All three readers failed (local sidecar, Jina, AllOrigins). The site may block scrapers, require login, or your network may be offline. Paste content below instead — open the URL in a new tab, select all (Ctrl+A / ⌘A), copy (Ctrl+C / ⌘C), and paste here.`,
   };
 }
 
