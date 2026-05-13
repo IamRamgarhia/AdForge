@@ -94,7 +94,11 @@ function Inner() {
       window.dispatchEvent(new Event("ados:usage"));
       const parsed = tryParseJson<any>(res.text);
       const fallback = new URL(r.url).hostname.replace(/^www\./, "");
-      stageBrain(parsed, fallback, r.url, "url", `${r.url} (via ${r.source === "allorigins" ? "AllOrigins fallback" : "Jina Reader"})`);
+      stageBrain(parsed, fallback, r.url, "url", `${r.url} (via ${
+        r.source === "sidecar" ? "local sidecar" :
+        r.source === "allorigins" ? "AllOrigins fallback" :
+        "Jina Reader"
+      })`);
     } catch (e: any) {
       setQuickStatus(e?.message ?? "Failed");
     } finally {
