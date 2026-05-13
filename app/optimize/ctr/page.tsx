@@ -40,6 +40,9 @@ const config: GeneratorConfig<CtrInput & Record<string, unknown>> = {
     { name: "search_terms", label: "Top search terms / queries", kind: "textarea", rows: 4, placeholder: "Paste up to 10 actual queries triggering this ad, one per line. From Google Ads → Search Terms report.", span: 2, hint: "Optional but high-leverage: lets the AI tie copy to real user intent." },
     { name: "reporting_window", label: "Reporting window", kind: "text", placeholder: "last 7 days · last 30 days · since launch", hint: "Helps the AI scale lift expectations." },
 
+    // ----- Optional screenshot -----
+    { name: "dashboard_screenshot", label: "Screenshot of your Ads dashboard (optional)", kind: "image", section: "Optional — drop a screenshot, AI reads it directly", placeholder: "Drop a Google Ads / Meta Ads Manager screenshot here. Vision-capable providers only (Claude / OpenAI / Gemini).", span: 2, hint: "When provided, the AI reads the metrics straight from the image — you can skip retyping the number fields above." },
+
     // ----- Goal block -----
     { name: "goal", label: "Primary goal", kind: "select", section: "Goal", options: [
       { value: "increase_ctr", label: "Increase CTR" },
@@ -60,6 +63,7 @@ const config: GeneratorConfig<CtrInput & Record<string, unknown>> = {
     avg_cpc: "",
     search_terms: "",
     reporting_window: "last 30 days",
+    dashboard_screenshot: null,
     goal: "increase_ctr",
     audience_one_liner: "",
   } as any,

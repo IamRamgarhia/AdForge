@@ -1,7 +1,7 @@
 import type { Platform } from "./storage";
 import type { BrandBrain } from "./brand-brain";
 
-export type FieldKind = "text" | "textarea" | "select" | "number";
+export type FieldKind = "text" | "textarea" | "select" | "number" | "image";
 
 export interface InputField {
   name: string;

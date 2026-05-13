@@ -13,6 +13,9 @@ import { getBrain, saveAd, type GeneratedAd } from "@/lib/storage";
 import { buildBrandSystemPrompt, type BrandBrain } from "@/lib/brand-brain";
 import { applySmartFill } from "@/lib/smart-fill";
 import { rememberLastGenerated, suggestNextSteps, type NextStep } from "@/lib/next-steps";
+import { providerSupportsVision, fileToImagePart } from "@/lib/providers/vision";
+import { getActiveProviderId } from "@/lib/settings";
+import type { ContentPart, ImagePart } from "@/lib/providers/types";
 import Link from "next/link";
 import type { GeneratorConfig, InputField } from "@/lib/generator-config";
 
@@ -99,9 +102,13 @@ function Inner<I extends Record<string, unknown>>({ config, scope }: Props<I>) {
     setParsed(null);
     stream.reset();
 
-    const missing = config.fields.filter(
-      (f) => f.required && !String((input as any)[f.name] ?? "").trim()
-    );
+    // Validate required fields. Image fields are required if their value is null.
+    const missing = config.fields.filter((f) => {
+      if (!f.required) return false;
+      const v = (input as any)[f.name];
+      if (f.kind === "image") return !v;
+      return !String(v ?? "").trim();
+    });
     if (missing.length) {
       setError(`Required: ${missing.map((m) => m.label).join(", ")}`);
       return;
@@ -112,6 +119,22 @@ function Inner<I extends Record<string, unknown>>({ config, scope }: Props<I>) {
       return;
     }
 
+    // Vision capability check: if any image fields have a value, the active
+    // provider+model must support vision.
+    const imageFields = config.fields.filter((f) => f.kind === "image");
+    const attachedImages: ImagePart[] = imageFields
+      .map((f) => (input as any)[f.name])
+      .filter((v): v is ImagePart => Boolean(v && (v as ImagePart).type === "image"));
+    if (attachedImages.length) {
+      const providerId = getActiveProviderId() as any;
+      if (!providerId || !providerSupportsVision(providerId, getModel())) {
+        setError(
+          "The current AI provider / model can't read images. Switch to Claude (any model), OpenAI (GPT-4.1+), or Gemini in Settings."
+        );
+        return;
+      }
+    }
+
     setRunning(true);
     setHasRun(true);
     const controller = new AbortController();
@@ -119,12 +142,18 @@ function Inner<I extends Record<string, unknown>>({ config, scope }: Props<I>) {
     try {
       const system = buildBrandSystemPrompt(brain, { language: getLanguage(), tone_override: getToneOverride() });
       const prompt = config.buildPrompt(input, brain);
+      // Build content. With no images, send a plain string for cheapest path.
+      // With images, send the array of parts (images first → text last is the
+      // convention all three vision-capable providers expect).
+      const content: string | ContentPart[] = attachedImages.length
+        ? [...attachedImages, { type: "text", text: prompt }]
+        : prompt;
       const res = await streamClaude(
         {
           apiKey,
           model: getModel(),
           system,
-          messages: [{ role: "user", content: prompt }],
+          messages: [{ role: "user", content }],
           maxTokens: config.maxTokens ?? 3000,
           temperature: config.temperature ?? 0.7,
           signal: controller.signal,
@@ -378,6 +407,8 @@ const FieldRenderer = memo(function FieldRenderer({
           value={(value as number | string) ?? ""}
           onChange={(e) => onChange(e.target.value === "" ? "" : Number(e.target.value))}
         />
+      ) : field.kind === "image" ? (
+        <ImageInput value={value as ImagePart | null} onChange={onChange} placeholder={field.placeholder} />
       ) : (
         <input
           className="input-base"
@@ -390,6 +421,77 @@ const FieldRenderer = memo(function FieldRenderer({
     </div>
   );
 });
+
+function ImageInput({
+  value,
+  onChange,
+  placeholder,
+}: {
+  value: ImagePart | null;
+  onChange: (v: ImagePart | null) => void;
+  placeholder?: string;
+}) {
+  const [err, setErr] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  async function handle(file: File | null | undefined) {
+    setErr(null);
+    if (!file) return;
+    setBusy(true);
+    try {
+      const part = await fileToImagePart(file);
+      onChange(part);
+    } catch (e: any) {
+      setErr(e?.message ?? "Couldn't read that image.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  if (value) {
+    const dataUrl = `data:${value.media_type};base64,${value.data}`;
+    return (
+      <div className="border border-base-700 bg-base-900/40 p-2 rounded-md">
+        <div className="flex items-start gap-3">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={dataUrl} alt="upload preview" className="h-20 w-20 object-cover border border-base-700" />
+          <div className="flex-1 text-[11px] text-ink-muted">
+            <div>Image ready · {value.media_type} · {Math.round((value.data.length * 3) / 4 / 1024)} KB</div>
+            <button
+              type="button"
+              onClick={() => onChange(null)}
+              className="text-[10px] text-neg hover:underline font-mono uppercase tracking-ui-wide mt-1"
+            >
+              remove
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <button
+        type="button"
+        onClick={() => inputRef.current?.click()}
+        disabled={busy}
+        className="w-full border border-dashed border-base-600 bg-base-900/30 hover:border-base-500 hover:bg-base-800/40 transition px-3 py-4 text-xs text-ink-muted"
+      >
+        {busy ? "Reading image…" : placeholder ?? "Drop a screenshot here or click to upload (PNG / JPEG / WebP / GIF · ≤ 4.5 MB)"}
+      </button>
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/png,image/jpeg,image/webp,image/gif"
+        className="hidden"
+        onChange={(e) => handle(e.target.files?.[0])}
+      />
+      {err ? <p className="text-[10px] text-neg mt-1 font-mono uppercase tracking-ui-wide">{err}</p> : null}
+    </div>
+  );
+}
 
 const OutputArea = memo(function OutputArea<I extends Record<string, unknown>>({
   running,
