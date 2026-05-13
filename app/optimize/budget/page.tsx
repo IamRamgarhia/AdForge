@@ -1,0 +1,137 @@
+"use client";
+
+import { GeneratorShell } from "@/components/GeneratorShell";
+import { Section, Pill, Kv } from "@/components/OutputBlocks";
+import { buildBudgetWastePrompt, type BudgetWasteInput } from "@/lib/prompts/budget-waste";
+import type { GeneratorConfig } from "@/lib/generator-config";
+
+const config: GeneratorConfig<BudgetWasteInput & Record<string, unknown>> = {
+  title: "Budget Waste Analyzer",
+  subtitle: "Three pulse numbers. Named contributors. No letter grades. STOP-conditions enforced.",
+  platform: "google",
+  campaign_type: "Budget Audit",
+  maxTokens: 3500,
+  fields: [
+    {
+      name: "platform",
+      label: "Platform",
+      kind: "select",
+      options: [
+        { value: "Google Ads", label: "Google Ads" },
+        { value: "Meta Ads", label: "Meta Ads" },
+        { value: "TikTok Ads", label: "TikTok Ads" },
+        { value: "LinkedIn Ads", label: "LinkedIn Ads" },
+      ],
+    },
+    { name: "monthly_spend", label: "Monthly spend ($)", kind: "text", required: true, placeholder: "5000" },
+    { name: "campaign_summary", label: "Campaigns & setup", kind: "textarea", required: true, rows: 5, placeholder: "Describe your campaigns: structure, audiences, match types, recent CPA, conversion volume.", span: 2 },
+    { name: "match_types", label: "Match types used", kind: "text", placeholder: "broad / phrase / exact" },
+    { name: "has_negatives", label: "Negative list?", kind: "text", placeholder: "yes / no / partial" },
+    { name: "schedule", label: "Ad scheduling", kind: "text", placeholder: "always-on / business hours / custom" },
+    { name: "device_targeting", label: "Devices", kind: "text", placeholder: "all / mobile-only / etc" },
+    { name: "geo_targeting", label: "Geo", kind: "text", placeholder: "US / 10mi from store / etc" },
+    { name: "excludes_customers", label: "Excludes existing customers?", kind: "text", placeholder: "yes / no" },
+  ],
+  initial: {
+    platform: "Google Ads",
+    monthly_spend: "",
+    campaign_summary: "",
+    match_types: "",
+    has_negatives: "",
+    schedule: "",
+    device_targeting: "",
+    geo_targeting: "",
+    excludes_customers: "",
+  } as any,
+  buildPrompt: (input) => buildBudgetWastePrompt(input as unknown as BudgetWasteInput),
+  buildTitle: (i: any) => `Budget · ${i.platform}`,
+  expectJson: true,
+  renderJson: (json) => <BudgetOutput json={json} />,
+};
+
+export default function Page() {
+  return <GeneratorShell config={config} scope="optimize/budget" />;
+}
+
+const priorityTone: Record<string, "neg" | "live" | "default" | "pos"> = {
+  critical: "neg",
+  high: "neg",
+  medium: "live",
+  low: "default",
+};
+
+function BudgetOutput({ json }: { json: any }) {
+  if (json?.stop_condition) {
+    return (
+      <Section title="STOP">
+        <p className="text-sm text-neg font-medium">{json.stop_condition}</p>
+        <p className="text-xs text-ink-muted mt-2">Resolve the stop condition before any optimization recommendations make sense.</p>
+      </Section>
+    );
+  }
+  return (
+    <div className="space-y-4 stagger">
+      {json?.pulse ? (
+        <Section title="Pulse — 3 numbers">
+          <div className="grid md:grid-cols-3 gap-2">
+            <PulseCard label="waste / month" value={`$${(json.pulse.waste_per_month_usd?.value ?? 0).toLocaleString()}`} contrib={json.pulse.waste_per_month_usd?.top_contributor} fix={json.pulse.waste_per_month_usd?.fix_pointer} tone="neg" />
+            <PulseCard label="demand captured" value={`${json.pulse.demand_captured_pct?.value ?? 0}%`} contrib={json.pulse.demand_captured_pct?.top_contributor} fix={json.pulse.demand_captured_pct?.fix_pointer} tone="live" />
+            <PulseCard label="cpa efficiency" value={`${json.pulse.cpa_efficiency_ratio?.value ?? 0}×`} contrib={json.pulse.cpa_efficiency_ratio?.top_contributor} fix={json.pulse.cpa_efficiency_ratio?.fix_pointer} tone="info" />
+          </div>
+        </Section>
+      ) : null}
+
+      {json?.audit?.length ? (
+        <Section title={`Audit · ${json.audit.length} checks`}>
+          <ul className="space-y-1.5">
+            {json.audit.map((a: any, i: number) => (
+              <li key={i} className="flex items-start gap-2 border border-base-700 px-2 py-1.5">
+                <Pill text={a.answer} tone={a.answer === "hit" ? "neg" : a.answer === "miss" ? "pos" : "default"} />
+                <Pill text={a.priority} tone={priorityTone[a.priority] ?? "default"} label="pri" />
+                <div className="flex-1 text-xs">
+                  <div className="text-ink">{a.question}</div>
+                  <div className="text-ink-muted mt-0.5">{a.evidence}</div>
+                  {a.fix ? <div className="text-pos mt-0.5">→ {a.fix}</div> : null}
+                </div>
+                <span className="font-mono text-[11px] text-neg tabular shrink-0">${(a.estimated_waste_usd ?? 0).toLocaleString()}</span>
+              </li>
+            ))}
+          </ul>
+        </Section>
+      ) : null}
+
+      {json?.top_5_fixes_by_roi?.length ? (
+        <Section title="Top fixes by ROI">
+          <ul className="space-y-1.5">
+            {json.top_5_fixes_by_roi.map((f: any, i: number) => (
+              <li key={i} className="flex items-center gap-2 border border-base-700 px-2 py-1.5 text-xs">
+                <span className="font-mono text-ink-faint w-5 tabular">{i + 1}</span>
+                <span className="flex-1 text-ink">{f.fix}</span>
+                <Kv k="rec" v={`$${f.estimated_recovery_usd?.toLocaleString() ?? 0}`} pos />
+                <Kv k="hr" v={f.effort_hours ?? 0} />
+              </li>
+            ))}
+          </ul>
+        </Section>
+      ) : null}
+
+      {json?.reallocation_plan ? (
+        <Section title="Reallocation plan">
+          <p className="text-sm text-ink">{json.reallocation_plan}</p>
+        </Section>
+      ) : null}
+    </div>
+  );
+}
+
+function PulseCard({ label, value, contrib, fix, tone }: { label: string; value: string; contrib?: string; fix?: string; tone: "neg" | "live" | "info" }) {
+  const toneMap: Record<string, string> = { neg: "text-neg", live: "text-live", info: "text-info" };
+  return (
+    <div className="border border-base-600 bg-base-900/30 p-4">
+      <div className="text-[10px] font-mono uppercase tracking-ui-mega text-ink-faint">{label}</div>
+      <div className={`font-display italic text-3xl mt-1 tabular ${toneMap[tone]}`}>{value}</div>
+      {contrib ? <div className="text-[11px] text-ink mt-2 leading-relaxed">{contrib}</div> : null}
+      {fix ? <div className="text-[11px] text-pos mt-1 leading-relaxed">→ {fix}</div> : null}
+    </div>
+  );
+}

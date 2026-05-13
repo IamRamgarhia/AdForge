@@ -1,0 +1,84 @@
+export interface BudgetWasteInput {
+  platform: string;
+  monthly_spend: string;
+  campaign_summary: string;
+  match_types?: string;
+  has_negatives?: string;
+  schedule?: string;
+  device_targeting?: string;
+  geo_targeting?: string;
+  excludes_customers?: string;
+}
+
+import { MANDATORY_EXCLUSIONS, DIAGNOSIS_TREES } from "./common-rules";
+
+export function buildBudgetWastePrompt(input: BudgetWasteInput): string {
+  return `Audit this ad account for budget waste and produce a PULSE REPORT (not a letter grade).
+
+${MANDATORY_EXCLUSIONS}
+
+${DIAGNOSIS_TREES}
+
+
+PULSE METRICS RULE (toprank pattern):
+Return THREE numbers as the headline finding:
+  - waste_per_month_usd (estimated waste in $)
+  - demand_captured_pct (rough % of available demand the account currently captures)
+  - cpa_efficiency_ratio (current CPA vs target CPA as a ratio)
+Each number must have:
+  - top_contributor: NAMED specific cause (campaign/keyword/ad group, not "some keywords")
+  - fix_pointer: the single highest-impact action
+
+NO LETTER GRADES. NO 0–100 scores hiding reasoning. Show the math, not the verdict.
+
+ANTI-VAGUENESS:
+- ❌ "Some keywords are underperforming"
+- ✅ "Campaign 'Brand-Search-US' has $1,840 last-30-day spend on 12 keywords with 0 conversions and quality score ≤ 4"
+
+INPUT:
+- Platform: ${input.platform}
+- Monthly spend: ${input.monthly_spend}
+- Campaign setup:
+"""
+${input.campaign_summary}
+"""
+- Match types in use: ${input.match_types || "not specified"}
+- Negative keyword list: ${input.has_negatives || "not specified"}
+- Ad scheduling: ${input.schedule || "always-on"}
+- Device targeting: ${input.device_targeting || "all"}
+- Geographic targeting: ${input.geo_targeting || "not specified"}
+- Excludes current customers from prospecting: ${input.excludes_customers || "not specified"}
+
+20-QUESTION WASTE AUDIT — for each question, mark hit (waste likely present), miss (looks fine), unknown.
+
+STOP-CONDITIONS — emit a top-level "stop_condition" if ANY of:
+- Conversion tracking is not mentioned (cannot audit blind)
+- Tracking measurement is broken or unverified
+- Special Ad Categories (housing, employment, credit, finance) without explicit ack
+If a stop condition fires, set audit_findings to [] and tell user to fix the stop_condition first.
+
+Return ONLY valid JSON:
+{
+  "stop_condition": null,
+  "pulse": {
+    "waste_per_month_usd": { "value": 0, "top_contributor": "string (name names)", "fix_pointer": "string" },
+    "demand_captured_pct": { "value": 0, "top_contributor": "string", "fix_pointer": "string" },
+    "cpa_efficiency_ratio": { "value": 0, "top_contributor": "string", "fix_pointer": "string" }
+  },
+  "audit": [
+    {
+      "question": "string",
+      "answer": "hit|miss|unknown",
+      "evidence": "string (specific)",
+      "fix": "string (specific)",
+      "estimated_waste_usd": 0,
+      "priority": "critical|high|medium|low",
+      "fix_within_days": 0
+    }
+  ],
+  "top_5_fixes_by_roi": [
+    { "fix": "string", "estimated_recovery_usd": 0, "effort_hours": 0 }
+  ],
+  "reallocation_plan": "string (where to move the recovered $)"
+}`;
+}

@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: AI provider help (Claude / OpenAI / Gemini / Groq / etc.)
+    url: https://docs.anthropic.com
+    about: AdForge calls each provider directly from your browser. Questions about the underlying model or your API key are best handled by the provider.
+  - name: Security disclosure
+    url: https://github.com/IamRamgarhia/AdForge-/security/policy
+    about: Report security vulnerabilities privately — do NOT use a public issue.
+  - name: Built by Dicecodes
+    url: https://dicecodes.com
+    about: Need a custom build or agency-edition? Contact Dicecodes.

@@ -1,0 +1,73 @@
+name: Bug report
+description: Something AdForge does wrong or unexpectedly.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. Please remember AdForge runs entirely in your browser — there's no server to check. Most bugs reproduce locally.
+
+        **Do NOT paste your Claude API key, any other secrets, or your real ad account data here.**
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Describe the bug in a few sentences.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Go to /generate/google
+        2. Fill in product = "X"
+        3. Click Generate
+        4. See error
+    validations:
+      required: true
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where did this happen?
+      options:
+        - Local dev (npm run dev)
+        - Production build (npm run build && npm start)
+        - Vercel deploy
+        - Docker
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser + version
+      placeholder: e.g. Chrome 130, Firefox 132, Safari 17
+    validations:
+      required: true
+  - type: input
+    id: node
+    attributes:
+      label: Node version (if local)
+      placeholder: e.g. 20.10.0
+  - type: textarea
+    id: console
+    attributes:
+      label: Browser console output
+      description: Open DevTools → Console. Paste any errors. Redact anything sensitive.
+      render: shell
+  - type: checkboxes
+    id: confirms
+    attributes:
+      label: Confirmations
+      options:
+        - label: I have not pasted my API key or any secret in this issue.
+          required: true
+        - label: I have not pasted real, private ad account data.
+          required: true

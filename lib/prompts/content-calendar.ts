@@ -1,0 +1,111 @@
+import { VIDEO_HOOK_RULE } from "./common-rules";
+
+export interface ContentCalendarInput {
+  duration: "1_week" | "2_weeks" | "1_month";
+  cadence_per_week: number;
+  platforms: string;
+  pillars: string;
+  primary_goal: string;
+  voice_notes: string;
+  posting_window: string;
+  region_or_timezone: string;
+}
+
+export function buildContentCalendarPrompt(input: ContentCalendarInput): string {
+  const days = input.duration === "1_week" ? 7 : input.duration === "2_weeks" ? 14 : 30;
+  return `Generate an organic social media content calendar — full post specs, captions, hashtags, visual + video creative briefs with AI-tool recommendations.
+
+${VIDEO_HOOK_RULE}
+
+INPUT:
+- Total duration: ${days} days
+- Cadence: ~${input.cadence_per_week} posts / week per platform
+- Platforms in scope: ${input.platforms}
+- Content pillars (themes that should recur): ${input.pillars}
+- Primary goal of the calendar (awareness / engagement / lead gen / nurture / sales): ${input.primary_goal}
+- Voice notes: ${input.voice_notes || "(use brand brain default)"}
+- Posting window: ${input.posting_window || "anytime"}
+- Region / timezone: ${input.region_or_timezone || "(unspecified)"}
+
+PRINCIPLES (apply all):
+- Pillar rotation: each post serves ONE pillar. Don't blur. Rotate pillars across the week.
+- Platform-native: don't reuse the same caption across platforms. LinkedIn ≠ TikTok ≠ Instagram captions.
+- Format mix: balance image / carousel / Reel-or-short / Story-or-poll / text-only across each week.
+- One CTA per post. No double-CTAs.
+- Captions front-load: first sentence is the hook (cuts at "see more").
+- 80% value / 20% promotion — be honest, no fabricated stats.
+- Posting time matched to platform best practice: Instagram peaks 11am + 7pm local, LinkedIn 8-10am Tue-Thu, TikTok 7am + 7pm, Twitter 8-10am + 6pm. Adjust for the user's timezone.
+
+PLATFORM-SPECIFIC CAPTION RULES:
+- Instagram: first 125 chars visible before "more". 2,200 chars max. ~30 hashtags allowed but 5-10 niche performs best in 2025.
+- TikTok: 100 chars cap. 3-5 hashtags max. Hook = first 3 seconds OF VIDEO, not caption.
+- Twitter / X: 280 chars. 1-2 hashtags max.
+- LinkedIn: 150 chars visible, 3,000 max. 3-5 professional hashtags. No emoji walls.
+- Facebook: 80 chars visible, 63k max. Keep short. 1-2 hashtags.
+- YouTube Shorts: 100-char title, 5,000-char description. First 100 chars of description matter most.
+- Pinterest: 100-char title, 500-char description. Vertical 2:3 ratio.
+
+FOR EACH POST INCLUDE:
+- Day number + suggested date offset (Day 1, Day 2…)
+- Platform
+- Pillar served
+- Format (image / carousel / reel / short / story / text / live)
+- Hook (the first 1 line that does the heaviest work)
+- Full caption in the platform's native style + length
+- 5-10 hashtags (tiered: 1 broad / 3 medium / 3 niche / 1 branded)
+- Visual creative brief: ONE-paragraph description of what the image/video should be — written so it can be pasted into an AI image/video tool
+- Recommended AI tool for the asset (from this list — match brief to tool):
+  STATIC: Midjourney (photoreal/stylized), DALL-E 3 / ChatGPT (text in image), Ideogram (text rendering), Adobe Firefly (commercial-safe), Recraft (brand-vector), Canva (template-driven free)
+  VIDEO: Runway Gen-3 (cinematic), Pika (consumer-quick), Luma Dream Machine (photoreal motion), HeyGen (avatar/talking-head), Synthesia (corporate explainer), CapCut (mobile native edit), Canva Magic Video (template-driven free)
+- Cost tier of the chosen tool (free / freemium / paid)
+- Best post time (local hour, based on platform best practice)
+- Engagement hook (question / poll / CTA at the end)
+- Suggested overlay text if video
+
+ALSO PRODUCE:
+- Theme rotation map: which pillars hit on which days
+- Weekly summary: post counts by platform + format
+- Asset-generation budget estimate (free / paid tier breakdown)
+- 5 alternate hooks the user can substitute if a post under-performs
+
+Return ONLY valid JSON:
+{
+  "calendar": [
+    {
+      "day": 1,
+      "date_offset": "+0d",
+      "platform": "instagram|tiktok|twitter|linkedin|facebook|youtube_shorts|pinterest",
+      "pillar": "string",
+      "format": "image|carousel|reel|short|story|text|live",
+      "hook": "string",
+      "caption": "string (platform-native length)",
+      "caption_chars": 0,
+      "hashtags": ["#string"],
+      "visual_brief": "string (ready to paste into AI image/video tool)",
+      "recommended_ai_tool": {
+        "name": "string",
+        "url": "string",
+        "tier": "free|freemium|paid",
+        "why_this_tool": "string"
+      },
+      "best_post_time_local": "string e.g. 'Tue 8:30am local'",
+      "engagement_hook": "string (the question/poll/CTA closer)",
+      "video_overlay_text": "string or null"
+    }
+  ],
+  "theme_rotation": [
+    { "pillar": "string", "days": [1, 4, 7] }
+  ],
+  "weekly_summary": {
+    "total_posts": 0,
+    "by_platform": [{ "platform": "string", "count": 0 }],
+    "by_format": [{ "format": "string", "count": 0 }]
+  },
+  "asset_budget_estimate": {
+    "free_only_path": "string (e.g. 'Canva + DALL-E free tier covers all assets')",
+    "freemium_path": "string (e.g. '~$30 of Midjourney covers all 14 days')",
+    "premium_path": "string"
+  },
+  "spare_hooks_for_underperformers": ["string"]
+}`;
+}

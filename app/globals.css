@@ -1,0 +1,122 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  --grid-line: rgba(255, 255, 255, 0.025);
+}
+
+html,
+body {
+  height: 100%;
+  background-color: #08080a;
+  color: #e7e7ea;
+}
+
+body {
+  font-feature-settings: "cv11", "ss01", "ss03";
+  background-image:
+    radial-gradient(circle at 0% 0%, rgba(255, 176, 32, 0.025), transparent 40%),
+    radial-gradient(circle at 100% 100%, rgba(122, 162, 255, 0.018), transparent 40%);
+  background-attachment: fixed;
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #1c1c22;
+  border-radius: 0;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2a2a32;
+}
+
+::selection {
+  background: rgba(255, 176, 32, 0.25);
+  color: #fff;
+}
+
+@layer components {
+  .input-base {
+    @apply w-full bg-base-900 border border-base-600 text-ink rounded-none px-3 py-2 text-sm placeholder-ink-subtle focus:outline-none focus:ring-1 focus:ring-live/50 focus:border-live/60 transition font-sans;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-none bg-live text-base-950 text-[13px] font-semibold uppercase tracking-wide px-4 py-2 hover:bg-live/90 transition disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 rounded-none border border-base-600 bg-base-900/60 hover:bg-base-800 text-ink text-[13px] uppercase tracking-wide px-3 py-1.5 transition;
+  }
+
+  .card {
+    @apply rounded-none border border-base-600 bg-base-900/40 p-5 backdrop-blur-sm;
+  }
+
+  .panel {
+    @apply rounded-none border border-base-600 bg-base-900/60 p-4;
+  }
+
+  .label {
+    @apply block text-[12px] font-medium uppercase tracking-wider text-ink-muted mb-1.5;
+  }
+
+  .hairline {
+    @apply border-b border-base-600;
+  }
+
+  .vrule {
+    @apply border-l border-base-600;
+  }
+
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .kbd {
+    @apply font-mono text-[10px] px-1.5 py-0.5 rounded border border-base-600 bg-base-900 text-ink-muted;
+  }
+
+  .scope-prefix {
+    @apply font-mono text-[12px] text-ink-muted tracking-tight;
+  }
+}
+
+@layer utilities {
+  .stagger > * {
+    animation: fade-up 320ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .stagger > *:nth-child(1) { animation-delay: 0ms; }
+  .stagger > *:nth-child(2) { animation-delay: 60ms; }
+  .stagger > *:nth-child(3) { animation-delay: 120ms; }
+  .stagger > *:nth-child(4) { animation-delay: 180ms; }
+  .stagger > *:nth-child(5) { animation-delay: 240ms; }
+  .stagger > *:nth-child(6) { animation-delay: 300ms; }
+  .stagger > *:nth-child(7) { animation-delay: 360ms; }
+  .stagger > *:nth-child(8) { animation-delay: 420ms; }
+
+  .caret::after {
+    content: "▍";
+    color: #ffb020;
+    margin-left: 1px;
+    animation: caret-blink 1s steps(1) infinite;
+  }
+
+  .grid-bg {
+    background-image:
+      linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+}

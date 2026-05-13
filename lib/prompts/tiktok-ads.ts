@@ -1,0 +1,92 @@
+export const TIKTOK_LIMITS = {
+  ad_name: 40,
+  text: 100,
+  optimal_video_seconds: 30,
+} as const;
+
+export interface TikTokInput {
+  product: string;
+  audience: string;
+  format: "hooks" | "ugc_script";
+  vibe: string;
+}
+
+import { VIDEO_HOOK_RULE } from "./common-rules";
+
+export function buildTikTokPrompt(input: TikTokInput): string {
+  if (input.format === "hooks") {
+    return `Generate 50 TikTok ad hooks for: ${input.product}
+
+${VIDEO_HOOK_RULE}
+
+Target audience: ${input.audience}
+Brand vibe: ${input.vibe || "(let Claude pick — native, raw, not polished)"}
+
+RULES:
+- Must stop a thumb in the first 1.5 seconds.
+- Native voice — sound like a creator, NOT a brand.
+- Each hook is ≤ 12 words ideally.
+- Avoid corporate verbs ("leverage", "innovative", "solution").
+
+Distribute across these proven formulas:
+- POV: ___
+- Stop scrolling if ___
+- Things I wish I knew before ___
+- The reason your [X] isn't working
+- I tried ___ for 30 days and ___
+- Pattern interrupt (unexpected opener)
+- Question hook
+- Shocking stat hook
+- Before/after hook
+- Confession hook ("I'm not supposed to say this but…")
+
+Return ONLY valid JSON:
+{
+  "hooks": [
+    {
+      "hook": "string (the opening line, ≤ 12 words)",
+      "continuation": "string (2 sentences after the hook)",
+      "formula": "pov | stop_scrolling | wish_i_knew | reason | tried_30_days | pattern_interrupt | question | stat | before_after | confession",
+      "seconds_to_hook": 1
+    }
+  ],
+  "production_notes": ["3–5 short notes on lighting, framing, sound, energy"]
+}`;
+  }
+
+  return `Generate a TikTok UGC ad script for: ${input.product}
+
+${VIDEO_HOOK_RULE}
+
+Target audience: ${input.audience}
+Brand vibe: ${input.vibe || "native, authentic, slightly chaotic"}
+
+RULES:
+- Must feel native — polished = ignored.
+- Total length ≤ ${TIKTOK_LIMITS.optimal_video_seconds}s.
+- Avoid jump cuts that look like a corporate ad.
+- Caption ≤ ${TIKTOK_LIMITS.text} chars.
+
+Generate 3 distinct UGC scripts. For each:
+- creator_brief: what to wear, where to film, what NOT to do.
+- script_beats: array of beats with timestamp + spoken_line + visual + on_screen_text.
+- caption (≤ ${TIKTOK_LIMITS.text} chars).
+- hashtags: 5–8, mix broad and niche.
+- b_roll: 3 shot ideas.
+
+Return ONLY valid JSON:
+{
+  "scripts": [
+    {
+      "title": "string",
+      "creator_brief": "string",
+      "script_beats": [{ "t": "0:00", "spoken": "string", "visual": "string", "overlay": "string" }],
+      "caption": "string",
+      "hashtags": ["#string"],
+      "b_roll": ["string"]
+    }
+  ],
+  "hook_rate_target": "≥ 30% (thumb-stop rate to scale)",
+  "completion_rate_target": "≥ 25% (otherwise kill — bad hook)"
+}`;
+}

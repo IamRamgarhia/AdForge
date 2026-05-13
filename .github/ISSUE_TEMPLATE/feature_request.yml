@@ -1,0 +1,52 @@
+name: Feature request
+description: Suggest a new generator, optimization tool, or improvement.
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Most new generators and optimization tools follow a 10-minute recipe — see [CONTRIBUTING.md](../../blob/main/CONTRIBUTING.md). If you can write a prompt template + a page config, you can probably ship this yourself. Either way, propose it here.
+  - type: textarea
+    id: what
+    attributes:
+      label: What's the feature?
+      placeholder: A one-paragraph description.
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why is it valuable?
+      description: Whose workflow does this unlock? Which paid tool's behavior does it replicate or beat?
+    validations:
+      required: true
+  - type: dropdown
+    id: category
+    attributes:
+      label: Which area?
+      options:
+        - New generator (platform / format)
+        - New optimization tool
+        - Brand Brain enhancement
+        - Checklist / routine
+        - Learn hub content
+        - Reporting
+        - UI / UX
+        - Performance
+        - Open source / infra
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope check — would this require a NEW runtime API?
+      description: AdForge only ever calls your chosen LLM provider (Claude / OpenAI / Gemini / Groq / etc.) + Jina Reader for brand intake. If your idea needs Google Ads API / Meta API / analytics / database, it's out of scope for the core product (but maybe a fork).
+    validations:
+      required: true
+  - type: textarea
+    id: prompts
+    attributes:
+      label: Draft prompt (optional)
+      description: If you can sketch the Claude prompt you'd use, paste it here. Massively speeds review.
+      render: markdown

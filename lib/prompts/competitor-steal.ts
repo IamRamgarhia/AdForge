@@ -1,0 +1,107 @@
+export interface CompetitorStealInput {
+  our_product: string;
+  our_usp: string;
+  competitor_name: string;
+  competitor_ads_pasted: string;
+  platform: string;
+}
+
+import { PRICING_PSYCHOLOGY } from "./common-rules";
+
+export function buildCompetitorStealPrompt(input: CompetitorStealInput): string {
+  return `You are a senior media buyer and direct-response copywriter doing a competitive teardown.
+
+${PRICING_PSYCHOLOGY}
+
+INPUT:
+- Our product: ${input.our_product}
+- Our USP / differentiator: ${input.our_usp}
+- Competitor: ${input.competitor_name}
+- Platform: ${input.platform}
+- Competitor ads (pasted from public Ads Library / Transparency Center / Creative Center):
+"""
+${input.competitor_ads_pasted}
+"""
+
+PART 1 — TEARDOWN
+
+For each competitor ad supplied, extract:
+- **Angle** — pain | outcome | social_proof | curiosity | comparison | urgency | identity | contrarian
+- **Hook formula** — name the structural device (POV / question / shocking stat / before-after / etc.)
+- **Promise / claim** — the specific thing they're saying you get
+- **Proof** — what evidence they cite (testimonials, numbers, named entities, demos, none)
+- **Emotional trigger** — fear / pride / FOMO / aspiration / belonging
+- **CTA mechanic** — soft (learn more) / medium (sign up) / hard (buy now)
+- **Weakness** — the lever they DIDN'T pull, the angle they MISSED, the claim that's vague, the proof that's missing
+
+PART 2 — PATTERN RECOGNITION
+
+Across all the competitor ads:
+- Which angle do they repeat? (Tells you what's working for them.)
+- Which angles do they completely AVOID? (That's your opening.)
+- Which proof types do they over-use? (You can flip to a different proof type.)
+- What's the dominant emotional register? (You can stand out by going the opposite.)
+
+PART 3 — POSITIONING ATTACK PLAN
+
+Given OUR USP ("${input.our_usp}"), the highest-ROI positioning is:
+- What we should CLAIM that they can't match
+- What we should PROVE differently
+- What angle we should own (one they're not running)
+- What hook formula they're not using
+
+PART 4 — BEAT THEIR AD
+
+Write 3 variants that beat the strongest competitor ad shown:
+- Variant A — DIRECT FLANK: same angle, sharper claim + stronger proof
+- Variant B — DIFFERENT ANGLE: a missing angle from Part 2, anchored to our USP
+- Variant C — CONTRARIAN: the opposite emotional register or counter-frame
+
+Each variant: hook + body + CTA, suitable for ${input.platform}, char-validated for that platform's primary text field.
+
+RULES:
+- Never copy competitor claims verbatim — that's plagiarism AND policy risk.
+- Never make claims our USP doesn't support — that's policy and trust risk.
+- If a competitor claim is unsubstantiated, flag it AND don't echo it.
+- Cite competitor by name in the teardown only — never in the beat-their-ad variants.
+
+Return ONLY valid JSON:
+{
+  "teardown": [
+    {
+      "competitor_ad_summary": "string (1 sentence)",
+      "angle": "string",
+      "hook_formula": "string",
+      "promise": "string",
+      "proof": "string",
+      "emotional_trigger": "string",
+      "cta_mechanic": "soft|medium|hard",
+      "weakness": "string"
+    }
+  ],
+  "pattern_recognition": {
+    "repeated_angle": "string",
+    "missing_angles": ["string"],
+    "overused_proof_type": "string",
+    "dominant_emotional_register": "string",
+    "policy_or_substantiation_concerns": ["string"]
+  },
+  "positioning_attack_plan": {
+    "claim_we_should_own": "string",
+    "proof_differentiation": "string",
+    "angle_to_own": "string",
+    "hook_formula_to_use": "string"
+  },
+  "beat_their_ad": [
+    {
+      "label": "A | B | C",
+      "strategy": "direct_flank | different_angle | contrarian",
+      "hook": "string",
+      "body": "string",
+      "cta": "string",
+      "char_count_primary": 0,
+      "why_this_beats_them": "string"
+    }
+  ]
+}`;
+}

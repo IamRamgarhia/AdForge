@@ -1,0 +1,68 @@
+export interface HashtagInput {
+  title: string;
+  platform: "instagram" | "tiktok" | "twitter" | "linkedin" | "youtube" | "pinterest" | "any";
+  language: string;
+  context?: string;
+}
+
+export function buildHashtagPrompt(input: HashtagInput): string {
+  return `Generate a tiered hashtag strategy for: "${input.title}"
+Platform: ${input.platform}
+Language: ${input.language}
+Context: ${input.context || "(not provided)"}
+
+LANGUAGE RULES:
+- Generate hashtags in ${input.language}.
+- If ${input.language} uses a non-Latin script (Hindi, Arabic, Japanese, etc.), include BOTH the native-script version AND a romanized/transliterated variant for cross-platform reach.
+- Where there's a widely-used English equivalent (#travel, #fashion), include that too for discovery — clearly labeled.
+
+PLATFORM RULES (apply the ones relevant to ${input.platform}):
+- Instagram: ~30 hashtag soft limit, broad+niche+branded mix wins
+- TikTok: 3-5 hashtags optimal — over-tagging dilutes algorithm signal
+- Twitter/X: 1-2 max — more than 2 drops engagement measurably
+- LinkedIn: 3-5 professional hashtags; avoid emoji-style tags
+- YouTube: up to 15 in description; first 3 most weighted
+- Pinterest: 20 max but quality over quantity
+- "any": cover all platform sizes — output is a master list, user picks
+
+TIERS (return all four):
+
+1. **Broad / discovery** (millions of posts) — for top-of-funnel reach
+2. **Medium / topical** (100k - 1M posts) — sweet spot for actual visibility
+3. **Niche / micro-community** (under 100k) — highest engagement rates, lowest competition
+4. **Branded / campaign-specific** — your own brand tag(s) the audience could adopt
+
+RULES:
+- No spaces, no special chars except _ where allowed.
+- Lowercase by default — some platforms prefer CamelCase for accessibility (#BlackFriday vs #blackfriday) — include both versions for the top tier.
+- No banned/shadow-banned tags. Common banned examples include overused engagement-bait tags like #followme #like4like #f4f — never include these.
+- Branded tags should match the brand from context; if no brand provided, suggest tag patterns based on the title.
+- DO NOT generate hashtags about restricted topics (illegal substances, weapons, hate, adult content).
+
+Return ONLY valid JSON:
+{
+  "language_used": "string e.g. 'Spanish (es)' or 'Hindi (hi) — with English romanization'",
+  "tiers": {
+    "broad": [
+      { "tag": "#string", "estimated_volume": "string e.g. '10M+ posts'", "use_for": "string", "casing_variant": "string or null (e.g. CamelCase version)" }
+    ],
+    "medium": [
+      { "tag": "#string", "estimated_volume": "string", "use_for": "string", "casing_variant": "string or null" }
+    ],
+    "niche": [
+      { "tag": "#string", "estimated_volume": "string", "use_for": "string", "casing_variant": "string or null" }
+    ],
+    "branded": [
+      { "tag": "#string", "usage_hint": "string" }
+    ]
+  },
+  "english_crossover": [
+    { "tag": "#string", "use_for": "string (when to add this for international reach)" }
+  ],
+  "recommended_set_for_${input.platform}": ["#string"],
+  "avoid": [
+    { "tag": "string (no #)", "reason": "string" }
+  ],
+  "platform_specific_notes": "string — 2-3 sentence guidance specific to ${input.platform}"
+}`;
+}

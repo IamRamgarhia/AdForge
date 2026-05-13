@@ -1,0 +1,64 @@
+{
+  "name": "adforge",
+  "version": "0.1.0",
+  "private": false,
+  "description": "AdForge — open-source AI ad ops cockpit. Every ad platform, every AI provider (BYOK), zero subscriptions. Built by Dicecodes.",
+  "license": "MIT",
+  "homepage": "https://github.com/IamRamgarhia/AdForge-",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/IamRamgarhia/AdForge-.git"
+  },
+  "author": "Dicecodes <Contact@dicecodes.com>",
+  "keywords": [
+    "ai",
+    "ads",
+    "marketing",
+    "copywriting",
+    "open-source",
+    "byok",
+    "claude",
+    "openai",
+    "gemini",
+    "groq",
+    "google-ads",
+    "meta-ads",
+    "tiktok-ads",
+    "nextjs",
+    "browser-only"
+  ],
+  "scripts": {
+    "dev": "next dev -p 3005",
+    "sync": "node scripts/local-sync.cjs",
+    "start:all": "node scripts/run-all.cjs",
+    "build": "next build",
+    "start": "next start -p 3005",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "next": "14.2.5",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "zustand": "4.5.4",
+    "dexie": "4.0.8",
+    "dexie-react-hooks": "1.1.7",
+    "clsx": "2.1.1",
+    "tailwind-merge": "2.5.2",
+    "lucide-react": "0.441.0"
+  },
+  "devDependencies": {
+    "@types/node": "20.16.5",
+    "@types/react": "18.3.5",
+    "@types/react-dom": "18.3.0",
+    "autoprefixer": "10.4.20",
+    "eslint": "8.57.0",
+    "eslint-config-next": "14.2.5",
+    "postcss": "8.4.45",
+    "tailwindcss": "3.4.10",
+    "typescript": "5.5.4"
+  },
+  "engines": {
+    "node": ">=18.17"
+  }
+}

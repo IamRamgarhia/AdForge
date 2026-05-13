@@ -1,0 +1,395 @@
+"use client";
+
+import { memo, useCallback, useEffect, useRef, useState } from "react";
+import { Loader2, Sparkles, Save, AlertTriangle, StopCircle } from "lucide-react";
+import { ApiKeyGate } from "@/components/ApiKeyGate";
+import { PageHeader } from "@/components/PageHeader";
+import { CopyButton } from "@/components/CopyButton";
+import { useThrottledStream } from "@/lib/stream-hook";
+import { getApiKey, getModel, getActiveBrainId, addUsage, getLanguage, getToneOverride, getAutoSave } from "@/lib/settings";
+import { streamClaude, estimateCostUsd, tryParseJson } from "@/lib/claude";
+import { getBrain, saveAd, type GeneratedAd } from "@/lib/storage";
+import { buildBrandSystemPrompt, type BrandBrain } from "@/lib/brand-brain";
+import { applySmartFill } from "@/lib/smart-fill";
+import type { GeneratorConfig, InputField } from "@/lib/generator-config";
+
+interface Props<I extends Record<string, unknown>> {
+  config: GeneratorConfig<I>;
+  scope: string;
+}
+
+export function GeneratorShell<I extends Record<string, unknown>>({ config, scope }: Props<I>) {
+  return (
+    <ApiKeyGate>
+      <Inner config={config} scope={scope} />
+    </ApiKeyGate>
+  );
+}
+
+function Inner<I extends Record<string, unknown>>({ config, scope }: Props<I>) {
+  const [input, setInput] = useState<I>(config.initial);
+  const [brain, setBrain] = useState<BrandBrain | null>(null);
+  const [running, setRunning] = useState(false);
+  const [parsed, setParsed] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [savedId, setSavedId] = useState<string | null>(null);
+  const [hasRun, setHasRun] = useState(false);
+  const stream = useThrottledStream();
+  const abortRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    const loadBrain = async () => {
+      const id = getActiveBrainId();
+      const b = id ? (await getBrain(id)) ?? null : null;
+      setBrain(b);
+      // Smart-fill: pre-populate any empty input fields from the active brand brain
+      setInput((cur) => applySmartFill(config.fields, cur, b));
+    };
+    loadBrain();
+    const h = () => loadBrain();
+    window.addEventListener("ados:brains-changed", h);
+    return () => window.removeEventListener("ados:brains-changed", h);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const setField = useCallback((name: string, value: unknown) => {
+    setInput((cur) => ({ ...cur, [name]: value }));
+  }, []);
+
+  const stop = useCallback(() => {
+    abortRef.current?.abort();
+  }, []);
+
+  useEffect(() => {
+    const h = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "Enter" && !running) {
+        e.preventDefault();
+        run();
+      }
+    };
+    window.addEventListener("keydown", h);
+    return () => window.removeEventListener("keydown", h);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [running, input, brain]);
+
+  async function run() {
+    setError(null);
+    setSavedId(null);
+    setParsed(null);
+    stream.reset();
+
+    const missing = config.fields.filter(
+      (f) => f.required && !String((input as any)[f.name] ?? "").trim()
+    );
+    if (missing.length) {
+      setError(`Required: ${missing.map((m) => m.label).join(", ")}`);
+      return;
+    }
+    const apiKey = getApiKey();
+    if (!apiKey) {
+      setError("No API key. Add one in Settings.");
+      return;
+    }
+
+    setRunning(true);
+    setHasRun(true);
+    const controller = new AbortController();
+    abortRef.current = controller;
+    try {
+      const system = buildBrandSystemPrompt(brain, { language: getLanguage(), tone_override: getToneOverride() });
+      const prompt = config.buildPrompt(input, brain);
+      const res = await streamClaude(
+        {
+          apiKey,
+          model: getModel(),
+          system,
+          messages: [{ role: "user", content: prompt }],
+          maxTokens: config.maxTokens ?? 3000,
+          temperature: config.temperature ?? 0.7,
+          signal: controller.signal,
+        },
+        { onDelta: stream.append }
+      );
+
+      const cost = estimateCostUsd(res.modelId, res.usage);
+      addUsage(cost, res.usage?.input_tokens ?? 0, res.usage?.output_tokens ?? 0);
+      window.dispatchEvent(new Event("ados:usage"));
+
+      let json: any = null;
+      if (config.expectJson !== false) {
+        json = tryParseJson(res.text);
+        setParsed(json);
+      }
+
+      if (getAutoSave()) {
+        const ad: GeneratedAd = {
+          id: crypto.randomUUID(),
+          brand_id: brain?.id ?? "",
+          platform: config.platform,
+          campaign_type: config.campaign_type,
+          title: config.buildTitle(input),
+          input: input as unknown as Record<string, unknown>,
+          output_json: json,
+          output_text: res.text,
+          model_id: res.modelId,
+          usage_input_tokens: res.usage?.input_tokens ?? 0,
+          usage_output_tokens: res.usage?.output_tokens ?? 0,
+          cost_usd: cost,
+          starred: false,
+          status: "draft",
+          notes: "",
+          created_at: Date.now(),
+        };
+        await saveAd(ad);
+        setSavedId(ad.id);
+      }
+    } catch (e: any) {
+      if (e?.name === "AbortError") setError("Generation stopped.");
+      else setError(e?.message ?? "Generation failed");
+    } finally {
+      setRunning(false);
+      abortRef.current = null;
+    }
+  }
+
+  return (
+    <div>
+      <PageHeader scope={scope} title={config.title} subtitle={config.subtitle} showLive={running} />
+
+      <div className="grid gap-6 lg:grid-cols-5">
+        <section className="lg:col-span-2 space-y-4">
+          <div className="border border-base-600 bg-base-900/40 p-5 space-y-3 animate-fade-up">
+            <div className="flex items-center gap-2 text-[13px] font-semibold uppercase tracking-wider text-ink">
+              <span className="h-2 w-2 bg-live" />
+              <span>Input</span>
+              <div className="flex-1" />
+              <span className="text-[11px] font-normal normal-case tracking-normal text-ink-muted">
+                {config.fields.filter(f => f.required).length} required
+              </span>
+              {brain ? (
+                <button
+                  onClick={() => setInput((cur) => applySmartFill(config.fields, cur as any, brain) as I)}
+                  className="text-[12px] font-medium normal-case tracking-normal text-live hover:underline"
+                  title="Auto-fill empty fields from the active brand brain"
+                >
+                  ✨ smart-fill
+                </button>
+              ) : null}
+            </div>
+
+            {!brain ? (
+              <div className="border border-live/30 bg-live/5 text-live text-[13px] px-3 py-2 flex gap-2 items-start">
+                <AlertTriangle size={14} className="shrink-0 mt-0.5" />
+                <div>
+                  No active brand brain — copy will be generic + smart-fill disabled.{" "}
+                  <a href="/brand" className="underline font-medium">Create one</a>.
+                </div>
+              </div>
+            ) : (
+              <div className="border border-base-700 bg-base-900/30 text-[13px] px-3 py-2 flex items-center gap-2 text-ink-muted">
+                <span className="h-2 w-2 bg-pos rounded-full" />
+                <span>Active brand: <span className="text-pos font-medium">{brain.name || brain.business_name}</span></span>
+                <div className="flex-1" />
+                <span className="text-[11px] text-ink-faint hidden md:inline">Saved to history under this brand</span>
+              </div>
+            )}
+
+            <div className="grid grid-cols-2 gap-3">
+              {config.fields.map((f) => (
+                <FieldRenderer
+                  key={f.name}
+                  field={f}
+                  value={(input as any)[f.name]}
+                  onChange={(v) => setField(f.name, v)}
+                />
+              ))}
+            </div>
+
+            {error ? (
+              <div className="border border-neg/40 bg-neg/5 text-neg text-[11px] px-3 py-2 font-mono uppercase tracking-ui-wide">
+                {error}
+              </div>
+            ) : null}
+
+            <div className="flex gap-2 pt-2 border-t border-base-700">
+              <button onClick={run} disabled={running} className="btn-primary flex-1">
+                {running ? <Loader2 size={12} className="animate-spin" /> : <Sparkles size={12} />}
+                {running ? "generating" : "generate"}
+                <span className="ml-auto kbd hidden md:inline-flex">⌘↵</span>
+              </button>
+              {running ? (
+                <button onClick={stop} className="btn-ghost" title="Stop">
+                  <StopCircle size={12} />
+                </button>
+              ) : null}
+            </div>
+
+            {savedId ? (
+              <div className="text-[10px] text-pos flex items-center gap-1.5 font-mono uppercase tracking-ui-mega">
+                <Save size={10} /> saved to history
+              </div>
+            ) : null}
+          </div>
+        </section>
+
+        <section className="lg:col-span-3 space-y-4">
+          <OutputArea running={running} stream={stream.text} parsed={parsed} config={config as unknown as GeneratorConfig<Record<string, unknown>>} hasRun={hasRun} />
+        </section>
+      </div>
+    </div>
+  );
+}
+
+const FieldRenderer = memo(function FieldRenderer({
+  field,
+  value,
+  onChange,
+}: {
+  field: InputField;
+  value: unknown;
+  onChange: (v: unknown) => void;
+}) {
+  const span = field.span === 2 || field.kind === "textarea" ? "col-span-2" : "col-span-2 md:col-span-1";
+  return (
+    <div className={span}>
+      <label className="label">
+        {field.label}
+        {field.required ? " *" : ""}
+      </label>
+      {field.kind === "textarea" ? (
+        <textarea
+          rows={field.rows ?? 3}
+          className="input-base"
+          placeholder={field.placeholder}
+          value={(value as string) ?? ""}
+          onChange={(e) => onChange(e.target.value)}
+        />
+      ) : field.kind === "select" ? (
+        <select
+          className="input-base"
+          value={(value as string) ?? ""}
+          onChange={(e) => onChange(e.target.value)}
+        >
+          {field.options?.map((o) => (
+            <option key={o.value} value={o.value}>
+              {o.label}
+            </option>
+          ))}
+        </select>
+      ) : field.kind === "number" ? (
+        <input
+          type="number"
+          className="input-base tabular"
+          placeholder={field.placeholder}
+          value={(value as number | string) ?? ""}
+          onChange={(e) => onChange(e.target.value === "" ? "" : Number(e.target.value))}
+        />
+      ) : (
+        <input
+          className="input-base"
+          placeholder={field.placeholder}
+          value={(value as string) ?? ""}
+          onChange={(e) => onChange(e.target.value)}
+        />
+      )}
+      {field.hint ? <p className="text-[10px] text-ink-subtle mt-1 font-mono uppercase tracking-ui-wide">{field.hint}</p> : null}
+    </div>
+  );
+});
+
+const OutputArea = memo(function OutputArea<I extends Record<string, unknown>>({
+  running,
+  stream,
+  parsed,
+  config,
+  hasRun,
+}: {
+  running: boolean;
+  stream: string;
+  parsed: any;
+  config: GeneratorConfig<I>;
+  hasRun: boolean;
+}) {
+  // First-load empty state — only before any run has happened
+  if (!running && !stream && !parsed && !hasRun) {
+    return (
+      <div className="border border-dashed border-base-600 bg-base-900/20 text-sm text-ink-muted min-h-[260px] grid place-items-center">
+        Output will stream here
+      </div>
+    );
+  }
+
+  // Generation finished with nothing — surface a clear error instead of staying silent
+  if (!running && !stream && !parsed && hasRun) {
+    return (
+      <div className="border border-neg/40 bg-neg/5 p-5 space-y-2">
+        <div className="text-[10px] font-mono uppercase tracking-ui-mega text-neg flex items-center gap-2">
+          <span className="h-1 w-1 bg-neg" /> empty response
+        </div>
+        <p className="text-sm text-ink leading-relaxed">
+          Your provider returned no content. This usually means:
+        </p>
+        <ul className="text-[12px] text-ink-muted list-disc list-inside space-y-0.5">
+          <li>API key in <a href="/settings" className="text-live underline">Settings</a> is invalid or rate-limited</li>
+          <li>Selected model doesn&apos;t support the request size — try a different model</li>
+          <li>Free-tier quota exhausted — switch provider in Settings</li>
+        </ul>
+        <p className="text-[11px] font-mono uppercase tracking-ui-wide text-ink-subtle">
+          open browser devtools → network tab → re-run to see the actual response from the provider
+        </p>
+      </div>
+    );
+  }
+
+  if (parsed && config.renderJson) {
+    return (
+      <div className="space-y-4 animate-fade-up">
+        {config.renderJson(parsed)}
+        <div className="flex items-center justify-end gap-2">
+          <CopyButton text={stream} label="copy raw output" />
+          <CopyButton text={JSON.stringify(parsed, null, 2)} label="copy parsed json" />
+        </div>
+      </div>
+    );
+  }
+
+  if (stream && config.renderStreaming) {
+    return <>{config.renderStreaming(stream)}</>;
+  }
+
+  // Have stream text but no parsed JSON (parse failed) — show raw with a warning
+  if (stream && !parsed && config.expectJson !== false && !running) {
+    return (
+      <div className="space-y-3">
+        <div className="border border-live/40 bg-live/5 px-3 py-2 text-[11px] font-mono uppercase tracking-ui-wide text-live">
+          ⚠ json parse failed — showing raw response. you can still copy + paste the text below.
+        </div>
+        <div className="border border-base-600 bg-base-900/40 p-5">
+          <div className="flex items-center justify-between mb-3 text-[10px] font-mono uppercase tracking-ui-mega text-ink-subtle">
+            <div className="flex items-center gap-2">
+              <span className="h-1 w-1 bg-pos" />
+              <span>raw output</span>
+            </div>
+            <CopyButton text={stream} />
+          </div>
+          <pre className="text-xs whitespace-pre-wrap font-mono leading-relaxed text-ink">{stream}</pre>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="border border-base-600 bg-base-900/40 p-5">
+      <div className="flex items-center justify-between mb-3 text-[10px] font-mono uppercase tracking-ui-mega text-ink-subtle">
+        <div className="flex items-center gap-2">
+          <span className={running ? "h-1 w-1 bg-live animate-pulse-soft" : "h-1 w-1 bg-pos"} />
+          <span>{running ? "streaming" : "output"}</span>
+        </div>
+        {!running ? <CopyButton text={stream} /> : null}
+      </div>
+      <pre className={`text-xs whitespace-pre-wrap font-mono leading-relaxed text-ink ${running ? "caret" : ""}`}>
+        {stream || "…"}
+      </pre>
+    </div>
+  );
+});

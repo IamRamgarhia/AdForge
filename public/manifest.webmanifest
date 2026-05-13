@@ -1,0 +1,9 @@
+{
+  "name": "AdForge — open-source AI ad ops",
+  "short_name": "AdForge",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#08080a",
+  "theme_color": "#08080a",
+  "description": "Browser-only, BYOK AI ad operating system. Built by Dicecodes."
+}
