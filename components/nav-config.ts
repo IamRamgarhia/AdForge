@@ -30,6 +30,7 @@ export const NAV_GROUPS: NavGroup[] = [
       { href: "/suggestions", label: "✨ AI Suggestions" },
       { href: "/platforms", label: "Pick a platform" },
       { href: "/launch/wizard", label: "⚡ 10-Minute Launch Wizard" },
+      { href: "/batch", label: "Multi-client Batch Mode" },
       { href: "/launch-guide", label: "Step-by-step launch" },
       { href: "/generate/campaign-kit", label: "Full Campaign Kit" },
     ],
@@ -125,6 +126,7 @@ export const NAV_GROUPS: NavGroup[] = [
     title: "Research & Insights",
     items: [
       { href: "/research/competitors", label: "Steal & Beat" },
+      { href: "/research/reel-teardown", label: "Competitor Reel Teardown" },
       { href: "/research/compare", label: "Compare 2 Ads" },
       { href: "/benchmarks", label: "Benchmarks" },
       { href: "/strategy", label: "What Ad Should I Run" },
