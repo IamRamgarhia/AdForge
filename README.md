@@ -1,12 +1,12 @@
 <div align="center">
 
-<img src="docs/banner.svg" alt="AdForge — open-source AI ad ops cockpit. 17 generators, 11 optimizers, 9 AI providers, browser-only, MIT-licensed, built by Dicecodes." width="100%" />
+<img src="docs/banner.svg" alt="AdForge — free open-source AI ad generator, ad copy tool, and marketing cockpit. 18 generators, 11 optimizers, 9 AI providers including Claude, GPT, Gemini, Groq, OpenAI, DeepSeek. Browser-only, BYOK, MIT-licensed. Open-source alternative to Jasper, AdCreative, Anyword, and Copy.ai. Built by Dicecodes." width="100%" />
 
-# AdForge
+# AdForge — Free, Open-Source AI Ad Generator
 
 ### Open-source AI ad ops cockpit · every platform · bring your own AI key · zero subscriptions
 
-*Built by [Dicecodes](https://dicecodes.com)*
+*The open-source alternative to Jasper, AdCreative, Anyword, Pencil & Copy.ai · runs in your browser · MIT-licensed · built by [Dicecodes](https://dicecodes.com)*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-0.1.0-ffb020.svg)](CHANGELOG.md)
@@ -20,11 +20,13 @@
 **One tool. Every ad platform. Zero subscriptions.**
 *Your key · your data · your folder.*
 
-[Install](#install-in-60-seconds) ·
+[Install in 60 seconds](#install-in-60-seconds) ·
+[Who's it for](#whos-it-for) ·
 [What's inside](#whats-inside) ·
-[vs paid alternatives](#why-this-vs-the-49-499mo-stack) ·
+[vs paid AI ad tools](#why-this-vs-the-49-499mo-stack) ·
+[FAQ](#frequently-asked-questions) ·
 [Architecture](#architecture) ·
-[Contributing](CONTRIBUTING.md)
+[Star this repo ⭐](https://github.com/IamRamgarhia/AdForge/stargazers)
 
 </div>
 
@@ -32,9 +34,13 @@
 
 ## What is AdForge?
 
-AdForge replaces a **$49–$499/month stack** of AI marketing tools (Jasper · AdCreative · Anyword · Pencil · Marpipe …) with **one open-source app** that runs entirely in your browser.
+**AdForge is a free, open-source AI ad generator** that replaces a **$49–$499/month stack** of paid AI marketing tools (Jasper · AdCreative · Anyword · Pencil · Copy.ai · Marpipe) with **one app that runs entirely in your browser**.
 
-You bring your own AI key — free tier (Groq · Gemini · Cerebras · OpenRouter) or paid (Claude · GPT · Mistral · DeepSeek) — and get every paid-tool feature for **$0/month**.
+You **bring your own AI key** — free-tier (Groq · Gemini · Cerebras · OpenRouter) or paid (Claude · GPT · Mistral · DeepSeek) — and get every paid-tool feature for **$0/month, forever**.
+
+**18 AI generators · 11 data-driven optimizers · 9 AI providers · multi-client brand brains · vision (image) input on Claude/GPT/Gemini · platform-grouped sidebar · 10-minute launch wizard · multi-client batch mode · auto-update from GitHub.**
+
+> Use it for: writing Google Ads RSA copy, generating Meta / Facebook / Instagram / TikTok / LinkedIn / YouTube / X ads, building Reel hooks, scoring creatives before launch, fixing low-CTR ads, planning campaigns end-to-end, running an agency across many clients, or teaching yourself paid media via the built-in framework trainer (PAS · AIDA · BAB · 4 U's · Schwartz awareness ladder).
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────┐
@@ -43,7 +49,7 @@ You bring your own AI key — free tier (Groq · Gemini · Cerebras · OpenRoute
 │                                                                          │
 │   ▼                                                                      │
 │                                                                          │
-│   AI suggests campaigns    ─►   Pick a generator (17 of them)            │
+│   AI suggests campaigns    ─►   Pick a generator (18 of them)            │
 │                                                                          │
 │   ▼                                                                      │
 │                                                                          │
@@ -51,6 +57,20 @@ You bring your own AI key — free tier (Groq · Gemini · Cerebras · OpenRoute
 │                                                                          │
 └──────────────────────────────────────────────────────────────────────────┘
 ```
+
+---
+
+## Who's it for?
+
+| You are… | AdForge gives you… |
+|---|---|
+| 🧑‍💻 **A solo founder or indie maker** | Free AI ad copy across Google / Meta / TikTok / LinkedIn / YouTube / X without paying $49–125/mo for Jasper. |
+| 🏢 **A marketing agency** | Multi-client brand brains, batch mode (generate the same asset for 5 clients in one parallel run), per-client cost rollup, and Markdown/PDF campaign export for client handoff. |
+| 🛒 **An e-commerce store owner** | Performance Max + Shopping ad generators, Reel idea generator with 10 hook formulas, hashtag stacks per platform, content calendar with image/video prompts. |
+| 🎓 **A marketing student** | Free practice ground with framework trainer (PAS / AIDA / BAB / FAB / 4 U's), 28 mini-course lessons, 25-concept library, industry benchmarks for CTR/CPC/CVR/ROAS. |
+| 💸 **A budget-conscious freelancer** | Bring your own free AI key (Groq, Gemini Flash, Cerebras, OpenRouter free tier) — generate unlimited copy at literally $0 cost. |
+| 🔒 **A privacy-conscious team** | Zero backend. No telemetry. No accounts. Your API key + every generation lives in your browser only. Data file portable to another machine in one zip. |
+| 🤖 **A power user** | Cmd+K command palette, multi-AI-provider abstraction, vision (screenshot upload) on Claude/OpenAI/Gemini, auto-update from GitHub with safety rules, full keyboard navigation. |
 
 ---
 
@@ -185,7 +205,7 @@ Pick during onboarding · switch any time in Settings · one app, every API.
 | Feature | Jasper $49+ | AdCreative $39+ | Anyword $49+ | Pencil $119+ | **AdForge · free** |
 |---|:-:|:-:|:-:|:-:|:-:|
 | Visual ad mockups | ❌ | ✅ | ❌ | ✅ | ✅ |
-| Multi-platform copy | ✅ | partial | ✅ | Meta-only | ✅ (17 generators) |
+| Multi-platform copy | ✅ | partial | ✅ | Meta-only | ✅ (18 generators) |
 | Brand voice memory | ✅ | ❌ | partial | partial | ✅ (per-client) |
 | Predictive creative scoring | ❌ | ✅ | ✅ | ✅ | ✅ |
 | Competitor teardown | ❌ | ✅ | ❌ | ✅ | ✅ (4 libraries) |
@@ -263,9 +283,11 @@ See [SECURITY.md](SECURITY.md) for the threat model + responsible-disclosure flo
 ```
 adforge/
 ├── app/                         Next.js App Router (56 routes)
-│   ├── generate/*               17 ad generators
-│   ├── optimize/*               11 optimization tools
-│   ├── research/*               Steal & Beat · Compare ads
+│   ├── generate/*               18 ad generators (Reel Ideas, Spark Ads, BHC, etc.)
+│   ├── optimize/*               11 data-first optimization tools
+│   ├── research/*               Steal & Beat · Compare ads · Reel Teardown
+│   ├── launch/wizard/           10-minute Launch Wizard
+│   ├── batch/                   Multi-client batch generation
 │   ├── platforms/[platform]/    Per-platform hubs
 │   ├── checklist/*              Daily / Weekly / Monthly routines
 │   ├── learn/*                  Concepts · mini-courses · framework trainer
@@ -374,7 +396,7 @@ Most problems come down to one of four things: a port already in use, Node missi
 
 ### Windows Defender / SmartScreen warning
 
-**Symptom:** "Windows protected your PC" dialog when running `install.bat` or `AdForge.bat`.
+**Symptom:** "Windows protected your PC" dialog when running `AdForge.bat`.
 
 - Click **More info → Run anyway**. The warning appears for any unsigned script downloaded from the internet — AdForge is open source and reviewable.
 - For zero warnings: clone the repo with `git clone` instead of downloading the ZIP. Files created locally don't carry the "mark of the web."
@@ -446,6 +468,49 @@ This is a stale `.next/` build-cache problem — usually caused by running `npm 
 ### Reporting a bug
 
 Click **⚠ Report a problem on GitHub** in the launcher — it pre-fills [github.com/IamRamgarhia/AdForge-/issues/new](https://github.com/IamRamgarhia/AdForge-/issues/new) with your platform, Node version, port config, and recent log lines. Add what you were trying to do and submit.
+
+---
+
+## Frequently Asked Questions
+
+### Is AdForge really free?
+Yes. **Forever, no asterisk.** Released under the **MIT license**. We make money from custom builds at [Dicecodes](https://dicecodes.com) — not from this tool. You only pay your chosen AI provider, and several of them (Groq, Gemini Flash, Cerebras, OpenRouter `:free` models) cost **$0/month** for typical AdForge usage.
+
+### Is AdForge a real Jasper / AdCreative / Copy.ai alternative?
+For ad-copy generation across Google, Meta, TikTok, LinkedIn, YouTube, and X — yes. AdForge has 18 generators covering every major ad format, plus 11 data-driven optimizers, multi-client brand brains, competitor teardowns, content calendars, and a 10-minute launch wizard. The one thing it doesn't do is *image generation* — for that, AdForge writes prompts for Midjourney / Runway / DALL-E / Pika instead of running its own image model.
+
+### Where does my data go?
+**Nowhere except your own browser.** All your brand brains, generated ads, campaigns, and history live in your browser's IndexedDB. The folder-sync sidecar mirrors everything to `data/snapshot.json` *in the project directory on your own machine*. No analytics, no telemetry, no accounts, no cloud sync.
+
+### What about my AI API key?
+Stored in your browser's `localStorage`, same as 1Password's browser extension stores your session. Every LLM call goes **directly from your browser to the provider** (api.anthropic.com, api.openai.com, etc.) — never proxied through any AdForge server (we don't run one). Treat your install like a password manager: only set it up on devices you trust.
+
+### Which AI provider should I pick if I want it free?
+**Groq** for speed, **Gemini 2.5 Flash** for free-tier generosity, or **OpenRouter** for free community models (`meta-llama/llama-3.3-70b-instruct:free`, `deepseek/deepseek-chat-v3:free`). All four are first-class. Add multiple keys in Settings and switch between them per project.
+
+### Can I run AdForge on a server / for my whole team?
+Out of the box it's designed for one person on one machine. You *can* expose it on a LAN by changing the bind from `127.0.0.1` to `0.0.0.0` in `scripts/local-sync.cjs`, but it has no auth layer — anyone on the network would have full access including your API keys. For team use, fork it and add your own auth, or wait for a multi-user fork (or [hire us](mailto:Contact@dicecodes.com) to build one).
+
+### How do I move AdForge to another machine?
+Zip the entire folder → copy to the new machine → run `AdForge.bat` / `AdForge.command`. Every brand brain, ad, campaign, checklist, and performance log comes with you in `data/snapshot.json`. API keys are excluded by default (re-paste them on the new machine for safety).
+
+### Does it work offline?
+The Service Worker caches the app shell + all 56 routes, so the UI loads offline. AI generation needs internet (every LLM provider is online-only). URL ingest (Jina Reader) and Google search (Jina Search) also need internet. Everything else — viewing history, editing brands, browsing campaigns — works fully offline.
+
+### Can the AI read screenshots of my Google Ads dashboard?
+**Yes**, on vision-capable providers (Claude, OpenAI GPT-4.1+, Gemini). Drop a screenshot into CTR Optimizer / Quality Score / Audience / Landing Page / Keywords / Bid Strategy / Ad Fatigue and the AI extracts metrics + recommendations directly from the image. If your active provider is text-only (Groq, DeepSeek, Mistral, Cerebras, Together), AdForge auto-falls-back to a vision-capable provider you've configured a key for, just for that one generation.
+
+### How is AdForge different from ChatGPT or Claude itself?
+ChatGPT/Claude are general models — they'll write ad copy if you prompt them, but you do all the framework selection, character-limit validation, platform-specific rules, and JSON structuring yourself. AdForge wraps the model with **30+ task-specific prompts** that bake in Schwartz's awareness ladder, Google RSA character limits, Meta primary-text rules, TikTok hook formulas, 4 U's headline scoring, and 20 years of direct-response copywriting patterns. You paste a URL + a goal; AdForge writes you a launch-ready campaign.
+
+### Is the code production-quality?
+Production build is **56 static routes · 87 KB shared JS · 130-160 KB first-load JS per route**. Strict TypeScript across the entire codebase. Vitest unit tests for the highest-risk pure functions (smart-fill, brand-brain normalization, framework stack, next-steps routing, LLM helpers — 43 tests total). CI runs typecheck + tests + production build + lint on Node 18 / 20 / 22 for every PR.
+
+### How do I contribute?
+See [CONTRIBUTING.md](CONTRIBUTING.md). Most generators are a single prompt file + a single page that imports `GeneratorShell`. A typical new-generator PR is 30-60 lines of code and 30-60 minutes of work.
+
+### License?
+**MIT.** Use it commercially. Fork it. White-label it. The only thing we ask: don't claim you wrote it.
 
 ---
 
