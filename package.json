@@ -37,7 +37,8 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:smoke": "playwright test tests/smoke.spec.ts --reporter=line"
   },
   "dependencies": {
     "clsx": "2.1.1",

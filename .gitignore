@@ -27,3 +27,8 @@ NOTES.md
 TODO.md
 scratch/
 internal/
+
+# Playwright artifacts
+test-results/
+playwright-report/
+.playwright/
