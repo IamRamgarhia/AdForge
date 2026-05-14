@@ -100,6 +100,24 @@ export function Sidebar() {
     });
   }, [path]);
 
+  // Escape + click-outside close the brand switcher (ARIA dialog pattern, audit findings #33).
+  useEffect(() => {
+    if (!switcherOpen) return;
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setSwitcherOpen(false);
+    }
+    function onClick(e: MouseEvent) {
+      const target = e.target as HTMLElement | null;
+      if (target && !target.closest("[data-brand-switcher]")) setSwitcherOpen(false);
+    }
+    document.addEventListener("keydown", onKey);
+    document.addEventListener("mousedown", onClick);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("mousedown", onClick);
+    };
+  }, [switcherOpen]);
+
   const activeBrand = brains.find((b) => b.id === activeBrandId);
 
   return (
@@ -137,7 +155,7 @@ export function Sidebar() {
       {/* Active-client block — persistent reminder of which brain every tool
           below this point will use. Click to quick-switch between saved clients;
           no client yet → CTA into the onboarding flow. */}
-      <div className="border-b border-base-700/60 px-3 py-3 relative">
+      <div data-brand-switcher className="border-b border-base-700/60 px-3 py-3 relative">
         {activeBrand ? (
           <>
             <button

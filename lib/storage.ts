@@ -195,7 +195,11 @@ export async function deleteCampaign(id: string): Promise<void> {
   await db().campaigns.update(id, { deleted_at: Date.now() });
 }
 export async function getCampaign(id: string): Promise<Campaign | undefined> {
-  return db().campaigns.get(id);
+  // listCampaigns filters deleted_at; getCampaign was returning soft-deleted rows.
+  // Callers that operate on the returned campaign by ID would happily display
+  // or generate against deleted data. (Audit finding #27.)
+  const row = await db().campaigns.get(id);
+  return row?.deleted_at ? undefined : row;
 }
 
 // --- Performance ---

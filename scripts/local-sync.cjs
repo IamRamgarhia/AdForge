@@ -646,7 +646,17 @@ const server = http.createServer(async (req, res) => {
     }
     if (req.method === "POST" && url === "/web/restart") {
       stopWeb();
-      setTimeout(() => startWeb(), 1200);
+      // Windows taskkill is fire-and-forget — the child only nulls out on its
+      // own `exit` event. Poll until that fires (up to 8s) before restarting,
+      // otherwise the new startWeb() sees the old child still alive and bails
+      // with "already running". (Audit finding #35.)
+      (async () => {
+        const deadline = Date.now() + 8000;
+        while (webChild && !webChild.killed && Date.now() < deadline) {
+          await new Promise((r) => setTimeout(r, 100));
+        }
+        startWeb();
+      })();
       return json(res, 200, { ok: true });
     }
     // --- Update endpoints (auto-update from GitHub main) ---

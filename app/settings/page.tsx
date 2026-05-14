@@ -81,8 +81,18 @@ function SettingsInner() {
       return;
     }
     setTesting(p.id);
-    const ok = await testApiKey(k, p.id);
-    setTesting(null);
+    // try/finally — without it a network timeout/error from testApiKey would
+    // leave `testing` stuck and the verify button permanently disabled until
+    // page reload. (Audit finding #30.)
+    let ok = false;
+    try {
+      ok = await testApiKey(k, p.id);
+    } catch (e: any) {
+      setError(`${p.name} key check failed: ${e?.message ?? "network error"}.`);
+      return;
+    } finally {
+      setTesting(null);
+    }
     if (!ok) {
       setError(`${p.name} rejected that key.`);
       return;

@@ -86,7 +86,7 @@ export default function AboutPage() {
         <section className="border border-base-600 bg-base-900/40 p-6">
           <h3 className="font-display italic text-2xl text-ink mb-3">What&apos;s in AdForge today</h3>
           <ul className="grid md:grid-cols-2 gap-x-6 gap-y-1 text-sm text-ink-muted">
-            <li>○ 17 AI generators (Google, Meta, TikTok, YouTube, LinkedIn, X, Display, hashtags, lead forms, email subjects, AI image/video prompts, social content calendar)</li>
+            <li>○ 18 AI generators (Google, Meta, TikTok, YouTube, LinkedIn, X, Display, hashtags, lead forms, email subjects, AI image/video prompts, social content calendar)</li>
             <li>○ 11 optimization tools (CTR, Quality Score, Budget Waste, Bid Strategy, Ad Fatigue, more)</li>
             <li>○ Competitor research (Meta Ads Library + Google Transparency + TikTok Top Ads)</li>
             <li>○ Brand Brain — auto-extracted from a website URL via Jina Reader</li>
@@ -106,7 +106,7 @@ export default function AboutPage() {
             <Link href="https://github.com/AgriciDaniel/claude-ads" className="text-live hover:underline ml-1">claude-ads</Link>,
             <Link href="https://github.com/google-marketing-solutions/copycat" className="text-live hover:underline ml-1">Copycat</Link>,
             <Link href="https://github.com/nowork-studio/toprank" className="text-live hover:underline ml-1">toprank</Link>.
-            See <Link href="/about" className="text-live hover:underline">NOTICE.md</Link> in the repo for full attribution.
+            See <a href="https://github.com/IamRamgarhia/AdForge-/blob/main/NOTICE.md" target="_blank" rel="noreferrer" className="text-live hover:underline">NOTICE.md</a> in the repo for full attribution.
           </p>
         </section>
 

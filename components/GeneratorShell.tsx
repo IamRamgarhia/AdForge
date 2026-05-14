@@ -53,9 +53,20 @@ function Inner<I extends Record<string, unknown>>({ config, scope }: Props<I>) {
   const [fillToast, setFillToast] = useState<string | null>(null);
   const stream = useThrottledStream();
   const abortRef = useRef<AbortController | null>(null);
+  // Ref mirror of `running` so the brain-switch effect can read the live value
+  // without re-binding. Without this guard, switching active brand mid-generation
+  // mutates the brain state captured by the in-flight closure, producing output
+  // built against the OLD brain but displayed under the NEW brand name.
+  // (Audit finding #25.)
+  const runningRef = useRef(false);
+  useEffect(() => { runningRef.current = running; }, [running]);
 
   useEffect(() => {
     const loadBrain = async (opts: { resetForm?: boolean } = {}) => {
+      // Skip brain updates while a generation is in flight. The user's switch
+      // takes effect on the NEXT run; the current run finishes against the
+      // brain it started with.
+      if (runningRef.current) return;
       const id = getActiveBrainId();
       const b = id ? (await getBrain(id)) ?? null : null;
       setBrain(b);

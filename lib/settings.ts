@@ -1,3 +1,5 @@
+import { getProvider } from "./providers";
+
 const KEYS = {
   activeProvider: "ados.active_provider",
   activeBrain: "ados.active_brain",
@@ -89,10 +91,33 @@ export function hasAnyKeyConfigured(): boolean {
     const k = s.key(i);
     if (k && k.startsWith("ados.provider.") && k.endsWith(".key")) {
       const v = s.getItem(k);
-      if (v && v.length > 8) return true;
+      const id = k.slice("ados.provider.".length, -".key".length);
+      if (isPlausibleKey(id, v)) return true;
     }
   }
   return false;
+}
+
+/** Per-provider format check. The old `length > 8` threshold accepted "invalid!"
+ *  (9 chars) as a valid key, which made the vision-fallback picker offer it as a
+ *  provider option — leading to a 401 mid-generation. Checks the shortest known
+ *  real prefix per provider. (Audit finding #23.) */
+function isPlausibleKey(providerId: string, key: string | null): boolean {
+  if (!key) return false;
+  const v = key.trim();
+  if (v.length < 20) return false;
+  switch (providerId) {
+    case "anthropic": return v.startsWith("sk-ant-");
+    case "openai": return v.startsWith("sk-");
+    case "openrouter": return v.startsWith("sk-or-");
+    case "groq": return v.startsWith("gsk_");
+    case "cerebras": return v.length >= 32; // no documented prefix
+    case "together": return v.length >= 40;
+    case "deepseek": return v.startsWith("sk-");
+    case "mistral": return v.length >= 32;
+    case "google": return v.length >= 30; // AI Studio keys are ~39 chars
+    default: return v.length >= 20;
+  }
 }
 
 /** Return every provider id that has a saved key (length > 8) in localStorage.
@@ -107,11 +132,8 @@ export function getProvidersWithKeys(): string[] {
     const k = s.key(i);
     if (k && k.startsWith("ados.provider.") && k.endsWith(".key")) {
       const v = s.getItem(k);
-      if (v && v.length > 8) {
-        // Key format: ados.provider.<id>.key
-        const id = k.slice("ados.provider.".length, -".key".length);
-        if (id) ids.push(id);
-      }
+      const id = k.slice("ados.provider.".length, -".key".length);
+      if (id && isPlausibleKey(id, v)) ids.push(id);
     }
   }
   return ids;
@@ -145,9 +167,15 @@ export function addUsage(cost: number, input: number, output: number): void {
   const s = safeLocal();
   if (!s) return;
   const cur = getUsage();
-  s.setItem(KEYS.totalCost, String(cur.cost + cost));
-  s.setItem(KEYS.totalIn, String(cur.input + input));
-  s.setItem(KEYS.totalOut, String(cur.output + output));
+  // Safari private mode throws QuotaExceededError synchronously on setItem.
+  // Without this guard the exception propagates to every LLM call site and
+  // crashes generation result-save. Usage tracking degrades gracefully.
+  // (Audit finding #29.)
+  try {
+    s.setItem(KEYS.totalCost, String(cur.cost + cost));
+    s.setItem(KEYS.totalIn, String(cur.input + input));
+    s.setItem(KEYS.totalOut, String(cur.output + output));
+  } catch {}
 }
 export function resetUsage(): void {
   const s = safeLocal();
@@ -230,9 +258,14 @@ export function clearApiKey(): void {
 
 export type ModelKey = string;
 export function getModel(): ModelKey {
+  // Hardcoded "claude-sonnet-4-6" as fallback would break non-Anthropic users on a
+  // cache miss — Groq/Mistral/etc. don't have that model ID. Fall back to the
+  // active provider's own default. (Audit finding #22.)
   const pid = getActiveProviderId();
-  if (!pid) return "claude-sonnet-4-6";
-  return getActiveModelId(pid) ?? "claude-sonnet-4-6";
+  if (!pid) return "";
+  const fromStorage = getActiveModelId(pid);
+  if (fromStorage) return fromStorage;
+  return getProvider(pid)?.default_model ?? "";
 }
 export function setModel(m: ModelKey): void {
   const pid = getActiveProviderId() ?? "anthropic";

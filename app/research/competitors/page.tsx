@@ -7,8 +7,8 @@ import { PageHeader } from "@/components/PageHeader";
 import { Section, Pill } from "@/components/OutputBlocks";
 import { CopyButton } from "@/components/CopyButton";
 import { useThrottledStream } from "@/lib/stream-hook";
-import { getApiKey, getModel, getActiveBrainId, addUsage } from "@/lib/settings";
-import { streamClaude, estimateCostUsd, tryParseJson } from "@/lib/claude";
+import { getApiKey, getActiveBrainId, addUsage } from "@/lib/settings";
+import { llmStream, estimateCostUsd, tryParseJson } from "@/lib/llm";
 import { getBrain, saveAd, type GeneratedAd } from "@/lib/storage";
 import { buildBrandSystemPrompt, type BrandBrain } from "@/lib/brand-brain";
 import { buildCompetitorStealPrompt, type CompetitorStealInput } from "@/lib/prompts/competitor-steal";
@@ -118,10 +118,12 @@ function Inner() {
     const controller = new AbortController();
     abortRef.current = controller;
     try {
-      const res = await streamClaude(
+      // Migrated from streamClaude shim to llmStream directly — same routing
+      // through the active provider, but the explicit dependency makes future
+      // provider-aware features (vision fallback, model override) trivial.
+      // (Audit finding #26.)
+      const res = await llmStream(
         {
-          apiKey,
-          model: getModel(),
           system: buildBrandSystemPrompt(brain),
           messages: [{ role: "user", content: buildCompetitorStealPrompt(input) }],
           maxTokens: 4000,

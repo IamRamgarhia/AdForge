@@ -139,12 +139,22 @@ function Inner() {
 
   async function commitPendingExtraction() {
     if (!pendingExtraction) return;
-    await saveBrain(pendingExtraction.brain);
-    setActiveBrainId(pendingExtraction.brain.id);
-    window.dispatchEvent(new Event("ados:brains-changed"));
-    // After save, route back to the clients list so the user sees the new
-    // brand active in context with their other clients.
-    router.push("/brand");
+    // Busy guard: a double-click on the Save button used to fire two saves of
+    // the same brain. (Audit finding #31.)
+    if (busyRef.current) return;
+    busyRef.current = true;
+    try {
+      await saveBrain(pendingExtraction.brain);
+      setActiveBrainId(pendingExtraction.brain.id);
+      window.dispatchEvent(new Event("ados:brains-changed"));
+      // After save, route back to the clients list so the user sees the new
+      // brand active in context with their other clients.
+      router.push("/brand");
+    } catch (e: any) {
+      setQuickStatus(`Save failed: ${e?.message ?? "IndexedDB error"}. Try again, or pick "Edit before saving" to recover.`);
+    } finally {
+      busyRef.current = false;
+    }
   }
 
   function editPendingExtraction() {

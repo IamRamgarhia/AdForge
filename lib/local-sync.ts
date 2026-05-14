@@ -160,27 +160,46 @@ export async function pullSnapshot(): Promise<{ ok: boolean; merged: boolean; by
   }
 }
 
+// In-flight guard so two tabs that both fire `ados:brains-changed` don't both
+// build a stale snapshot from their local IndexedDB and overwrite each other.
+// Web Locks API serializes the actual push across tabs in the same browser.
+// (Audit finding #28.)
+let _pushInFlight: Promise<{ ok: boolean; bytes?: number; reason?: string }> | null = null;
+
 export async function pushSnapshotNow(): Promise<{ ok: boolean; bytes?: number; reason?: string }> {
-  const ok = await detectSync();
-  if (!ok) return { ok: false, reason: "sync sidecar not running" };
-  try {
-    const snap = await buildSnapshot();
-    const body = JSON.stringify(snap);
-    const r = await fetch(`${SYNC_URL}/snapshot`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body,
-    });
-    if (!r.ok) return { ok: false, reason: `sidecar returned ${r.status}` };
-    if (isBrowser()) {
+  if (_pushInFlight) return _pushInFlight;
+  const job = (async () => {
+    const ok = await detectSync();
+    if (!ok) return { ok: false, reason: "sync sidecar not running" };
+    const runPush = async () => {
       try {
-        window.localStorage.setItem(LS_LAST_SYNC, String(Date.now()));
-      } catch {}
+        const snap = await buildSnapshot();
+        const body = JSON.stringify(snap);
+        const r = await fetch(`${SYNC_URL}/snapshot`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body,
+        });
+        if (!r.ok) return { ok: false, reason: `sidecar returned ${r.status}` };
+        if (isBrowser()) {
+          try {
+            window.localStorage.setItem(LS_LAST_SYNC, String(Date.now()));
+          } catch {}
+        }
+        return { ok: true, bytes: body.length };
+      } catch (e: any) {
+        return { ok: false, reason: e?.message ?? "unknown" };
+      }
+    };
+    // Use the cross-tab lock when available so concurrent pushes from two tabs
+    // serialize on the sidecar. Falls back to in-tab guard on older browsers.
+    if (isBrowser() && (navigator as any).locks?.request) {
+      return (navigator as any).locks.request("adforge:snapshot-push", { mode: "exclusive" }, runPush);
     }
-    return { ok: true, bytes: body.length };
-  } catch (e: any) {
-    return { ok: false, reason: e?.message ?? "unknown" };
-  }
+    return runPush();
+  })();
+  _pushInFlight = job;
+  try { return await job; } finally { _pushInFlight = null; }
 }
 
 export function debouncedPush(): void {
