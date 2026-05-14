@@ -7,6 +7,7 @@ import { ApiKeyGate } from "@/components/ApiKeyGate";
 import { PageHeader } from "@/components/PageHeader";
 import { Section, Pill, Kv } from "@/components/OutputBlocks";
 import { CopyButton } from "@/components/CopyButton";
+import { ProviderSwitcher } from "@/components/ProviderSwitcher";
 import { useThrottledStream } from "@/lib/stream-hook";
 import { getActiveBrainId, addUsage } from "@/lib/settings";
 import { llmStream, estimateCostUsd, tryParseJson } from "@/lib/llm";
@@ -143,7 +144,12 @@ function Inner() {
       </div>
 
       {error ? (
-        <div className="border border-neg/40 bg-neg/5 text-neg text-sm px-3 py-2 mb-4">{error}</div>
+        <div className={`border ${/rate limit|quota|too many requests|429|retry in/i.test(error) ? "border-live/40 bg-live/5" : "border-neg/40 bg-neg/5"} px-3 py-3 mb-4 space-y-3`}>
+          <div className={`${/rate limit|quota|too many requests|429|retry in/i.test(error) ? "text-live" : "text-neg"} text-sm`}>{error}</div>
+          {/rate limit|quota|too many requests|429|retry in/i.test(error) ? (
+            <ProviderSwitcher reason="rate-limit" />
+          ) : null}
+        </div>
       ) : null}
 
       {!running && !stream.text && !parsed ? (

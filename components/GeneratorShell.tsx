@@ -15,6 +15,7 @@ import { getBrain, saveAd, type GeneratedAd } from "@/lib/storage";
 import { buildBrandSystemPrompt, type BrandBrain } from "@/lib/brand-brain";
 import { applySmartFill } from "@/lib/smart-fill";
 import { rememberLastGenerated, suggestNextSteps, type NextStep } from "@/lib/next-steps";
+import { ProviderSwitcher } from "@/components/ProviderSwitcher";
 import { providerSupportsVision, fileToImagePart, pickVisionProvider } from "@/lib/providers/vision";
 import { getActiveProviderId } from "@/lib/settings";
 import type { ContentPart, ImagePart } from "@/lib/providers/types";
@@ -661,24 +662,17 @@ const OutputArea = memo(function OutputArea<I extends Record<string, unknown>>({
       // provider. Generic "API key invalid" hint is removed for this case
       // because the key obviously works — they just exceeded the quota.
       return (
-        <div className="border border-live/40 bg-live/5 p-5 space-y-2">
+        <div className="border border-live/40 bg-live/5 p-5 space-y-3">
           <div className="text-[10px] font-mono uppercase tracking-ui-mega text-live flex items-center gap-2">
-            <span className="h-1 w-1 bg-warn" /> rate-limit hit (free-tier quota)
+            <span className="h-1 w-1 bg-live" /> rate-limit hit (free-tier quota)
           </div>
           <p className="text-sm text-ink leading-relaxed">
             Provider rejected with: <code className="text-[11px] font-mono text-live bg-base-900/60 px-1 py-0.5">{lastError}</code>
           </p>
           <p className="text-[12px] text-ink-muted leading-relaxed">
-            Your API key works fine — you've hit the free-tier ceiling for this provider. Options:
+            Your API key works fine — you've hit the per-minute / daily quota. Either wait the retry-in seconds shown above, or switch provider now:
           </p>
-          <ul className="text-[12px] text-ink-muted list-disc list-inside space-y-0.5">
-            <li>Wait the retry-in seconds shown in the error, then retry the same button.</li>
-            <li>Switch to a different provider in <a href="/settings" className="text-live underline">Settings</a> — Groq + Cerebras have generous free tiers.</li>
-            <li>Add billing on the same provider to upgrade past the free-tier cap.</li>
-          </ul>
-          <p className="text-[11px] font-mono uppercase tracking-ui-wide text-ink-subtle pt-1">
-            see exact limits in settings → rate limits dropdown · or in the status bar at the bottom of the page
-          </p>
+          <ProviderSwitcher reason="rate-limit" />
         </div>
       );
     }

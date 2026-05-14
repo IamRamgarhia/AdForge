@@ -22,6 +22,7 @@ import {
 } from "@/lib/prompts/launch-wizard";
 import { rememberLastGenerated } from "@/lib/next-steps";
 import { getCurrency } from "@/lib/currency";
+import { ProviderSwitcher } from "@/components/ProviderSwitcher";
 
 type PhaseStatus = "pending" | "running" | "done" | "error";
 interface Phase {
@@ -663,7 +664,12 @@ function Inner() {
           </div>
 
           {topError ? (
-            <div className="border border-neg/40 bg-neg/5 text-neg text-[11px] px-3 py-2 font-mono uppercase tracking-ui-wide">{topError}</div>
+            <div className={`border ${/rate limit|quota|too many requests|429|retry in/i.test(topError) ? "border-live/40 bg-live/5" : "border-neg/40 bg-neg/5"} px-3 py-3 space-y-3`}>
+              <div className={`text-[11px] font-mono uppercase tracking-ui-wide ${/rate limit|quota|too many requests|429|retry in/i.test(topError) ? "text-live" : "text-neg"}`}>{topError}</div>
+              {/rate limit|quota|too many requests|429|retry in/i.test(topError) ? (
+                <ProviderSwitcher reason="rate-limit" />
+              ) : null}
+            </div>
           ) : null}
 
           <div className="flex gap-2">

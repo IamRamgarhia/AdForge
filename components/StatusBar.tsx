@@ -6,6 +6,7 @@ import { getActiveProviderId, getActiveModelId, getUsage, hasAnyKeyConfigured, g
 import { getProvider } from "@/lib/providers";
 import { formatCost } from "@/lib/utils";
 import { getProviderLimits } from "@/lib/provider-limits";
+import { ProviderSwitcher } from "@/components/ProviderSwitcher";
 
 export function StatusBar() {
   const [info, setInfo] = useState({
@@ -70,6 +71,7 @@ export function StatusBar() {
         <Cell>
           <span className="text-ink-faint">Provider</span>
           <Link href="/settings" className="text-ink hover:text-live transition font-medium">{info.providerName}</Link>
+          <div className="hidden md:flex"><ProviderSwitcher variant="compact" /></div>
         </Cell>
         <Cell>
           <span className="text-ink-faint">Model</span>
