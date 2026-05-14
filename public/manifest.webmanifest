@@ -5,5 +5,19 @@
   "display": "standalone",
   "background_color": "#08080a",
   "theme_color": "#08080a",
-  "description": "Browser-only, BYOK AI ad operating system. Built by Dicecodes."
+  "description": "Browser-only, BYOK AI ad operating system. Built by Dicecodes.",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
 }

@@ -43,6 +43,10 @@ function Inner<I extends Record<string, unknown>>({ config, scope }: Props<I>) {
   const [running, setRunning] = useState(false);
   const [parsed, setParsed] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
+  // Non-blocking advisory — vision fallback, etc. Separate from error so it
+  // renders in info-blue instead of error-red and doesn't make a successful
+  // generation look like a failure. (Audit finding #10.)
+  const [warning, setWarning] = useState<string | null>(null);
   const [savedId, setSavedId] = useState<string | null>(null);
   const [hasRun, setHasRun] = useState(false);
   const [nextSteps, setNextSteps] = useState<NextStep[]>([]);
@@ -101,6 +105,7 @@ function Inner<I extends Record<string, unknown>>({ config, scope }: Props<I>) {
 
   async function run() {
     setError(null);
+    setWarning(null);
     setSavedId(null);
     setParsed(null);
     stream.reset();
@@ -135,7 +140,9 @@ function Inner<I extends Record<string, unknown>>({ config, scope }: Props<I>) {
       if (!providerId || !providerSupportsVision(providerId, getModel())) {
         const fallback = pickVisionProvider(providerId);
         if (fallback) {
-          setError(
+          // Use warning (not error) so the banner is info-blue and clears with
+          // the next run. setError stays reserved for actual failures.
+          setWarning(
             `Active provider can't read images. Falling back to ${fallback} for this run only. Make it permanent in Settings.`
           );
           // Let the run continue — llmStream below will use providerOverride.
@@ -200,7 +207,9 @@ function Inner<I extends Record<string, unknown>>({ config, scope }: Props<I>) {
             { onDelta: stream.append }
           );
 
-      const cost = estimateCostUsd(res.modelId, res.usage);
+      // Three-arg form so vision-fallback runs (which route via a different provider than the
+      // active one) bill against the correct pricing table. (Audit finding #8.)
+      const cost = estimateCostUsd(res.providerId, res.modelId, res.usage);
       addUsage(cost, res.usage?.input_tokens ?? 0, res.usage?.output_tokens ?? 0);
       window.dispatchEvent(new Event("ados:usage"));
 
@@ -348,6 +357,12 @@ function Inner<I extends Record<string, unknown>>({ config, scope }: Props<I>) {
             {error ? (
               <div className="border border-neg/40 bg-neg/5 text-neg text-[11px] px-3 py-2 font-mono uppercase tracking-ui-wide">
                 {error}
+              </div>
+            ) : null}
+
+            {warning ? (
+              <div className="border border-info/40 bg-info/5 text-info text-[11px] px-3 py-2 font-mono uppercase tracking-ui-wide">
+                {warning}
               </div>
             ) : null}
 

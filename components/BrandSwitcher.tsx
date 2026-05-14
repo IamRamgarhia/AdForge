@@ -26,17 +26,24 @@ export function BrandSwitcher() {
     const h = () => refresh();
     window.addEventListener("storage", h);
     window.addEventListener("ados:brains-changed", h);
+    // PageHeader chip needs to refresh when the Sidebar switches active brand.
+    // (Audit finding #32.)
+    window.addEventListener("ados:active-brain-changed", h);
     return () => {
       window.removeEventListener("storage", h);
       window.removeEventListener("ados:brains-changed", h);
+      window.removeEventListener("ados:active-brain-changed", h);
     };
   }, []);
 
   async function pick(b: BrandBrain) {
+    // setActiveBrainId already dispatches `ados:active-brain-changed`.
+    // Don't double-dispatch `ados:brains-changed` — that triggers the
+    // non-reset handler in GeneratorShell right after the reset one,
+    // leaving the form in a partially merged state. (Audit finding #12.)
     setActiveBrainId(b.id);
     setActive(b);
     setOpen(false);
-    window.dispatchEvent(new Event("ados:brains-changed"));
   }
 
   return (

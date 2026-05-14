@@ -259,8 +259,11 @@ export async function exportBrain(id: string): Promise<string> {
 
 export async function importBrain(json: string): Promise<BrandBrain> {
   const data = JSON.parse(json);
-  const brain: BrandBrain = data?.brain ?? data;
-  if (!brain?.business_name) throw new Error("Invalid brain JSON");
+  const raw = data?.brain ?? data;
+  if (!raw?.business_name) throw new Error("Invalid brain JSON");
+  // Normalize first so any old-schema brain gets every field (favicon_url, website_url,
+  // pending_user_input, ...) backfilled before write. (Audit finding #3.)
+  const brain = normalizeBrandBrain(raw);
   brain.id = brain.id || crypto.randomUUID();
   brain.created_at = brain.created_at || Date.now();
   brain.updated_at = Date.now();
@@ -291,7 +294,8 @@ export async function importAll(json: string): Promise<{ brains: number; ads: nu
     "rw",
     [db().brains, db().ads, db().checklist, db().custom_items, db().campaigns, db().templates],
     async () => {
-      if (Array.isArray(data.brains)) await db().brains.bulkPut(data.brains);
+      // Normalize all imported brains so old-schema backups don't write deficient rows. (Audit finding #3.)
+      if (Array.isArray(data.brains)) await db().brains.bulkPut(data.brains.map((b: any) => normalizeBrandBrain(b)));
       if (Array.isArray(data.ads)) await db().ads.bulkPut(data.ads);
       if (Array.isArray(data.checklist)) await db().checklist.bulkPut(data.checklist);
       if (Array.isArray(data.custom_items)) await db().custom_items.bulkPut(data.custom_items);

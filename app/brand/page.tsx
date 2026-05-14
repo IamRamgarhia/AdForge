@@ -242,12 +242,18 @@ function BrandInner() {
                         const label = b.name || b.business_name;
                         if (!confirm(`Delete "${label}"?\n\nYou can undo from the toast for 7 seconds, but after that the brand and its history link are gone.`)) return;
                         await softDeleteBrain(b.id);
+                        // Clear the dangling active brain reference. If we don't, every tool downstream
+                        // reads getActiveBrainId() → getBrain(id) → undefined → silently runs without
+                        // brand context. (Audit finding #2.)
+                        const wasActive = getActiveBrainId() === b.id;
+                        if (wasActive) setActiveBrainId(null);
                         window.dispatchEvent(new Event("ados:brains-changed"));
                         refresh();
                         showUndoToast({
                           message: `Deleted "${label}"`,
                           undo: async () => {
                             await restoreBrain(b.id);
+                            if (wasActive) setActiveBrainId(b.id);
                             window.dispatchEvent(new Event("ados:brains-changed"));
                             refresh();
                           },

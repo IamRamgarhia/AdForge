@@ -3,10 +3,14 @@ import type { Provider } from "./types";
 
 const openaiCfg = { baseUrl: "https://api.openai.com/v1", testModel: "gpt-4.1-mini" };
 const groqCfg = { baseUrl: "https://api.groq.com/openai/v1", testModel: "llama-3.3-70b-versatile" };
-const cerebrasCfg = { baseUrl: "https://api.cerebras.ai/v1", testModel: "llama-3.3-70b" };
-const togetherCfg = { baseUrl: "https://api.together.xyz/v1", testModel: "meta-llama/Llama-3.3-70B-Instruct-Turbo" };
-const deepseekCfg = { baseUrl: "https://api.deepseek.com/v1", testModel: "deepseek-chat" };
-const mistralCfg = { baseUrl: "https://api.mistral.ai/v1", testModel: "mistral-small-latest" };
+// Cerebras silently ignores `stream_options` — leaving it on returns null usage. (Audit #24.)
+const cerebrasCfg = { baseUrl: "https://api.cerebras.ai/v1", testModel: "llama-3.3-70b", supportsStreamUsage: false };
+// Together has reported inconsistent acceptance — safer to omit. (Audit #7.)
+const togetherCfg = { baseUrl: "https://api.together.xyz/v1", testModel: "meta-llama/Llama-3.3-70B-Instruct-Turbo", supportsStreamUsage: false };
+// DeepSeek reasoner outputs include chain-of-thought; 2K default truncates mid-thought. (Audit #60.)
+const deepseekCfg = { baseUrl: "https://api.deepseek.com/v1", testModel: "deepseek-chat", defaultMaxTokens: 8192 };
+// Mistral returns HTTP 422 on `stream_options.include_usage`. (Audit #7.)
+const mistralCfg = { baseUrl: "https://api.mistral.ai/v1", testModel: "mistral-small-latest", supportsStreamUsage: false };
 const openrouterCfg = {
   baseUrl: "https://openrouter.ai/api/v1",
   testModel: "meta-llama/llama-3.3-70b-instruct:free",

@@ -117,7 +117,7 @@ async function applySnapshot(snap: Snapshot): Promise<void> {
       }
     } catch {}
   }
-  const { importAll } = await import("./storage");
+  const { importAll, getBrain } = await import("./storage");
   await importAll(
     JSON.stringify({
       version: 1,
@@ -129,6 +129,17 @@ async function applySnapshot(snap: Snapshot): Promise<void> {
       custom_items: snap.custom_items ?? [],
     })
   );
+  // Reconcile active brain: if the snapshot restored an active_brain ID that points
+  // at a now-deleted brain, clear it so downstream tools don't run with null context. (Audit finding #4.)
+  if (isBrowser()) {
+    try {
+      const activeId = window.localStorage.getItem("ados.active_brain");
+      if (activeId) {
+        const exists = await getBrain(activeId);
+        if (!exists) window.localStorage.removeItem("ados.active_brain");
+      }
+    } catch {}
+  }
   window.dispatchEvent(new Event("ados:brains-changed"));
 }
 

@@ -152,8 +152,9 @@ export function CommandPalette() {
       group: "Switch client",
       icon: Brain,
       run: () => {
+        // setActiveBrainId fires `ados:active-brain-changed` internally.
+        // Don't double-dispatch — see audit finding #44.
         setActiveBrainId(b.id);
-        window.dispatchEvent(new Event("ados:brains-changed"));
         setOpen(false);
       },
     }));

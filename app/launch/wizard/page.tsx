@@ -85,12 +85,13 @@ function Inner() {
         const seed = Array.from(new Set(normalized.filter((p) => ALL_PLATFORMS.some((ap) => ap.id === p))));
         if (seed.length) setPlatforms(seed);
       }
-      // Default campaign name + launch date
-      const now = new Date();
-      const yyyy = now.getFullYear();
-      const mm = String(now.getMonth() + 1).padStart(2, "0");
-      const dd = String(now.getDate() + 7).padStart(2, "0");
-      setLaunchDate(`${yyyy}-${mm}-${dd}`);
+      // Default campaign name + launch date. Use Date arithmetic so month-end
+      // dates roll over correctly — `getDate() + 7` produces 29-38 on the last
+      // week of any month and padStart can't fix it (was emitting 2026-05-35).
+      // (Audit finding #9.)
+      const launch = new Date();
+      launch.setDate(launch.getDate() + 7);
+      setLaunchDate(launch.toISOString().slice(0, 10));
       if (b?.business_name) setCampaignName(`${b.business_name} · launch`);
     })();
   }, []);

@@ -72,17 +72,19 @@ export async function llmStream(opts: RunOptions, handlers: StreamHandlers): Pro
 }
 
 export function estimateCostUsd(
-  providerIdOrModelId: string,
+  providerIdOrModelId: string | undefined,
   modelIdOrUsage: string | { input_tokens?: number; output_tokens?: number } | null,
   usage?: { input_tokens?: number; output_tokens?: number } | null
 ): number {
-  // New signature: (providerId, modelId, usage)
+  // New signature: (providerId, modelId, usage). If providerId is undefined (some
+  // legacy shims drop it), fall back to the active provider rather than throwing.
   if (typeof modelIdOrUsage === "string") {
-    return _estimateCostUsd(providerIdOrModelId, modelIdOrUsage, usage ?? null);
+    const pid = providerIdOrModelId || getActiveProviderId() || "";
+    return _estimateCostUsd(pid, modelIdOrUsage, usage ?? null);
   }
   // Legacy signature: (modelId, usage) — infer provider from the active one.
   const pid = getActiveProviderId() ?? "";
-  return _estimateCostUsd(pid, providerIdOrModelId, modelIdOrUsage);
+  return _estimateCostUsd(pid, providerIdOrModelId ?? "", modelIdOrUsage);
 }
 
 export function tryParseJson<T = unknown>(text: string): T | null {

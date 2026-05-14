@@ -104,13 +104,62 @@ async function ensureDataDir() {
   if (!fs.existsSync(DATA_DIR)) await fsp.mkdir(DATA_DIR, { recursive: true });
 }
 
+// CSRF guard: only respond to known-good local origins. A malicious page in
+// any browser tab could otherwise POST to 127.0.0.1:<port>/update/apply (runs
+// git pull + npm install), /snapshot (writes user data), /quit, etc. — the
+// 127.0.0.1 binding blocks remote network but not same-machine browser tabs.
+// (Audit finding #14.)
+function isAllowedOrigin(origin) {
+  if (!origin) return false;
+  try {
+    const u = new URL(origin);
+    if (u.hostname !== "localhost" && u.hostname !== "127.0.0.1") return false;
+    // Web port is whatever .env.local says; sidecar port is PORT. Accept either,
+    // and a small range around them in case ports were auto-shifted.
+    const p = Number(u.port);
+    if (!Number.isFinite(p)) return false;
+    return (
+      p === webPort ||
+      p === PORT ||
+      // Tolerate the conventional defaults in case ports get shifted.
+      (p >= 3000 && p <= 3030)
+    );
+  } catch {
+    return false;
+  }
+}
+
 function setCors(req, res) {
   const origin = req.headers.origin || "";
-  if (origin) res.setHeader("Access-Control-Allow-Origin", origin);
-  else res.setHeader("Access-Control-Allow-Origin", "*");
+  if (isAllowedOrigin(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Vary", "Origin");
+  }
+  // Unknown origins: deliberately do NOT set Access-Control-Allow-Origin.
+  // The browser will block the response from the calling script.
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   res.setHeader("Access-Control-Max-Age", "86400");
+}
+
+// SSRF guard: refuse to fetch private / loopback / link-local addresses
+// either on the initial URL or on any redirect target. (Audit finding #13.)
+function isPrivateOrLoopbackHost(hostname) {
+  if (!hostname) return true;
+  const h = String(hostname).toLowerCase();
+  if (h === "localhost" || h === "ip6-localhost" || h === "ip6-loopback") return true;
+  // IPv4 loopback / private RFC1918 / link-local
+  if (/^127\./.test(h)) return true;
+  if (/^10\./.test(h)) return true;
+  if (/^192\.168\./.test(h)) return true;
+  if (/^172\.(1[6-9]|2\d|3[01])\./.test(h)) return true;
+  if (/^169\.254\./.test(h)) return true;
+  if (/^0\./.test(h)) return true;
+  // IPv6 loopback / link-local / unique-local
+  if (h === "::1" || h === "::") return true;
+  if (/^fe[89ab][0-9a-f]:/i.test(h)) return true;
+  if (/^f[cd][0-9a-f]{2}:/i.test(h)) return true;
+  return false;
 }
 
 function readBody(req) {
@@ -437,19 +486,30 @@ function runCommand(cmd, args, label) {
 }
 
 async function applyUpdate() {
+  // Set status synchronously BEFORE any await — otherwise two concurrent POSTs
+  // both pass the guard, both run git pull + npm install, and the working tree
+  // is left in an indeterminate state. (Audit finding #15.)
   if (updateState.status === "applying") {
     return { ok: false, error: "Update already in progress." };
   }
+  const priorStatus = updateState.status;
+  updateState = { ...updateState, status: "applying" };
+  const releaseLock = (err) => {
+    // Reset status only when we bail before kicking off the long-running pipeline.
+    // After we've started, finishUpdate() owns the status transitions.
+    updateState = { ...updateState, status: priorStatus };
+    return err;
+  };
   // R4: branch lock
   const local = readLocalGit();
-  if (!local) return { ok: false, error: "Not a git repository — can't auto-update. Re-clone the repo or pull manually." };
+  if (!local) return releaseLock({ ok: false, error: "Not a git repository — can't auto-update. Re-clone the repo or pull manually." });
   if (local.branch !== "main") {
-    return { ok: false, error: `Current branch is "${local.branch || "(detached)"}", not main. Auto-update only runs on the main branch.` };
+    return releaseLock({ ok: false, error: `Current branch is "${local.branch || "(detached)"}", not main. Auto-update only runs on the main branch.` });
   }
   // R5: dirty-tree lock
   const dirty = await checkDirtyTree();
   if (dirty) {
-    return { ok: false, error: "Local working tree has uncommitted changes. Commit or stash first, then update." };
+    return releaseLock({ ok: false, error: "Local working tree has uncommitted changes. Commit or stash first, then update." });
   }
 
   updateState = {
@@ -671,21 +731,32 @@ const server = http.createServer(async (req, res) => {
       if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
         return json(res, 400, { ok: false, error: "Only http/https URLs supported." });
       }
-      const https = parsed.protocol === "https:" ? require("https") : require("http");
+      // SSRF guard on the initial URL. (Audit finding #13.)
+      if (isPrivateOrLoopbackHost(parsed.hostname)) {
+        return json(res, 400, { ok: false, error: "Private / loopback / link-local hosts are not allowed." });
+      }
       let body = "";
       let redirects = 0;
+      // Cap remote body at 500 KB — extractMetadata + strip pipeline runs ~10x the raw size in memory.
+      // Old 1.5 MB silent-truncate wasted CPU and risked OOM on adversarial input. (Audit finding #36.)
+      const MAX_REMOTE_BYTES = 500_000;
       const fetchOnce = (targetUrl) => new Promise((resolve, reject) => {
+        // Re-validate scheme + private-host on every hop. Redirect chains can otherwise
+        // point at 169.254.169.254 (AWS IMDS), intranet, etc.
+        let u;
+        try { u = new URL(targetUrl); } catch { return reject(new Error("Invalid redirect target")); }
+        if (u.protocol !== "http:" && u.protocol !== "https:") return reject(new Error("Non-http(s) redirect blocked"));
+        if (isPrivateOrLoopbackHost(u.hostname)) return reject(new Error("Redirect to private host blocked"));
+        const lib = u.protocol === "https:" ? require("https") : require("http");
         const opts = {
           headers: {
-            // Pretend to be a real browser — many sites short-circuit non-UA requests.
             "User-Agent": "Mozilla/5.0 (compatible; AdForge/1.0; +https://github.com/IamRamgarhia/AdForge)",
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
             "Accept-Language": "en-US,en;q=0.5",
           },
           timeout: 15000,
         };
-        const r = https.get(targetUrl, opts, (resp) => {
-          // Follow up to 5 redirects (Cloudflare and friends frequently bounce).
+        const r = lib.get(targetUrl, opts, (resp) => {
           if (resp.statusCode >= 300 && resp.statusCode < 400 && resp.headers.location && redirects < 5) {
             redirects++;
             const next = new URL(resp.headers.location, targetUrl).toString();
@@ -695,9 +766,18 @@ const server = http.createServer(async (req, res) => {
             return reject(new Error(`HTTP ${resp.statusCode} from target`));
           }
           let raw = "";
+          let tooLarge = false;
           resp.setEncoding("utf8");
-          resp.on("data", (c) => { raw += c; if (raw.length > 1_500_000) { resp.destroy(); resolve(raw); } });
-          resp.on("end", () => resolve(raw));
+          resp.on("data", (c) => {
+            if (tooLarge) return;
+            raw += c;
+            if (raw.length > MAX_REMOTE_BYTES) {
+              tooLarge = true;
+              resp.destroy();
+              reject(new Error(`Remote body exceeded ${MAX_REMOTE_BYTES} bytes`));
+            }
+          });
+          resp.on("end", () => { if (!tooLarge) resolve(raw); });
         });
         r.on("error", reject);
         r.on("timeout", () => { r.destroy(); reject(new Error("Timeout after 15s")); });
@@ -785,9 +865,19 @@ const server = http.createServer(async (req, res) => {
       const body = await readBody(req);
       let parsed;
       try { parsed = JSON.parse(body); } catch { return json(res, 400, { ok: false, error: "invalid json" }); }
+      // Validate as ports — refuse junk like "../../evil" or "99999" before writing .env.local. (Audit finding #16.)
+      const current = readEnvLocal();
+      const portIn = envPort(parsed.PORT, null);
+      const syncPortIn = envPort(parsed.ADFORGE_SYNC_PORT, null);
+      if (parsed.PORT !== undefined && portIn === null) {
+        return json(res, 400, { ok: false, error: "PORT must be an integer 1-65535." });
+      }
+      if (parsed.ADFORGE_SYNC_PORT !== undefined && syncPortIn === null) {
+        return json(res, 400, { ok: false, error: "ADFORGE_SYNC_PORT must be an integer 1-65535." });
+      }
       const next = writeEnvLocal({
-        PORT: String(parsed.PORT || readEnvLocal().PORT),
-        ADFORGE_SYNC_PORT: String(parsed.ADFORGE_SYNC_PORT || readEnvLocal().ADFORGE_SYNC_PORT),
+        PORT: String(portIn ?? current.PORT),
+        ADFORGE_SYNC_PORT: String(syncPortIn ?? current.ADFORGE_SYNC_PORT),
       });
       return json(res, 200, { ok: true, env: next, restart_required: true });
     }

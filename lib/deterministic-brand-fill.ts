@@ -58,7 +58,10 @@ export function deterministicFillFromMetadata(meta: IngestMetadata | undefined, 
       out.name = primaryOrg.name;
     }
     if (primaryOrg.logo) out.favicon_url = out.favicon_url || primaryOrg.logo;
-    if (primaryOrg.address) out.audience_demographics = primaryOrg.address;
+    // NOTE: Organization.address is the BRAND's office address, not the
+    // customer demographic. Don't write it to audience_demographics. (See
+    // audit finding #1.) The address is retained internally on the org object
+    // in case a future field needs it.
     // Organization.description is often the cleanest one-sentence positioning
     // the site provides — better than the meta description because it's
     // explicitly written for machine consumption.
@@ -140,11 +143,11 @@ interface ParsedOrganization {
   telephone?: string;
 }
 
-function extractOrganizations(ld: any): ParsedOrganization[] {
+function extractOrganizations(ld: any, depth = 0): ParsedOrganization[] {
   const out: ParsedOrganization[] = [];
-  if (!ld) return out;
-  if (Array.isArray(ld)) { for (const x of ld) out.push(...extractOrganizations(x)); return out; }
-  if (ld["@graph"]) { for (const x of ld["@graph"]) out.push(...extractOrganizations(x)); }
+  if (!ld || depth > 10) return out; // guard against malformed nested @graph (audit finding #19)
+  if (Array.isArray(ld)) { for (const x of ld) out.push(...extractOrganizations(x, depth + 1)); return out; }
+  if (ld["@graph"]) { for (const x of ld["@graph"]) out.push(...extractOrganizations(x, depth + 1)); }
   const types = Array.isArray(ld["@type"]) ? ld["@type"] : [ld["@type"]];
   if (types.some((t: any) => typeof t === "string" && /Organization|LocalBusiness|Corporation|Person/i.test(t))) {
     const logo = typeof ld.logo === "string" ? ld.logo : ld.logo?.url || ld.logo?.contentUrl;
@@ -178,11 +181,11 @@ function extractOrganizations(ld: any): ParsedOrganization[] {
   return out;
 }
 
-function extractFAQs(ld: any): Array<{ question: string; answer: string }> {
+function extractFAQs(ld: any, depth = 0): Array<{ question: string; answer: string }> {
   const out: Array<{ question: string; answer: string }> = [];
-  if (!ld) return out;
-  if (Array.isArray(ld)) { for (const x of ld) out.push(...extractFAQs(x)); return out; }
-  if (ld["@graph"]) { for (const x of ld["@graph"]) out.push(...extractFAQs(x)); }
+  if (!ld || depth > 10) return out;
+  if (Array.isArray(ld)) { for (const x of ld) out.push(...extractFAQs(x, depth + 1)); return out; }
+  if (ld["@graph"]) { for (const x of ld["@graph"]) out.push(...extractFAQs(x, depth + 1)); }
   const types = Array.isArray(ld["@type"]) ? ld["@type"] : [ld["@type"]];
   if (types.some((t: any) => typeof t === "string" && /FAQPage/i.test(t)) && Array.isArray(ld.mainEntity)) {
     for (const q of ld.mainEntity) {
@@ -205,7 +208,7 @@ function bucketSocialFromUrls(urls: string[]): Record<string, string> {
     else if (!out.instagram && /(^|\.)instagram\.com$/.test(host)) out.instagram = url;
     else if (!out.twitter && (/(^|\.)twitter\.com$/.test(host) || /(^|\.)x\.com$/.test(host))) out.twitter = url;
     else if (!out.linkedin && /(^|\.)linkedin\.com$/.test(host)) out.linkedin = url;
-    else if (!out.youtube && /(^|\.)youtube\.com$/.test(host)) out.youtube = url;
+    else if (!out.youtube && (/(^|\.)youtube\.com$/.test(host) || /(^|\.)youtu\.be$/.test(host))) out.youtube = url;
     else if (!out.tiktok && /(^|\.)tiktok\.com$/.test(host)) out.tiktok = url;
     else if (!out.pinterest && /(^|\.)pinterest\.com$/.test(host)) out.pinterest = url;
     else if (!out.threads && /(^|\.)threads\.net$/.test(host)) out.threads = url;

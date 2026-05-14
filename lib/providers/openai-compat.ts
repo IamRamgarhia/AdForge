@@ -5,6 +5,13 @@ export interface OpenAICompatConfig {
   extraHeaders?: Record<string, string>;
   bodyTransform?: (body: any) => any;
   testModel: string;
+  /** Some OpenAI-compatible providers reject `stream_options.include_usage` with
+   *  HTTP 422 (Mistral) or silently ignore it (Cerebras). When false, this field
+   *  is omitted from streaming requests for this provider. Default: true. */
+  supportsStreamUsage?: boolean;
+  /** Per-provider default max_tokens override — needed for reasoning models
+   *  (DeepSeek reasoner) that legitimately produce 16K+ token outputs. */
+  defaultMaxTokens?: number;
 }
 
 function headers(apiKey: string, extra?: Record<string, string>): HeadersInit {
@@ -51,7 +58,7 @@ export function makeOpenAICompatCall(cfg: OpenAICompatConfig, providerId: string
     let body: any = {
       model: opts.model,
       messages: toMessages(opts),
-      max_tokens: opts.maxTokens ?? 2048,
+      max_tokens: opts.maxTokens ?? cfg.defaultMaxTokens ?? 2048,
       temperature: opts.temperature ?? 0.7,
     };
     if (cfg.bodyTransform) body = cfg.bodyTransform(body);
@@ -80,11 +87,14 @@ export function makeOpenAICompatStream(cfg: OpenAICompatConfig, providerId: stri
     let body: any = {
       model: opts.model,
       messages: toMessages(opts),
-      max_tokens: opts.maxTokens ?? 2048,
+      max_tokens: opts.maxTokens ?? cfg.defaultMaxTokens ?? 2048,
       temperature: opts.temperature ?? 0.7,
       stream: true,
-      stream_options: { include_usage: true },
     };
+    // Mistral 422s on `stream_options`; opt-in per provider. (Audit finding #7.)
+    if (cfg.supportsStreamUsage !== false) {
+      body.stream_options = { include_usage: true };
+    }
     if (cfg.bodyTransform) body = cfg.bodyTransform(body);
     const res = await fetch(url, {
       method: "POST",

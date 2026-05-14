@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { X, TrendingUp } from "lucide-react";
 import { logPerformance, type GeneratedAd } from "@/lib/storage";
 
@@ -12,18 +12,37 @@ export function PerformanceDialog({ ad, onClose }: { ad: GeneratedAd; onClose: (
   const [spend, setSpend] = useState(String(p.spend_usd ?? ""));
   const [revenue, setRevenue] = useState(String(p.revenue_usd ?? ""));
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
+  // Escape-to-close — ARIA dialog pattern. (Audit finding #34.)
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") onClose();
+    }
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  // logPerformance can throw on IndexedDB quota / schema errors. Without a finally
+  // block the Save button stays stuck on "Saving…" forever with no error surface.
+  // (Audit finding #11.)
   async function save() {
     setSaving(true);
-    await logPerformance(ad.id, {
-      impressions: Number(impressions) || undefined,
-      clicks: Number(clicks) || undefined,
-      conversions: Number(conversions) || undefined,
-      spend_usd: Number(spend) || undefined,
-      revenue_usd: Number(revenue) || undefined,
-    });
-    setSaving(false);
-    onClose();
+    setSaveError(null);
+    try {
+      await logPerformance(ad.id, {
+        impressions: Number(impressions) || undefined,
+        clicks: Number(clicks) || undefined,
+        conversions: Number(conversions) || undefined,
+        spend_usd: Number(spend) || undefined,
+        revenue_usd: Number(revenue) || undefined,
+      });
+      onClose();
+    } catch (e: any) {
+      setSaveError(e?.message ?? "Save failed");
+    } finally {
+      setSaving(false);
+    }
   }
 
   const i = Number(impressions) || 0;
@@ -61,6 +80,11 @@ export function PerformanceDialog({ ad, onClose }: { ad: GeneratedAd; onClose: (
             <Computed k="CPA" v={cpa ? `$${cpa.toFixed(2)}` : "—"} />
             <Computed k="ROAS" v={roas ? `${roas.toFixed(2)}×` : "—"} pos={roas >= 2} />
           </div>
+          {saveError ? (
+            <div className="border border-neg/40 bg-neg/5 text-neg text-[11px] px-3 py-2 font-mono uppercase tracking-ui-wide">
+              {saveError}
+            </div>
+          ) : null}
           <div className="flex justify-end gap-2 pt-3 border-t border-base-700">
             <button onClick={onClose} className="btn-ghost">Cancel</button>
             <button onClick={save} disabled={saving} className="btn-primary">{saving ? "Saving…" : "Save"}</button>

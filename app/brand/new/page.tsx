@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Plus, Globe, Loader2, Search, Check, X, AlertTriangle, Edit3, ArrowLeft } from "lucide-react";
@@ -37,6 +37,35 @@ function isEmptyField(v: unknown): boolean {
   return false;
 }
 
+/** Expected JSON shape for each BrandBrain field the AI may return. Used to
+ *  coerce gap-fill results when the model returns the wrong type (e.g. a
+ *  comma-separated string for an array field). (Audit finding #5.) */
+const ARRAY_FIELDS = new Set([
+  "products", "platforms", "content_pillars", "personality_traits",
+  "audience_pain_points", "audience_desires",
+  "key_benefits", "key_messages", "words_to_use", "words_to_avoid",
+  "competitors", "differentiators", "objections", "objection_handling",
+]);
+
+/** Coerce an AI value to match the BrandBrain schema's expected type for `key`.
+ *  Wraps stray strings into arrays, splits "a, b, c" into ["a","b","c"], and
+ *  returns null when the value is unsalvageable. */
+function coerceFieldValue(key: string, v: unknown): unknown {
+  if (v == null) return null;
+  if (ARRAY_FIELDS.has(key)) {
+    if (Array.isArray(v)) return v.filter((x) => typeof x === "string" && x.trim()).map((s) => String(s).trim());
+    if (typeof v === "string") {
+      const parts = v.split(/[,;\n|·]/).map((s) => s.trim()).filter(Boolean);
+      return parts.length ? parts : null;
+    }
+    return null;
+  }
+  // string-typed field
+  if (typeof v === "string") return v.trim() || null;
+  if (Array.isArray(v)) return v.filter(Boolean).join(", ") || null;
+  return null;
+}
+
 export default function BrandOnboardingPage() {
   return (
     <ApiKeyGate>
@@ -50,6 +79,11 @@ function Inner() {
   const [editing, setEditing] = useState<BrandBrain | null>(null);
   const [quickUrl, setQuickUrl] = useState("");
   const [quickBusy, setQuickBusy] = useState(false);
+  // Synchronous race guard. React state updates are async, so two Enter-presses
+  // (URL + Google) before the first re-render can both pass `disabled={quickBusy}`.
+  // The ref is checked + set synchronously at the top of each async entry point.
+  // (Audit finding #6.)
+  const busyRef = useRef(false);
   const [quickStatus, setQuickStatus] = useState<string | null>(null);
   const [showPaste, setShowPaste] = useState(false);
   const [pasted, setPasted] = useState("");
@@ -126,6 +160,8 @@ function Inner() {
 
   async function quickAddFromUrl() {
     if (!quickUrl.trim()) return;
+    if (busyRef.current) return;
+    busyRef.current = true;
     setQuickBusy(true);
     setQuickStatus("① Fetching page content…");
     setShowPaste(false);
@@ -202,8 +238,12 @@ function Inner() {
           window.dispatchEvent(new Event("ados:usage"));
           const gapParsed = tryParseJson<any>(gapRes.text) ?? {};
           console.log("[adforge:brand-extract] parsed AI JSON (gap-fill):", gapParsed);
+          // Coerce each gap-fill value to the BrandBrain schema's expected type.
+          // The model often returns "Instagram, LinkedIn" (string) for an array
+          // field; without coercion, brain.platforms.join(...) downstream throws.
           for (const f of missing) {
-            if (!isEmptyField(gapParsed[f])) parsed[f] = gapParsed[f];
+            const coerced = coerceFieldValue(f, gapParsed[f]);
+            if (!isEmptyField(coerced)) parsed[f] = coerced;
           }
         } catch (gapErr) {
           console.warn("[adforge:brand-extract] gap-fill pass failed:", gapErr);
@@ -216,11 +256,14 @@ function Inner() {
       setQuickStatus(e?.message ?? "Failed");
     } finally {
       setQuickBusy(false);
+      busyRef.current = false;
     }
   }
 
   async function quickAddFromPaste() {
     if (!pasted.trim()) return;
+    if (busyRef.current) return;
+    busyRef.current = true;
     setQuickBusy(true);
     setQuickStatus("① Asking AI to extract brand intelligence from pasted content…");
     try {
@@ -238,19 +281,26 @@ function Inner() {
       const cost = estimateCostUsd(res.providerId, res.modelId, res.usage);
       addUsage(cost, res.usage?.input_tokens ?? 0, res.usage?.output_tokens ?? 0);
       window.dispatchEvent(new Event("ados:usage"));
-      const parsed = tryParseJson<any>(res.text);
+      const parsed = tryParseJson<any>(res.text) ?? {};
       console.log("[adforge:brand-extract] parsed AI JSON (paste):", parsed);
+      if (!parsed.business_name && !Object.keys(parsed).length) {
+        setQuickStatus("AI returned no usable JSON. Check DevTools [adforge:brand-extract] logs and try again, or fall back to Method 3 / 4.");
+        return;
+      }
       const fallbackName = quickUrl ? (() => { try { return new URL(/^https?:\/\//i.test(quickUrl) ? quickUrl : `https://${quickUrl}`).hostname.replace(/^www\./, ""); } catch { return "My Brand"; } })() : "My Brand";
       stageBrain(parsed, fallbackName, quickUrl, "paste", `Pasted content${quickUrl ? ` from ${quickUrl}` : ""}`);
     } catch (e: any) {
       setQuickStatus(e?.message ?? "Extraction failed");
     } finally {
       setQuickBusy(false);
+      busyRef.current = false;
     }
   }
 
   async function quickAddFromGoogle() {
     if (!googleQuery.trim()) return;
+    if (busyRef.current) return;
+    busyRef.current = true;
     setQuickBusy(true);
     setQuickStatus(`① Searching Google for "${googleQuery}"…`);
     try {
@@ -270,13 +320,18 @@ function Inner() {
       const cost = estimateCostUsd(res.providerId, res.modelId, res.usage);
       addUsage(cost, res.usage?.input_tokens ?? 0, res.usage?.output_tokens ?? 0);
       window.dispatchEvent(new Event("ados:usage"));
-      const parsed = tryParseJson<any>(res.text);
+      const parsed = tryParseJson<any>(res.text) ?? {};
       console.log("[adforge:brand-extract] parsed AI JSON (google):", parsed);
+      if (!parsed.business_name && !Object.keys(parsed).length) {
+        setQuickStatus("AI returned no usable JSON from search results. Try a more specific query or fall back to Method 3 / 4.");
+        return;
+      }
       stageBrain(parsed, googleQuery, "", "google", `Google search · "${googleQuery}"`);
     } catch (e: any) {
       setQuickStatus(e?.message ?? "Google search ingest failed");
     } finally {
       setQuickBusy(false);
+      busyRef.current = false;
     }
   }
 

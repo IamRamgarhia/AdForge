@@ -130,7 +130,7 @@ function Inner() {
         },
         { onDelta: stream.append }
       );
-      const cost = estimateCostUsd(res.modelId, res.usage);
+      const cost = estimateCostUsd(res.providerId, res.modelId, res.usage);
       addUsage(cost, res.usage?.input_tokens ?? 0, res.usage?.output_tokens ?? 0);
       window.dispatchEvent(new Event("ados:usage"));
       const json = tryParseJson(res.text);

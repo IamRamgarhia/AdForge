@@ -67,7 +67,7 @@ function Inner() {
         },
         { onDelta: stream.append }
       );
-      addUsage(estimateCostUsd(res.modelId, res.usage), res.usage?.input_tokens ?? 0, res.usage?.output_tokens ?? 0);
+      addUsage(estimateCostUsd(res.providerId, res.modelId, res.usage), res.usage?.input_tokens ?? 0, res.usage?.output_tokens ?? 0);
       window.dispatchEvent(new Event("ados:usage"));
       setParsed(tryParseJson(res.text));
     } catch (e: any) {

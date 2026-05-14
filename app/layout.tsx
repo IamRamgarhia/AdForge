@@ -27,11 +27,34 @@ const display = Instrument_Serif({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://adforge.dicecodes.com"),
   title: "AdForge · open-source AI ad ops",
   description:
     "Browser-only, BYOK AI ad operating system. Every ad platform, every AI provider, zero subscriptions. Built by Dicecodes.",
   applicationName: "AdForge",
   manifest: "/manifest.webmanifest",
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/icon.svg", sizes: "any", type: "image/svg+xml" },
+    ],
+    apple: "/icon.svg",
+  },
+  openGraph: {
+    title: "AdForge · open-source AI ad ops",
+    description:
+      "Browser-only, BYOK AI ad operating system. Every ad platform, every AI provider, zero subscriptions.",
+    url: "/",
+    siteName: "AdForge",
+    type: "website",
+    images: ["/icon.svg"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AdForge · open-source AI ad ops",
+    description: "Browser-only, BYOK AI ad operating system.",
+    images: ["/icon.svg"],
+  },
 };
 
 export const viewport: Viewport = {
