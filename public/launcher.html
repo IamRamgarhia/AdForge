@@ -138,7 +138,7 @@
     <div class="btns" id="trouble-row" style="display:none;margin-top:10px">
       <button id="btn-report" class="btn">⚠ Report a problem on GitHub</button>
       <button id="btn-rebuild" class="btn" title="Wipe .next cache and rebuild — fixes unstyled-render / stale-chunk issues">🧹 Clean rebuild</button>
-      <a class="btn" href="https://github.com/IamRamgarhia/AdForge-#troubleshooting" target="_blank">📖 Troubleshooting guide</a>
+      <a class="btn" href="https://github.com/IamRamgarhia/AdForge#troubleshooting" target="_blank">📖 Troubleshooting guide</a>
     </div>
   </div>
 
@@ -314,7 +314,7 @@
     ];
     const title = "Launcher issue — " + (diag ? diag.web_status : "sidecar unreachable");
     const body = encodeURIComponent(lines.join("\n"));
-    const url = "https://github.com/IamRamgarhia/AdForge-/issues/new?labels=bug&title=" + encodeURIComponent(title) + "&body=" + body;
+    const url = "https://github.com/IamRamgarhia/AdForge/issues/new?labels=bug&title=" + encodeURIComponent(title) + "&body=" + body;
     window.open(url, "_blank");
   }
 

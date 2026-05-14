@@ -82,12 +82,12 @@ You need **Node.js 20+** ([download here](https://nodejs.org/en/download)). That
 
 **Windows** (PowerShell):
 ```powershell
-iwr -useb https://raw.githubusercontent.com/IamRamgarhia/AdForge-/main/scripts/install/install.ps1 | iex
+iwr -useb https://raw.githubusercontent.com/IamRamgarhia/AdForge/main/scripts/install/install.ps1 | iex
 ```
 
 **macOS / Linux / WSL**:
 ```bash
-curl -fsSL https://raw.githubusercontent.com/IamRamgarhia/AdForge-/main/scripts/install/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/IamRamgarhia/AdForge/main/scripts/install/install.sh | bash
 ```
 
 That single command: installs Node + git if missing (Windows uses winget), clones the repo into `~/AdForge`, runs `npm install`, asks for a port, then opens the launcher control panel in your browser. Click **▶ Start AdForge** and you're live.
@@ -467,7 +467,7 @@ This is a stale `.next/` build-cache problem — usually caused by running `npm 
 
 ### Reporting a bug
 
-Click **⚠ Report a problem on GitHub** in the launcher — it pre-fills [github.com/IamRamgarhia/AdForge-/issues/new](https://github.com/IamRamgarhia/AdForge-/issues/new) with your platform, Node version, port config, and recent log lines. Add what you were trying to do and submit.
+Click **⚠ Report a problem on GitHub** in the launcher — it pre-fills [github.com/IamRamgarhia/AdForge/issues/new](https://github.com/IamRamgarhia/AdForge/issues/new) with your platform, Node version, port config, and recent log lines. Add what you were trying to do and submit.
 
 ---
 

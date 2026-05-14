@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # AdForge one-line installer for macOS / Linux / WSL
 # Usage from any terminal:
-#   curl -fsSL https://raw.githubusercontent.com/IamRamgarhia/AdForge-/main/install-online.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/IamRamgarhia/AdForge/main/install-online.sh | bash
 #
 # Does everything in one go:
 #   1. Checks for Node.js + git (suggests install command if missing)
@@ -12,7 +12,7 @@
 
 set -e
 
-REPO="https://github.com/IamRamgarhia/AdForge-.git"
+REPO="https://github.com/IamRamgarhia/AdForge.git"
 BRANCH="main"
 TARGET="${ADFORGE_DIR:-$HOME/AdForge}"
 

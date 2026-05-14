@@ -4,10 +4,10 @@
   "private": true,
   "description": "AdForge — open-source AI ad ops cockpit. Every ad platform, every AI provider (BYOK), zero subscriptions. Built by Dicecodes.",
   "license": "MIT",
-  "homepage": "https://github.com/IamRamgarhia/AdForge-",
+  "homepage": "https://github.com/IamRamgarhia/AdForge",
   "repository": {
     "type": "git",
-    "url": "https://github.com/IamRamgarhia/AdForge-.git"
+    "url": "https://github.com/IamRamgarhia/AdForge.git"
   },
   "author": "Dicecodes <Contact@dicecodes.com>",
   "keywords": [

@@ -106,7 +106,7 @@ export default function AboutPage() {
             <Link href="https://github.com/AgriciDaniel/claude-ads" className="text-live hover:underline ml-1">claude-ads</Link>,
             <Link href="https://github.com/google-marketing-solutions/copycat" className="text-live hover:underline ml-1">Copycat</Link>,
             <Link href="https://github.com/nowork-studio/toprank" className="text-live hover:underline ml-1">toprank</Link>.
-            See <a href="https://github.com/IamRamgarhia/AdForge-/blob/main/NOTICE.md" target="_blank" rel="noreferrer" className="text-live hover:underline">NOTICE.md</a> in the repo for full attribution.
+            See <a href="https://github.com/IamRamgarhia/AdForge/blob/main/NOTICE.md" target="_blank" rel="noreferrer" className="text-live hover:underline">NOTICE.md</a> in the repo for full attribution.
           </p>
         </section>
 
