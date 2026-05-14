@@ -23,7 +23,7 @@ const config: GeneratorConfig<BudgetWasteInput & Record<string, unknown>> = {
         { value: "LinkedIn Ads", label: "LinkedIn Ads" },
       ],
     },
-    { name: "monthly_spend", label: "Monthly spend ($)", kind: "text", required: true, placeholder: "5000" },
+    { name: "monthly_spend", label: "Monthly spend", kind: "text", required: true, placeholder: "5000", hint: "Your selected currency (see Settings)." },
     { name: "campaign_summary", label: "Campaigns & setup", kind: "textarea", required: true, rows: 5, placeholder: "Describe your campaigns: structure, audiences, match types, recent CPA, conversion volume.", span: 2 },
     { name: "match_types", label: "Match types used", kind: "text", placeholder: "broad / phrase / exact" },
     { name: "has_negatives", label: "Negative list?", kind: "text", placeholder: "yes / no / partial" },

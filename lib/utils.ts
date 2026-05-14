@@ -6,8 +6,17 @@ export function cn(...inputs: ClassValue[]): string {
 }
 
 export function formatCost(usd: number): string {
-  if (usd < 0.01) return `$${usd.toFixed(4)}`;
-  return `$${usd.toFixed(2)}`;
+  // Routes through the currency setting so /history, StatusBar, and any other
+  // cost-display surface honor the user's chosen currency.
+  if (typeof window === "undefined") {
+    // SSR fallback to USD.
+    if (usd < 0.01) return `$${usd.toFixed(4)}`;
+    return `$${usd.toFixed(2)}`;
+  }
+  // Lazy import so SSR doesn't choke on the browser-only localStorage path.
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { formatMoney } = require("./currency");
+  return formatMoney(usd, { fromUsd: true });
 }
 
 export function formatTokens(n: number): string {

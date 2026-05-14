@@ -12,10 +12,10 @@ const config: GeneratorConfig<BudgetPlannerInput & Record<string, unknown>> = {
   campaign_type: "Budget Plan",
   maxTokens: 3500,
   fields: [
-    { name: "total_monthly", label: "Total monthly budget ($)", kind: "text", required: true, placeholder: "5000" },
+    { name: "total_monthly", label: "Total monthly budget", kind: "text", required: true, placeholder: "5000", hint: "Your selected currency (see Settings)." },
     { name: "goal", label: "Goal", kind: "text", required: true, placeholder: "trial signups / sales / leads" },
     { name: "business_type", label: "Business type", kind: "text", required: true, placeholder: "B2B SaaS / ecommerce / local service" },
-    { name: "current_aov_or_ltv", label: "AOV / LTV ($)", kind: "text", placeholder: "120 LTV" },
+    { name: "current_aov_or_ltv", label: "AOV / LTV", kind: "text", placeholder: "120 LTV", hint: "Your selected currency." },
     { name: "current_cvr", label: "Site CVR (%)", kind: "text", placeholder: "2.4" },
     { name: "has_organic", label: "Organic traffic?", kind: "text", placeholder: "10k/mo SEO" },
     { name: "geo", label: "Geo", kind: "text", placeholder: "US + Canada", span: 2 },

@@ -224,9 +224,14 @@ function Inner<I extends Record<string, unknown>>({ config, scope }: Props<I>) {
       addUsage(cost, res.usage?.input_tokens ?? 0, res.usage?.output_tokens ?? 0);
       window.dispatchEvent(new Event("ados:usage"));
 
+      // Some providers (Gemini in particular) occasionally return res.text empty
+      // even when streaming deltas worked correctly. Fall back to the accumulated
+      // streamed buffer so the user's output (and any auto-saved ad) is never blank.
+      const finalText = res.text || stream.text;
+
       let json: any = null;
       if (config.expectJson !== false) {
-        json = tryParseJson(res.text);
+        json = tryParseJson(finalText);
         setParsed(json);
       }
 
@@ -239,7 +244,7 @@ function Inner<I extends Record<string, unknown>>({ config, scope }: Props<I>) {
           title: config.buildTitle(input),
           input: input as unknown as Record<string, unknown>,
           output_json: json,
-          output_text: res.text,
+          output_text: finalText,
           model_id: res.modelId,
           usage_input_tokens: res.usage?.input_tokens ?? 0,
           usage_output_tokens: res.usage?.output_tokens ?? 0,

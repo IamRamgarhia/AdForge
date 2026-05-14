@@ -21,6 +21,7 @@ import {
   type LaunchWizardCommon,
 } from "@/lib/prompts/launch-wizard";
 import { rememberLastGenerated } from "@/lib/next-steps";
+import { getCurrency } from "@/lib/currency";
 
 type PhaseStatus = "pending" | "running" | "done" | "error";
 interface Phase {
@@ -148,9 +149,13 @@ function Inner() {
       );
       const cost = estimateCostUsd(res.providerId, res.modelId, res.usage);
       addUsage(cost, res.usage?.input_tokens ?? 0, res.usage?.output_tokens ?? 0);
-      const json = args.expectJson === false ? null : tryParseJson<any>(res.text);
-      updatePhase(args.key, { status: "done", result: json, text: res.text });
-      return { json, text: res.text, modelId: res.modelId, usage: res.usage, cost };
+      // res.text might be empty if the provider returned content only via deltas
+      // (some Gemini responses do this). Fall back to our accumulated buffer so
+      // the UI doesn't show "queued" on a successfully completed phase.
+      const finalText = res.text || accumulated;
+      const json = args.expectJson === false ? null : tryParseJson<any>(finalText);
+      updatePhase(args.key, { status: "done", result: json, text: finalText });
+      return { json, text: finalText, modelId: res.modelId, usage: res.usage, cost };
     } catch (e: any) {
       // The user pressed Stop — surface no failover, no error spam.
       if (args.signal?.aborted) {
@@ -199,9 +204,10 @@ function Inner() {
             );
             const cost = estimateCostUsd(res.providerId, res.modelId, res.usage);
             addUsage(cost, res.usage?.input_tokens ?? 0, res.usage?.output_tokens ?? 0);
-            const json = args.expectJson === false ? null : tryParseJson<any>(res.text);
-            updatePhase(args.key, { status: "done", result: json, text: res.text });
-            return { json, text: res.text, modelId: res.modelId, usage: res.usage, cost };
+            const finalText = res.text || accumulated;
+            const json = args.expectJson === false ? null : tryParseJson<any>(finalText);
+            updatePhase(args.key, { status: "done", result: json, text: finalText });
+            return { json, text: finalText, modelId: res.modelId, usage: res.usage, cost };
           } catch {
             // fall through to error state below
           } finally {
@@ -241,7 +247,7 @@ function Inner() {
       campaign_name: campaignName.trim(),
       goal,
       platforms,
-      budget_total: budget.trim(),
+      budget_total: budget.trim() ? `${getCurrency().code} ${budget.trim()}` : "",
       launch_date: launchDate,
       duration,
       notes: notes.trim() || undefined,
@@ -412,7 +418,7 @@ function Inner() {
       goal,
       status: "planning",
       created_at: Date.now(),
-      notes: `Launch date ${launchDate} · duration ${duration} · budget ${budget} · platforms ${platforms.join(", ")}`,
+      notes: `Launch date ${launchDate} · duration ${duration} · budget ${getCurrency().symbol}${budget} · platforms ${platforms.join(", ")}`,
     };
     await saveCampaign(camp);
     setCampaignId(camp.id);
@@ -421,7 +427,7 @@ function Inner() {
       campaign_name: campaignName.trim(),
       goal,
       platforms,
-      budget_total: budget.trim(),
+      budget_total: budget.trim() ? `${getCurrency().code} ${budget.trim()}` : "",
       launch_date: launchDate,
       duration,
       notes: notes.trim() || undefined,
@@ -615,8 +621,8 @@ function Inner() {
 
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="label">Total budget</label>
-              <input className="input-base" value={budget} onChange={(e) => setBudget(e.target.value)} placeholder="$5,000" />
+              <label className="label">Total budget ({getCurrency().code})</label>
+              <input className="input-base" value={budget} onChange={(e) => setBudget(e.target.value)} placeholder={`${getCurrency().symbol}5,000`} />
             </div>
             <div>
               <label className="label">Launch date</label>

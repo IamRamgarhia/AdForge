@@ -42,7 +42,7 @@ const config: GeneratorConfig<BidStrategyInput & Record<string, unknown>> = {
     { name: "current_strategy_days_active", label: "Days since this strategy was last changed", kind: "number", placeholder: "e.g. 21", hint: "Smart Bidding needs 7+ uninterrupted days to learn. Below that, the AI flags it." },
 
     // ----- Performance data -----
-    { name: "monthly_budget", label: "Budget / month", kind: "text", required: true, section: "Performance data", placeholder: "$5000" },
+    { name: "monthly_budget", label: "Budget / month", kind: "text", required: true, section: "Performance data", placeholder: "5000", hint: "Your selected currency (see Settings)." },
     { name: "conversions_per_month", label: "Conversions / month (campaign)", kind: "number", required: true, placeholder: "35" },
     { name: "conversions_last_7d", label: "Conversions in last 7 days (campaign)", kind: "number", placeholder: "e.g. 9", hint: "Smart Bidding tiers: ≥ 15/week for Target CPA, ≥ 30/week for Target ROAS." },
     { name: "account_monthly_conversions", label: "Account-wide conversions / month", kind: "number", placeholder: "e.g. 120", hint: "Some platforms (Google) borrow signal across campaigns. Higher = faster learning." },

@@ -12,6 +12,7 @@ const KEYS = {
   toneOverride: "ados.tone_override",
   charWarn: "ados.char_warn",
   autoSave: "ados.autosave",
+  currency: "ados.currency",
   // Per-provider keys: `ados.provider.{id}.key`
   // Per-provider model: `ados.provider.{id}.model`
   // Legacy (migrated): "ados.api_key", "ados.model"

@@ -20,6 +20,7 @@ import { deterministicFillFromMetadata } from "@/lib/deterministic-brand-fill";
 import { applyIndustryFallback } from "@/lib/industry-fallback";
 import { saveDraft, loadDraft, clearDraft } from "@/lib/brand-draft";
 import { getProvider } from "@/lib/providers";
+import { formatMoney } from "@/lib/currency";
 import { providerSupportsVision, fileToImagePart } from "@/lib/providers/vision";
 import type { ContentPart, ImagePart } from "@/lib/providers/types";
 
@@ -740,7 +741,7 @@ function Inner() {
               </label>
               {costPreview > 0 ? (
                 <span className="text-[11px] font-mono uppercase tracking-ui-wide text-ink-faint tabular">
-                  ≈ ${costPreview.toFixed(4)} {lightMode ? "(light)" : "(full)"}
+                  ≈ {formatMoney(costPreview, { fromUsd: true, decimals: 4 })} {lightMode ? "(light)" : "(full)"}
                 </span>
               ) : null}
             </div>

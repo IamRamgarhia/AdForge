@@ -17,6 +17,7 @@ import { PROVIDERS, type Provider } from "@/lib/providers";
 import { testApiKey } from "@/lib/llm";
 import { exportAll, importAll, wipeAll } from "@/lib/storage";
 import { formatCost, formatTokens } from "@/lib/utils";
+import { CURRENCIES, getCurrencyCode, setCurrencyCode } from "@/lib/currency";
 
 export default function SettingsPage() {
   return (
@@ -41,6 +42,7 @@ function SettingsInner() {
   const [autoSave, setAutoSaveState] = useState(true);
   const [jina, setJinaState] = useState("");
   const [syncKeys, setSyncKeysState] = useState(false);
+  const [currency, setCurrencyState] = useState("USD");
   const importRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -59,6 +61,7 @@ function SettingsInner() {
     setCharWarnState(getCharWarn());
     setAutoSaveState(getAutoSave());
     setJinaState(getJinaKey());
+    setCurrencyState(getCurrencyCode());
     if (typeof window !== "undefined") {
       setSyncKeysState(window.localStorage.getItem("ados.sync_include_keys") === "1");
     }
@@ -283,6 +286,21 @@ function SettingsInner() {
             <div>
               <label className="label">default language for generated copy</label>
               <input className="input-base" value={lang} onChange={(e) => persistLang(e.target.value)} placeholder="English / Spanish / Hindi / Arabic …" />
+            </div>
+            <div>
+              <label className="label">currency (budgets + cost displays)</label>
+              <select
+                className="input-base"
+                value={currency}
+                onChange={(e) => { setCurrencyState(e.target.value); setCurrencyCode(e.target.value); }}
+              >
+                {CURRENCIES.map((c) => (
+                  <option key={c.code} value={c.code}>{c.symbol} {c.code} — {c.label}</option>
+                ))}
+              </select>
+              <p className="text-[11px] text-ink-muted mt-1.5">
+                Applied to budget inputs in optimizers + launch wizard, and to AI cost previews. Exchange rates are coarse approximations — accurate enough for previews, not accounting.
+              </p>
             </div>
             <div>
               <label className="label">tone override (optional)</label>
