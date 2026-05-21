@@ -599,14 +599,14 @@ function Inner() {
           <h2 className="text-[10px] font-mono uppercase tracking-ui-mega text-ink-muted">1 · Inputs</h2>
 
           <div>
-            <label className="label">Campaign name</label>
-            <input className="input-base" value={campaignName} onChange={(e) => setCampaignName(e.target.value)} placeholder="e.g. Q3 trial blitz" />
+            <label htmlFor="wiz-campaign-name" className="label">Campaign name</label>
+            <input id="wiz-campaign-name" className="input-base" value={campaignName} onChange={(e) => setCampaignName(e.target.value)} placeholder="e.g. Q3 trial blitz" />
           </div>
 
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="label">Goal</label>
-              <select className="input-base" value={goal} onChange={(e) => setGoal(e.target.value as any)}>
+              <label htmlFor="wiz-goal" className="label">Goal</label>
+              <select id="wiz-goal" className="input-base" value={goal} onChange={(e) => setGoal(e.target.value as any)}>
                 <option value="awareness">Awareness</option>
                 <option value="leads">Leads</option>
                 <option value="sales">Sales</option>
@@ -615,8 +615,8 @@ function Inner() {
               </select>
             </div>
             <div>
-              <label className="label">Duration</label>
-              <select className="input-base" value={duration} onChange={(e) => setDuration(e.target.value as any)}>
+              <label htmlFor="wiz-duration" className="label">Duration</label>
+              <select id="wiz-duration" className="input-base" value={duration} onChange={(e) => setDuration(e.target.value as any)}>
                 <option value="1_week">1 week</option>
                 <option value="2_weeks">2 weeks</option>
                 <option value="1_month">1 month</option>
@@ -626,18 +626,18 @@ function Inner() {
 
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="label">Total budget ({getCurrency().code})</label>
-              <input className="input-base" value={budget} onChange={(e) => setBudget(e.target.value)} placeholder={`${getCurrency().symbol}5,000`} />
+              <label htmlFor="wiz-budget" className="label">Total budget ({getCurrency().code})</label>
+              <input id="wiz-budget" className="input-base" value={budget} onChange={(e) => setBudget(e.target.value)} placeholder={`${getCurrency().symbol}5,000`} />
             </div>
             <div>
-              <label className="label">Launch date</label>
-              <input type="date" className="input-base tabular" value={launchDate} onChange={(e) => setLaunchDate(e.target.value)} />
+              <label htmlFor="wiz-launch-date" className="label">Launch date</label>
+              <input id="wiz-launch-date" type="date" className="input-base tabular" value={launchDate} onChange={(e) => setLaunchDate(e.target.value)} />
             </div>
           </div>
 
           <div>
-            <label className="label">Platforms</label>
-            <div className="flex flex-wrap gap-1.5">
+            <label className="label" id="wiz-platforms-label">Platforms</label>
+            <div className="flex flex-wrap gap-1.5" role="group" aria-labelledby="wiz-platforms-label">
               {ALL_PLATFORMS.map((p) => {
                 const on = platforms.includes(p.id);
                 return (
@@ -645,7 +645,9 @@ function Inner() {
                     key={p.id}
                     type="button"
                     onClick={() => togglePlatform(p.id)}
-                    className={`text-[11px] font-mono uppercase tracking-ui-wide px-2.5 py-1 border transition ${
+                    aria-pressed={on}
+                    // py-2 mobile / py-1 desktop hits 44px touch target.
+                    className={`text-[11px] font-mono uppercase tracking-ui-wide px-2.5 py-2 md:py-1 border transition ${
                       on ? "bg-live text-base-950 border-live" : "border-base-600 text-ink-muted hover:border-base-500"
                     }`}
                   >
@@ -657,8 +659,9 @@ function Inner() {
           </div>
 
           <div>
-            <label className="label">Notes (optional)</label>
+            <label htmlFor="wiz-notes" className="label">Notes (optional)</label>
             <textarea
+              id="wiz-notes"
               rows={3}
               className="input-base"
               value={notes}

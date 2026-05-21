@@ -5,6 +5,7 @@ import { Section, Pill } from "@/components/OutputBlocks";
 import { CopyButton } from "@/components/CopyButton";
 import { buildReelIdeasPrompt, type ReelIdeasInput } from "@/lib/prompts/reel-ideas";
 import type { GeneratorConfig } from "@/lib/generator-config";
+import { ReelIdeasSchema } from "@/lib/schemas/generators";
 
 const config: GeneratorConfig<ReelIdeasInput & Record<string, unknown>> = {
   title: "Reel Ideas — Hook-First Generator",
@@ -70,6 +71,7 @@ const config: GeneratorConfig<ReelIdeasInput & Record<string, unknown>> = {
   buildPrompt: (input) => buildReelIdeasPrompt(input as unknown as ReelIdeasInput),
   buildTitle: (i: any) => `Reels · ${i.platform} · ${i.reel_count} ideas`,
   expectJson: true,
+  schema: ReelIdeasSchema,
   renderJson: (json) => <ReelOutput json={json} />,
 };
 

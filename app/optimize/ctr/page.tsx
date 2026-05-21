@@ -5,6 +5,7 @@ import { Section, ScoreBar, Pill, Kv } from "@/components/OutputBlocks";
 import { CopyButton } from "@/components/CopyButton";
 import { buildCtrPrompt, type CtrInput } from "@/lib/prompts/ctr-optimizer";
 import type { GeneratorConfig } from "@/lib/generator-config";
+import { CtrSchema } from "@/lib/schemas/generators";
 
 const config: GeneratorConfig<CtrInput & Record<string, unknown>> = {
   title: "CTR Optimizer",
@@ -70,6 +71,7 @@ const config: GeneratorConfig<CtrInput & Record<string, unknown>> = {
   buildPrompt: (input) => buildCtrPrompt(input as unknown as CtrInput),
   buildTitle: (i: any) => `CTR · ${i.platform} · ${i.industry || ""}`.trim(),
   expectJson: true,
+  schema: CtrSchema,
   renderJson: (json) => <CtrOutput json={json} />,
 };
 

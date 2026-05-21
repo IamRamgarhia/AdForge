@@ -6,6 +6,7 @@ import { CharBadge } from "@/components/CharBadge";
 import { CopyButton } from "@/components/CopyButton";
 import { buildDisplayPrompt, DISPLAY_SIZES, type DisplayInput } from "@/lib/prompts/display-ads";
 import type { GeneratorConfig } from "@/lib/generator-config";
+import { DisplaySchema } from "@/lib/schemas/generators";
 
 const config: GeneratorConfig<DisplayInput & Record<string, unknown>> = {
   title: "Display Banners",
@@ -23,6 +24,7 @@ const config: GeneratorConfig<DisplayInput & Record<string, unknown>> = {
   buildPrompt: (input) => buildDisplayPrompt(input as unknown as DisplayInput),
   buildTitle: (i: any) => `Display · ${i.product}`,
   expectJson: true,
+  schema: DisplaySchema,
   renderJson: (json) => <DisplayOutput json={json} />,
 };
 

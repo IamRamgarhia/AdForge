@@ -5,6 +5,7 @@ import { Section, Pill, Kv } from "@/components/OutputBlocks";
 import { CopyButton } from "@/components/CopyButton";
 import { buildKeywordPrompt, type KeywordInput } from "@/lib/prompts/keyword-strategy";
 import type { GeneratorConfig } from "@/lib/generator-config";
+import { KeywordsSchema } from "@/lib/schemas/generators";
 
 const config: GeneratorConfig<KeywordInput & Record<string, unknown>> = {
   title: "Keyword Strategy Builder",
@@ -43,6 +44,7 @@ const config: GeneratorConfig<KeywordInput & Record<string, unknown>> = {
   buildPrompt: (input) => buildKeywordPrompt(input as unknown as KeywordInput),
   buildTitle: (i: any) => `Keywords · ${i.product}`,
   expectJson: true,
+  schema: KeywordsSchema,
   renderJson: (json) => <KwOutput json={json} />,
 };
 

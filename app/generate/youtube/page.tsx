@@ -5,6 +5,7 @@ import { Section, Pill } from "@/components/OutputBlocks";
 import { CopyButton } from "@/components/CopyButton";
 import { buildYouTubePrompt, type YouTubeInput } from "@/lib/prompts/youtube-ads";
 import type { GeneratorConfig } from "@/lib/generator-config";
+import { YoutubeSchema } from "@/lib/schemas/generators";
 
 const config: GeneratorConfig<YouTubeInput & Record<string, unknown>> = {
   title: "YouTube — Ad Scripts",
@@ -31,6 +32,7 @@ const config: GeneratorConfig<YouTubeInput & Record<string, unknown>> = {
   buildPrompt: (input) => buildYouTubePrompt(input as unknown as YouTubeInput),
   buildTitle: (i: any) => `YouTube · ${i.format} · ${i.product}`,
   expectJson: true,
+  schema: YoutubeSchema,
   renderJson: (json) => <YouTubeOutput json={json} />,
 };
 

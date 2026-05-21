@@ -5,6 +5,7 @@ import { Section, Pill, Kv } from "@/components/OutputBlocks";
 import { getCurrency } from "@/lib/currency";
 import { buildBudgetWastePrompt, type BudgetWasteInput } from "@/lib/prompts/budget-waste";
 import type { GeneratorConfig } from "@/lib/generator-config";
+import { BudgetWasteSchema } from "@/lib/schemas/generators";
 
 const config: GeneratorConfig<BudgetWasteInput & Record<string, unknown>> = {
   title: "Budget Waste Analyzer",
@@ -47,6 +48,7 @@ const config: GeneratorConfig<BudgetWasteInput & Record<string, unknown>> = {
   buildPrompt: (input) => buildBudgetWastePrompt(input as unknown as BudgetWasteInput),
   buildTitle: (i: any) => `Budget · ${i.platform}`,
   expectJson: true,
+  schema: BudgetWasteSchema,
   renderJson: (json) => <BudgetOutput json={json} />,
 };
 

@@ -5,6 +5,7 @@ import { Section, Pill } from "@/components/OutputBlocks";
 import { CopyButton } from "@/components/CopyButton";
 import { buildHashtagPrompt, type HashtagInput } from "@/lib/prompts/hashtags";
 import type { GeneratorConfig } from "@/lib/generator-config";
+import { HashtagsSchema } from "@/lib/schemas/generators";
 
 const config: GeneratorConfig<HashtagInput & Record<string, unknown>> = {
   title: "Hashtag Generator",
@@ -37,6 +38,7 @@ const config: GeneratorConfig<HashtagInput & Record<string, unknown>> = {
   buildPrompt: (input) => buildHashtagPrompt(input as unknown as HashtagInput),
   buildTitle: (i: any) => `Hashtags · ${i.platform} · ${i.title?.slice(0, 28)}`,
   expectJson: true,
+  schema: HashtagsSchema,
   renderJson: (json) => <HashtagOutput json={json} />,
 };
 

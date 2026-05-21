@@ -5,6 +5,7 @@ import { Section, Pill, Kv } from "@/components/OutputBlocks";
 import { getCurrency } from "@/lib/currency";
 import { buildBudgetPlannerPrompt, type BudgetPlannerInput } from "@/lib/prompts/budget-planner";
 import type { GeneratorConfig } from "@/lib/generator-config";
+import { BudgetPlannerSchema } from "@/lib/schemas/generators";
 
 const config: GeneratorConfig<BudgetPlannerInput & Record<string, unknown>> = {
   title: "Ad Budget Planner",
@@ -25,6 +26,7 @@ const config: GeneratorConfig<BudgetPlannerInput & Record<string, unknown>> = {
   buildPrompt: (input) => buildBudgetPlannerPrompt(input as unknown as BudgetPlannerInput),
   buildTitle: (i: any) => `Budget Plan · ${i.total_monthly}/mo`,
   expectJson: true,
+  schema: BudgetPlannerSchema,
   renderJson: (json) => <PlannerOutput json={json} />,
 };
 

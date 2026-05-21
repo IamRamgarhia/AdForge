@@ -6,6 +6,7 @@ import { CharBadge } from "@/components/CharBadge";
 import { CopyButton } from "@/components/CopyButton";
 import { buildTwitterPrompt, TWITTER_LIMITS, type TwitterInput } from "@/lib/prompts/twitter-ads";
 import type { GeneratorConfig } from "@/lib/generator-config";
+import { TwitterSchema } from "@/lib/schemas/generators";
 
 const config: GeneratorConfig<TwitterInput & Record<string, unknown>> = {
   title: "Twitter / X",
@@ -34,6 +35,7 @@ const config: GeneratorConfig<TwitterInput & Record<string, unknown>> = {
   buildPrompt: (input) => buildTwitterPrompt(input as unknown as TwitterInput),
   buildTitle: (i: any) => `Twitter · ${i.format} · ${i.product}`,
   expectJson: true,
+  schema: TwitterSchema,
   renderJson: (json) => <TwitterOutput json={json} />,
 };
 

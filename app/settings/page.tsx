@@ -227,9 +227,10 @@ function SettingsInner() {
 
                   <div className="grid md:grid-cols-2 gap-2">
                     <div>
-                      <label className="label flex items-center gap-1.5"><KeyRound size={10} /> api key</label>
+                      <label htmlFor={`apikey-${p.id}`} className="label flex items-center gap-1.5"><KeyRound size={10} /> api key</label>
                       <div className="relative">
                         <input
+                          id={`apikey-${p.id}`}
                           type={showKey[p.id] ? "text" : "password"}
                           value={keys[p.id] ?? ""}
                           onChange={(e) => setKeys({ ...keys, [p.id]: e.target.value.trim() })}
@@ -249,7 +250,7 @@ function SettingsInner() {
                       </div>
                     </div>
                     <div>
-                      <label className="label flex items-center gap-2">
+                      <label htmlFor={`model-${p.id}`} className="label flex items-center gap-2">
                         <span>model</span>
                         {p.supports_vision ? (
                           <span className="text-[9px] font-mono uppercase tracking-ui-wide text-live border border-live/40 px-1.5 py-0.5">
@@ -262,6 +263,7 @@ function SettingsInner() {
                         )}
                       </label>
                       <select
+                        id={`model-${p.id}`}
                         value={modelsByProvider[p.id] ?? p.default_model}
                         onChange={(e) => setModelsByProvider({ ...modelsByProvider, [p.id]: e.target.value })}
                         className="input-base"

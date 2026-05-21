@@ -6,6 +6,7 @@ import { CopyButton } from "@/components/CopyButton";
 import { getCurrency } from "@/lib/currency";
 import { buildSparkAdsPrompt, type SparkInput } from "@/lib/prompts/tiktok-spark";
 import type { GeneratorConfig } from "@/lib/generator-config";
+import { SparkAdsSchema } from "@/lib/schemas/generators";
 
 const config: GeneratorConfig<SparkInput & Record<string, unknown>> = {
   title: "TikTok Spark Ads brief",
@@ -23,6 +24,7 @@ const config: GeneratorConfig<SparkInput & Record<string, unknown>> = {
   buildPrompt: (input) => buildSparkAdsPrompt(input as unknown as SparkInput),
   buildTitle: (i: any) => `Spark · ${i.product}`,
   expectJson: true,
+  schema: SparkAdsSchema,
   renderJson: (json) => <SparkOutput json={json} />,
 };
 

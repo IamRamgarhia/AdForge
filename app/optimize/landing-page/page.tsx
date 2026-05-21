@@ -6,6 +6,7 @@ import { CharBadge } from "@/components/CharBadge";
 import { CopyButton } from "@/components/CopyButton";
 import { buildLandingPrompt, type LandingPageInput } from "@/lib/prompts/landing-page";
 import type { GeneratorConfig } from "@/lib/generator-config";
+import { LandingPageSchema } from "@/lib/schemas/generators";
 
 const config: GeneratorConfig<LandingPageInput & Record<string, unknown>> = {
   title: "Landing Page Grader",
@@ -53,6 +54,7 @@ const config: GeneratorConfig<LandingPageInput & Record<string, unknown>> = {
   buildPrompt: (input) => buildLandingPrompt(input as unknown as LandingPageInput),
   buildTitle: (i: any) => `LP · ${i.ad_promise?.slice(0, 30)}`,
   expectJson: true,
+  schema: LandingPageSchema,
   renderJson: (json) => <LpOutput json={json} />,
 };
 

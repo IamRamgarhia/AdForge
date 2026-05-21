@@ -6,6 +6,7 @@ import { CharBadge } from "@/components/CharBadge";
 import { CopyButton } from "@/components/CopyButton";
 import { buildPmaxPrompt, PMAX_LIMITS, type PmaxInput } from "@/lib/prompts/google-pmax";
 import type { GeneratorConfig } from "@/lib/generator-config";
+import { GooglePmaxSchema } from "@/lib/schemas/generators";
 
 const config: GeneratorConfig<PmaxInput & Record<string, unknown>> = {
   title: "Google Performance Max",
@@ -35,6 +36,7 @@ const config: GeneratorConfig<PmaxInput & Record<string, unknown>> = {
   buildPrompt: (input) => buildPmaxPrompt(input as unknown as PmaxInput),
   buildTitle: (i: any) => `PMax · ${i.product}`,
   expectJson: true,
+  schema: GooglePmaxSchema,
   renderJson: (json) => <PmaxOutput json={json} />,
 };
 

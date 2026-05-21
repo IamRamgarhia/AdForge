@@ -12,6 +12,7 @@ import {
   type CreativeToolLink,
 } from "@/lib/prompts/creative-prompts";
 import type { GeneratorConfig } from "@/lib/generator-config";
+import { CreativePromptsSchema } from "@/lib/schemas/generators";
 
 const config: GeneratorConfig<CreativePromptInput & Record<string, unknown>> = {
   title: "AI Creative Prompt Generator",
@@ -89,6 +90,7 @@ const config: GeneratorConfig<CreativePromptInput & Record<string, unknown>> = {
   buildPrompt: (input) => buildCreativePromptPrompt(input as unknown as CreativePromptInput),
   buildTitle: (i: any) => `Creative · ${i.asset_type} · ${i.product?.slice(0, 24)}`,
   expectJson: true,
+  schema: CreativePromptsSchema,
   renderJson: (json) => <CreativePromptOutput json={json} />,
 };
 

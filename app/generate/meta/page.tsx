@@ -7,6 +7,7 @@ import { CharBadge } from "@/components/CharBadge";
 import { MetaFeedMockup, ReelsMockup } from "@/components/AdMockup";
 import { buildMetaPrompt, META_LIMITS, type MetaInput } from "@/lib/prompts/meta-ads";
 import type { GeneratorConfig } from "@/lib/generator-config";
+import { MetaSchema } from "@/lib/schemas/generators";
 
 const config: GeneratorConfig<MetaInput & Record<string, unknown>> = {
   title: "Meta — Facebook + Instagram",
@@ -49,6 +50,7 @@ const config: GeneratorConfig<MetaInput & Record<string, unknown>> = {
   buildPrompt: (input) => buildMetaPrompt(input as unknown as MetaInput),
   buildTitle: (i: any) => `Meta · ${i.format} · ${i.product}`,
   expectJson: true,
+  schema: MetaSchema,
   renderJson: (json) => <MetaOutput json={json} />,
 };
 

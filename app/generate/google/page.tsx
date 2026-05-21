@@ -12,6 +12,7 @@ import {
   type GoogleRsaOutput,
 } from "@/lib/prompts/google-ads";
 import type { GeneratorConfig } from "@/lib/generator-config";
+import { GoogleSchema } from "@/lib/schemas/generators";
 
 const config: GeneratorConfig<GoogleRsaInput & Record<string, unknown>> = {
   title: "Google Responsive Search Ad",
@@ -42,6 +43,7 @@ const config: GeneratorConfig<GoogleRsaInput & Record<string, unknown>> = {
   buildPrompt: (input) => buildGoogleRsaPrompt(input as unknown as GoogleRsaInput),
   buildTitle: (input) => `${(input as any).product} — ${(input as any).keyword}`,
   expectJson: true,
+  schema: GoogleSchema,
   renderJson: (json: GoogleRsaOutput) => <RsaOutput json={json} />,
 };
 

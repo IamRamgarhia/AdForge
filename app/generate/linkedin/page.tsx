@@ -6,6 +6,7 @@ import { CopyButton } from "@/components/CopyButton";
 import { CharBadge } from "@/components/CharBadge";
 import { buildLinkedInPrompt, LINKEDIN_LIMITS, type LinkedInInput } from "@/lib/prompts/linkedin-ads";
 import type { GeneratorConfig } from "@/lib/generator-config";
+import { LinkedinSchema } from "@/lib/schemas/generators";
 
 const config: GeneratorConfig<LinkedInInput & Record<string, unknown>> = {
   title: "LinkedIn — B2B",
@@ -47,6 +48,7 @@ const config: GeneratorConfig<LinkedInInput & Record<string, unknown>> = {
   buildPrompt: (input) => buildLinkedInPrompt(input as unknown as LinkedInInput),
   buildTitle: (i: any) => `LinkedIn · ${i.format} · ${i.product}`,
   expectJson: true,
+  schema: LinkedinSchema,
   renderJson: (json) => <LinkedInOutput json={json} />,
 };
 

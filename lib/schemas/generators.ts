@@ -1,0 +1,589 @@
+/**
+ * Zod schemas for every generator that uses GeneratorShell with expectJson:true.
+ *
+ * Design rule: be LENIENT. The schema's only job is to catch genuinely broken
+ * shapes — null where an array is expected, a string where the renderer calls
+ * .map(), missing top-level fields the UI critically relies on. We don't want
+ * a missing optional sub-field to trigger a corrective retry — that wastes
+ * tokens.
+ *
+ * - Top-level objects use `.passthrough()` so extra fields the model returns
+ *   pass through untouched and the renderer's `json.future_field` reads still
+ *   work without needing a schema migration.
+ * - Inner objects mostly use `.partial().passthrough()` for the same reason.
+ * - Required arrays are kept short — only when the UI's primary content lives
+ *   in that array (e.g. /generate/meta `variants`) is it marked required.
+ *
+ * Discriminated unions: tiktok, twitter, youtube can return one of several
+ * shapes (hooks vs scripts, thread vs tweets, etc.). The schema uses .union()
+ * with each variant optional so any one variant passes.
+ */
+import { z } from "zod";
+
+const Loose = <T extends z.ZodRawShape>(shape: T) =>
+  z.object(shape).partial().passthrough();
+const Strings = z.array(z.string());
+
+// ──────────────────────────────────────────────────────────────────────────
+// /generate/meta
+// ──────────────────────────────────────────────────────────────────────────
+export const MetaSchema = z
+  .object({
+    variants: z
+      .array(
+        Loose({
+          label: z.string(),
+          angle: z.string(),
+          primary_text: z.string(),
+          headline: z.string(),
+          description: z.string(),
+          cta_button: z.string(),
+        })
+      )
+      .min(1),
+    audience_hint: z.string().optional(),
+    best_placement_recommendation: z.string().optional(),
+  })
+  .passthrough();
+
+// ──────────────────────────────────────────────────────────────────────────
+// /generate/google
+// ──────────────────────────────────────────────────────────────────────────
+const TextWithChars = Loose({
+  text: z.string(),
+  angle: z.string(),
+  chars: z.number(),
+  status: z.string(),
+  trimmed_alt: z.string(),
+});
+export const GoogleSchema = z
+  .object({
+    headlines: z.array(TextWithChars).min(1),
+    descriptions: z.array(TextWithChars).min(1),
+    angles: z.array(Loose({ label: z.string(), motivation: z.string() })).optional(),
+    sitelinks: z.array(Loose({ title: z.string(), desc1: z.string(), desc2: z.string() })).optional(),
+    callouts: Strings.optional(),
+    structured_snippets: Loose({ header: z.string(), values: Strings }).optional(),
+    quality_score_tips: Strings.optional(),
+    self_check: Loose({
+      combinable: z.boolean(),
+      headline_mix_balanced: z.boolean(),
+      notes: z.string(),
+    }).optional(),
+  })
+  .passthrough();
+
+// ──────────────────────────────────────────────────────────────────────────
+// /generate/google-pmax
+// ──────────────────────────────────────────────────────────────────────────
+export const GooglePmaxSchema = z
+  .object({
+    headlines: z.array(TextWithChars).min(1),
+    long_headlines: z.array(TextWithChars).min(1),
+    descriptions: z.array(TextWithChars).min(1),
+    business_name: z.string().optional(),
+    image_prompts: z
+      .array(Loose({ ratio: z.string(), size: z.string(), prompt: z.string() }))
+      .optional(),
+    video_script: z.record(z.any()).optional(),
+    audience_signals: z
+      .array(Loose({ type: z.string(), value: z.string(), rationale: z.string() }))
+      .optional(),
+  })
+  .passthrough();
+
+// ──────────────────────────────────────────────────────────────────────────
+// /generate/google-shopping
+// ──────────────────────────────────────────────────────────────────────────
+const TextChars = Loose({ text: z.string(), chars: z.number(), status: z.string() });
+export const GoogleShoppingSchema = z
+  .object({
+    title: TextChars,
+    description: TextChars,
+    highlights: Strings.optional(),
+    merchant_center_attributes: z
+      .array(Loose({ priority: z.string(), field: z.string(), value_or_action: z.string() }))
+      .optional(),
+    long_tail_queries_to_rank_for: Strings.optional(),
+    negative_keywords: Strings.optional(),
+    policy_warnings: Strings.optional(),
+  })
+  .passthrough();
+
+// ──────────────────────────────────────────────────────────────────────────
+// /generate/tiktok — one-of: hooks list OR scripts list
+// ──────────────────────────────────────────────────────────────────────────
+export const TiktokSchema = z
+  .object({
+    hooks: z
+      .array(Loose({ hook: z.string(), continuation: z.string(), formula: z.string() }))
+      .optional(),
+    production_notes: Strings.optional(),
+    scripts: z
+      .array(
+        Loose({
+          title: z.string(),
+          creator_brief: z.string(),
+          script_beats: z.array(z.any()),
+          caption: z.string(),
+          hashtags: Strings,
+          b_roll: Strings,
+        })
+      )
+      .optional(),
+  })
+  .passthrough()
+  .refine((v) => (v.hooks && v.hooks.length > 0) || (v.scripts && v.scripts.length > 0), {
+    message: "must return either hooks or scripts",
+  });
+
+// ──────────────────────────────────────────────────────────────────────────
+// /generate/twitter — one-of: thread OR tweets
+// ──────────────────────────────────────────────────────────────────────────
+export const TwitterSchema = z
+  .object({
+    thread: z
+      .array(
+        Loose({ position: z.number(), role: z.string(), text: z.string(), chars: z.number() })
+      )
+      .optional(),
+    tweets: z
+      .array(
+        Loose({
+          label: z.string(),
+          angle: z.string(),
+          text: z.string(),
+          chars: z.number(),
+          status: z.string(),
+          trimmed_alt: z.string(),
+        })
+      )
+      .optional(),
+    best_time_window_utc: z.string().optional(),
+  })
+  .passthrough()
+  .refine((v) => (v.thread && v.thread.length > 0) || (v.tweets && v.tweets.length > 0), {
+    message: "must return either thread or tweets",
+  });
+
+// ──────────────────────────────────────────────────────────────────────────
+// /generate/youtube — one-of: variants OR scripts OR headlines+descriptions
+// ──────────────────────────────────────────────────────────────────────────
+const Beat = Loose({ t: z.string(), vo: z.string(), visual: z.string(), on_screen_url: z.string() });
+export const YoutubeSchema = z
+  .object({
+    variants: z
+      .array(
+        Loose({
+          label: z.string(),
+          hook: Beat,
+          problem: Beat,
+          solution: Beat,
+          proof: Beat,
+          cta: Beat,
+          b_roll: Strings,
+          companion_banner: z.string(),
+        })
+      )
+      .optional(),
+    view_rate_target: z.string().optional(),
+    scripts: z
+      .array(
+        Loose({
+          label: z.string(),
+          angle: z.string(),
+          vo: z.string(),
+          on_screen_text: z.string(),
+          visual: z.string(),
+        })
+      )
+      .optional(),
+    headlines: Strings.optional(),
+    descriptions: Strings.optional(),
+    thumbnail_concepts: z
+      .array(Loose({ emotion: z.string(), title: z.string(), visual: z.string() }))
+      .optional(),
+  })
+  .passthrough()
+  .refine(
+    (v) =>
+      (v.variants && v.variants.length > 0) ||
+      (v.scripts && v.scripts.length > 0) ||
+      ((v.headlines && v.headlines.length > 0) || (v.descriptions && v.descriptions.length > 0)),
+    { message: "must return variants, scripts, or headlines/descriptions" }
+  );
+
+// ──────────────────────────────────────────────────────────────────────────
+// /generate/linkedin
+// ──────────────────────────────────────────────────────────────────────────
+export const LinkedinSchema = z
+  .object({
+    variants: z
+      .array(
+        Loose({
+          label: z.string(),
+          angle: z.string(),
+          intro_text: z.string(),
+          headline: z.string(),
+          description: z.string(),
+          cta_button: z.string(),
+        })
+      )
+      .min(1),
+    lead_form: Loose({ form_intro: z.string(), questions: z.array(z.any()) }).optional(),
+    audience_targeting: z.record(z.any()).optional(),
+  })
+  .passthrough();
+
+// ──────────────────────────────────────────────────────────────────────────
+// /generate/display
+// ──────────────────────────────────────────────────────────────────────────
+export const DisplaySchema = z
+  .object({
+    creatives: z
+      .array(
+        Loose({
+          size: z.string(),
+          name: z.string(),
+          short_headline: z.string(),
+          description: z.string(),
+          cta_button: z.string(),
+          image_concept: z.string(),
+        })
+      )
+      .min(1),
+    responsive_display_assets: Loose({
+      short_headlines: Strings,
+      descriptions: Strings,
+      long_headline: z.string(),
+      business_name: z.string(),
+      image_prompts: Strings,
+    }).optional(),
+  })
+  .passthrough();
+
+// ──────────────────────────────────────────────────────────────────────────
+// /generate/email-subjects
+// ──────────────────────────────────────────────────────────────────────────
+export const EmailSubjectsSchema = z
+  .object({
+    subjects: z
+      .array(
+        Loose({
+          label: z.string(),
+          angle: z.string(),
+          subject: z.string(),
+          preheader: z.string(),
+          spam_risk: z.string(),
+        })
+      )
+      .min(1),
+    best_for_first_send: z.string().optional(),
+    best_for_resend_to_non_openers: z.string().optional(),
+    best_for_segments: z
+      .array(Loose({ segment: z.string(), use: z.string() }))
+      .optional(),
+  })
+  .passthrough();
+
+// ──────────────────────────────────────────────────────────────────────────
+// /generate/hashtags — recommended_set is dynamic key, so we accept any record
+// ──────────────────────────────────────────────────────────────────────────
+const HashtagItem = Loose({
+  tag: z.string(),
+  casing_variant: z.string(),
+  estimated_volume: z.string(),
+  use_for: z.string(),
+  usage_hint: z.string(),
+});
+export const HashtagsSchema = z
+  .object({
+    language_used: z.string().optional(),
+    recommended_set: Strings.optional(),
+    tiers: Loose({
+      broad: z.array(HashtagItem),
+      medium: z.array(HashtagItem),
+      niche: z.array(HashtagItem),
+      branded: z.array(HashtagItem),
+    }).optional(),
+    english_crossover: z
+      .array(Loose({ tag: z.string(), use_for: z.string() }))
+      .optional(),
+    avoid: z.array(Loose({ tag: z.string(), reason: z.string() })).optional(),
+    platform_specific_notes: z.string().optional(),
+  })
+  .passthrough();
+
+// ──────────────────────────────────────────────────────────────────────────
+// /generate/lead-form
+// ──────────────────────────────────────────────────────────────────────────
+export const LeadFormSchema = z
+  .object({
+    intro: Loose({ headline: z.string(), greeting: z.string() }).optional(),
+    questions: z
+      .array(
+        Loose({
+          type: z.string(),
+          label: z.string(),
+          options: Strings,
+          qualifier: z.string(),
+          required: z.boolean(),
+          pre_fillable_by_platform: z.boolean(),
+        })
+      )
+      .optional(),
+    thank_you_screen: Loose({
+      headline: z.string(),
+      body: z.string(),
+      next_cta_text: z.string(),
+      next_cta_url_placeholder: z.string(),
+    }).optional(),
+    auto_responder_email: Loose({
+      subject: z.string(),
+      body_lines: Strings,
+    }).optional(),
+    sales_handoff: Loose({
+      fields_passed: Strings,
+      qualification_summary_template: z.string(),
+      recommended_response_sla_hours: z.number(),
+    }).optional(),
+    privacy_policy_text: z.string().optional(),
+  })
+  .passthrough();
+
+// ──────────────────────────────────────────────────────────────────────────
+// /generate/reel-ideas
+// ──────────────────────────────────────────────────────────────────────────
+export const ReelIdeasSchema = z
+  .object({
+    competitor_pattern_summary: z.string().optional(),
+    blue_ocean_angles: Strings.optional(),
+    ideas: z
+      .array(
+        Loose({
+          id: z.union([z.string(), z.number()]),
+          hook_formula: z.string(),
+          content_pillar: z.string(),
+          shoot_difficulty: z.string(),
+          duration_seconds: z.number(),
+          hook: z.string(),
+          script: z.string(),
+          cta: z.string(),
+          caption: z.string(),
+        })
+      )
+      .min(1),
+  })
+  .passthrough();
+
+// ──────────────────────────────────────────────────────────────────────────
+// /generate/spark-ads
+// ──────────────────────────────────────────────────────────────────────────
+export const SparkAdsSchema = z
+  .object({
+    boost_decision_criteria: z.record(z.any()).optional(),
+    creator_brief: z.record(z.any()).optional(),
+    adaptation_copy: z.record(z.any()).optional(),
+    disclosure: z.record(z.any()).optional(),
+    cta_overlay: z.record(z.any()).optional(),
+    scale_rules: z.record(z.any()).optional(),
+    audience_targeting: z.record(z.any()).optional(),
+  })
+  .passthrough();
+
+// ──────────────────────────────────────────────────────────────────────────
+// /generate/branded-hashtag-challenge
+// ──────────────────────────────────────────────────────────────────────────
+export const BrandedHashtagChallengeSchema = z
+  .object({
+    viability: Loose({
+      score: z.number(),
+      recommend_proceed: z.boolean(),
+      reasoning: z.string(),
+      alternative_if_not: z.string(),
+    }).optional(),
+    hashtag: Loose({
+      tag: z.string(),
+      rationale: z.string(),
+      potential_conflicts: Strings,
+    }).optional(),
+    participation_mechanic: z.record(z.any()).optional(),
+    seed_creators: z.array(z.any()).optional(),
+    discover_page: z.record(z.any()).optional(),
+    sound_strategy: z.record(z.any()).optional(),
+    six_day_timeline: z.array(z.any()).optional(),
+    success_metrics: z.record(z.any()).optional(),
+    compliance: z.record(z.any()).optional(),
+  })
+  .passthrough();
+
+// ──────────────────────────────────────────────────────────────────────────
+// /generate/creative-prompts
+// ──────────────────────────────────────────────────────────────────────────
+const PromptCard = Loose({
+  tool: z.string(),
+  prompt: z.string(),
+  best_for_this_brief: z.string(),
+  expected_iterations_to_winner: z.number(),
+  params: z.string(),
+  negative_prompt: z.string(),
+  shot_breakdown: z.array(z.any()),
+  tweaks_if_first_gen_misses: Strings,
+});
+export const CreativePromptsSchema = z
+  .object({
+    asset_intent_summary: z.string().optional(),
+    policy_warnings: Strings.optional(),
+    static_image_prompts: z.array(PromptCard).optional(),
+    video_prompts: z.array(PromptCard).optional(),
+    preflight_checklist: Strings.optional(),
+  })
+  .passthrough();
+
+// ──────────────────────────────────────────────────────────────────────────
+// OPTIMIZE generators — most are heavily-conditional renderers, so all-optional
+// ──────────────────────────────────────────────────────────────────────────
+
+export const AbTestSchema = z
+  .object({
+    hypothesis: z.string().optional(),
+    primary_metric: z.string().optional(),
+    secondary_metrics: Strings.optional(),
+    variants: z
+      .array(
+        Loose({
+          label: z.string(),
+          single_change_from_control: z.string(),
+          ad_copy: z.string(),
+        })
+      )
+      .min(1),
+    sample_size_per_variant_clicks: z.number().optional(),
+    expected_days_to_significance: z.union([z.string(), z.number()]).optional(),
+    minimum_detectable_lift_pct: z.number().optional(),
+    decision_rules: z.record(z.string()).optional(),
+    failure_modes_to_avoid: Strings.optional(),
+  })
+  .passthrough();
+
+export const AdFatigueSchema = z
+  .object({
+    computed_decay: z.record(z.any()).optional(),
+    fatigue_severity_overall: z.string().optional(),
+    severity_reason: z.string().optional(),
+    signals: z.record(z.any()).optional(),
+    refresh_options: z.record(z.any()).optional(),
+    new_angles_to_test: z.array(z.any()).optional(),
+    kill_threshold: z.string().optional(),
+  })
+  .passthrough();
+
+export const AudienceSchema = z
+  .object({
+    computed_targets: z.record(z.any()).optional(),
+    audience_diagnosis: z.string().optional(),
+    cold_prospecting: z.record(z.any()).optional(),
+    warm_retargeting: z.record(z.any()).optional(),
+    hot_remarketing: z.record(z.any()).optional(),
+    exclusions: z.array(z.any()).optional(),
+    platform_specific_features_to_enable: z.array(z.any()).optional(),
+  })
+  .passthrough();
+
+export const BidStrategySchema = z
+  .object({
+    smart_bidding_readiness: z.record(z.any()).optional(),
+    recommended_strategy: z.string().optional(),
+    reason: z.string().optional(),
+    fallback_strategy_if_data_insufficient: z.string().optional(),
+    learning_phase: z.record(z.any()).optional(),
+    bid_adjustments: z.array(z.any()).optional(),
+    budget_pacing_recommendation: z.string().optional(),
+    early_warning_signs: Strings.optional(),
+    graduation_path: z.record(z.any()).optional(),
+  })
+  .passthrough();
+
+export const BudgetPlannerSchema = z
+  .object({
+    platform_split: z.array(z.any()).optional(),
+    funnel_split_overall: z.array(z.any()).optional(),
+    campaign_breakout: z.array(z.any()).optional(),
+    volume_projection: z.record(z.any()).optional(),
+    break_even: z.record(z.any()).optional(),
+    reserve: z.record(z.any()).optional(),
+    no_go_list: Strings.optional(),
+  })
+  .passthrough();
+
+export const BudgetWasteSchema = z
+  .object({
+    stop_condition: z.string().optional(),
+    pulse: z.record(z.any()).optional(),
+    audit: z.array(z.any()).optional(),
+    top_5_fixes_by_roi: z.array(z.any()).optional(),
+    reallocation_plan: z.string().optional(),
+  })
+  .passthrough();
+
+export const CtrSchema = z
+  .object({
+    computed_metrics: z.record(z.any()).optional(),
+    verdict: z.string().optional(),
+    industry_benchmark_cited: z.string().optional(),
+    diagnosis_summary: z.string().optional(),
+    search_term_signals: z.array(z.any()).optional(),
+    scores: z.record(z.any()).optional(),
+    rewrites: z.array(z.any()).optional(),
+    full_rewritten_version: z.string().optional(),
+    kill_or_iterate: z.string().optional(),
+    kill_or_iterate_reason: z.string().optional(),
+  })
+  .passthrough();
+
+export const KeywordsSchema = z
+  .object({
+    search_terms_analysis: z.record(z.any()).optional(),
+    keywords: z
+      .array(
+        Loose({
+          term: z.string(),
+          match_type: z.string(),
+          intent: z.string(),
+          ad_group_suggestion: z.string(),
+          competition_guess: z.string(),
+        })
+      )
+      .min(1),
+    negative_keywords: z.array(z.union([z.string(), z.record(z.any())])).optional(),
+    ad_group_structure: z.array(z.any()).optional(),
+    long_tail_opportunities: Strings.optional(),
+    competitor_gaps: Strings.optional(),
+    bidding_recommendation: z.record(z.any()).optional(),
+  })
+  .passthrough();
+
+export const LandingPageSchema = z
+  .object({
+    computed_metrics: z.record(z.any()).optional(),
+    overall_grade_pulse: z.record(z.any()).optional(),
+    scores: z.record(z.any()).optional(),
+    fixes: z.array(z.any()).optional(),
+    rewrite_above_the_fold: z.record(z.any()).optional(),
+    biggest_problem: z.string().optional(),
+    biggest_opportunity: z.string().optional(),
+  })
+  .passthrough();
+
+export const QualityScoreSchema = z
+  .object({
+    computed_metrics: z.record(z.any()).optional(),
+    projected_qs: z.record(z.any()).optional(),
+    current_factors: z.record(z.any()).optional(),
+    search_term_signals: z.array(z.any()).optional(),
+    fixes: z.array(z.any()).optional(),
+    improved_headlines: z.array(z.any()).optional(),
+    negative_keywords: Strings.optional(),
+    landing_page_checklist: z.array(z.any()).optional(),
+  })
+  .passthrough();

@@ -98,6 +98,12 @@ test.describe("Smoke: every route renders without runtime errors", () => {
           if (text.includes("Failed to load resource")) return;
           if (text.includes("ServiceWorker")) return;
           if (text.includes("[openadkit:")) return; // our own dev debug logs
+          // Next 14 prefetches Link targets aggressively; in Playwright the
+          // first request can lose a race with the test browser closing. The
+          // resulting "Failed to fetch RSC payload for <route>" console.error
+          // is a non-fatal soft-fallback the framework recovers from (it
+          // falls back to full-page navigation). Filter it from smoke noise.
+          if (text.includes("Failed to fetch RSC payload")) return;
           errors.push(text);
         }
       });

@@ -191,7 +191,9 @@ function Inner() {
           screenshot or copy the ads you want analyzed, then paste below.
         </p>
         <div className="flex gap-2 mb-3">
+          <label htmlFor="competitor-search" className="sr-only">Competitor brand or keyword to search</label>
           <input
+            id="competitor-search"
             className="input-base flex-1"
             placeholder="competitor brand or keyword …"
             value={searchQ}
@@ -228,20 +230,20 @@ function Inner() {
             </div>
           ) : null}
           <div>
-            <label className="label">our product *</label>
-            <input className="input-base" value={input.our_product} onChange={(e) => setField("our_product", e.target.value)} />
+            <label htmlFor="our-product" className="label">our product *</label>
+            <input id="our-product" className="input-base" value={input.our_product} onChange={(e) => setField("our_product", e.target.value)} />
           </div>
           <div>
-            <label className="label">our usp *</label>
-            <textarea rows={2} className="input-base" value={input.our_usp} onChange={(e) => setField("our_usp", e.target.value)} />
+            <label htmlFor="our-usp" className="label">our usp *</label>
+            <textarea id="our-usp" rows={2} className="input-base" value={input.our_usp} onChange={(e) => setField("our_usp", e.target.value)} />
           </div>
           <div>
-            <label className="label">competitor name</label>
-            <input className="input-base" value={input.competitor_name} onChange={(e) => setField("competitor_name", e.target.value)} placeholder="e.g. Headspace" />
+            <label htmlFor="competitor-name" className="label">competitor name</label>
+            <input id="competitor-name" className="input-base" value={input.competitor_name} onChange={(e) => setField("competitor_name", e.target.value)} placeholder="e.g. Headspace" />
           </div>
           <div>
-            <label className="label">target platform</label>
-            <select className="input-base" value={input.platform} onChange={(e) => setField("platform", e.target.value)}>
+            <label htmlFor="target-platform" className="label">target platform</label>
+            <select id="target-platform" className="input-base" value={input.platform} onChange={(e) => setField("platform", e.target.value)}>
               <option>Meta Feed</option>
               <option>Meta Reels</option>
               <option>TikTok In-Feed</option>
@@ -252,18 +254,20 @@ function Inner() {
             </select>
           </div>
           <div>
-            <label className="label">competitor ads · pasted *</label>
+            <label htmlFor="competitor-ads" className="label">competitor ads · pasted *</label>
             <p className="text-[11px] text-ink-muted leading-relaxed mb-1.5">
               <span className="text-live font-medium">Honesty note:</span> the AI has <em>no live access</em> to ad libraries.
               Open the libraries above, copy the ads you want analyzed, paste them here. If you paste a brand name only,
               the AI will refuse rather than invent ads.
             </p>
             <textarea
+              id="competitor-ads"
               rows={8}
               className="input-base font-mono text-xs"
               placeholder={`Paste 1–5 ads exactly as they appear. Include headline, primary text, CTA. Separate multiple ads with --- on its own line.\n\nAd 1:\nHook here…\nBody here…\nCTA: Sign up\n\n---\n\nAd 2:\n…`}
               value={input.competitor_ads_pasted}
               onChange={(e) => setField("competitor_ads_pasted", e.target.value)}
+              aria-required="true"
             />
           </div>
           {error ? (

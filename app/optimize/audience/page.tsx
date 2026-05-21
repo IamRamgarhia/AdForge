@@ -4,6 +4,7 @@ import { GeneratorShell } from "@/components/GeneratorShell";
 import { Section, Pill, Kv } from "@/components/OutputBlocks";
 import { buildAudienceTargetingPrompt, type AudienceTargetingInput } from "@/lib/prompts/audience-targeting";
 import type { GeneratorConfig } from "@/lib/generator-config";
+import { AudienceSchema } from "@/lib/schemas/generators";
 
 const config: GeneratorConfig<AudienceTargetingInput & Record<string, unknown>> = {
   title: "Audience Targeting Plan",
@@ -57,6 +58,7 @@ const config: GeneratorConfig<AudienceTargetingInput & Record<string, unknown>> 
   buildPrompt: (input) => buildAudienceTargetingPrompt(input as unknown as AudienceTargetingInput),
   buildTitle: (i: any) => `Audience · ${i.platform} · ${i.product?.slice(0, 24)}`,
   expectJson: true,
+  schema: AudienceSchema,
   renderJson: (json) => <AudienceOutput json={json} />,
 };
 

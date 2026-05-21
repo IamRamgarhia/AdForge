@@ -5,6 +5,7 @@ import { Section, Pill, Kv } from "@/components/OutputBlocks";
 import { CopyButton } from "@/components/CopyButton";
 import { buildBhcPrompt, type BhcInput } from "@/lib/prompts/tiktok-bhc";
 import type { GeneratorConfig } from "@/lib/generator-config";
+import { BrandedHashtagChallengeSchema } from "@/lib/schemas/generators";
 
 const config: GeneratorConfig<BhcInput & Record<string, unknown>> = {
   title: "TikTok Branded Hashtag Challenge",
@@ -34,6 +35,7 @@ const config: GeneratorConfig<BhcInput & Record<string, unknown>> = {
   buildPrompt: (input) => buildBhcPrompt(input as unknown as BhcInput),
   buildTitle: (i: any) => `BHC · ${i.brand}`,
   expectJson: true,
+  schema: BrandedHashtagChallengeSchema,
   renderJson: (json) => <BhcOutput json={json} />,
 };
 

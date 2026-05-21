@@ -4,6 +4,7 @@ import { GeneratorShell } from "@/components/GeneratorShell";
 import { Section, Pill, Kv } from "@/components/OutputBlocks";
 import { buildAbTestPrompt, type AbTestInput } from "@/lib/prompts/ab-test";
 import type { GeneratorConfig } from "@/lib/generator-config";
+import { AbTestSchema } from "@/lib/schemas/generators";
 
 const config: GeneratorConfig<AbTestInput & Record<string, unknown>> = {
   title: "A/B Test Planner",
@@ -31,6 +32,7 @@ const config: GeneratorConfig<AbTestInput & Record<string, unknown>> = {
   buildPrompt: (input) => buildAbTestPrompt(input as unknown as AbTestInput),
   buildTitle: (i: any) => `A/B · ${i.platform}`,
   expectJson: true,
+  schema: AbTestSchema,
   renderJson: (json) => <AbOutput json={json} />,
 };
 

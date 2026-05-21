@@ -320,9 +320,10 @@ function StepKey({
         </a>
       </p>
       <div className="mt-5">
-        <label className="label flex items-center gap-1.5"><KeyRound size={11} /> api key</label>
+        <label htmlFor="setup-apikey" className="label flex items-center gap-1.5"><KeyRound size={11} /> api key</label>
         <div className="relative">
           <input
+            id="setup-apikey"
             type={showKey ? "text" : "password"}
             value={apiKey}
             onChange={(e) => setApiKey(e.target.value.trim())}
@@ -331,7 +332,7 @@ function StepKey({
             autoComplete="off"
             spellCheck={false}
           />
-          <button type="button" onClick={() => setShowKey(!showKey)} className="absolute right-2 top-1/2 -translate-y-1/2 text-ink-subtle hover:text-ink">
+          <button type="button" onClick={() => setShowKey(!showKey)} className="absolute right-2 top-1/2 -translate-y-1/2 text-ink-subtle hover:text-ink" aria-label={showKey ? "Hide API key" : "Show API key"}>
             {showKey ? <EyeOff size={13} /> : <Eye size={13} />}
           </button>
         </div>
@@ -358,8 +359,9 @@ function StepBrand({
       </p>
       <div className="mt-5 space-y-3">
         <div>
-          <label className="label flex items-center gap-1.5"><Globe size={11} /> website url</label>
+          <label htmlFor="setup-brand-url" className="label flex items-center gap-1.5"><Globe size={11} /> website url</label>
           <input
+            id="setup-brand-url"
             className="input-base"
             value={brandUrl}
             onChange={(e) => setBrandUrl(e.target.value)}
@@ -372,8 +374,8 @@ function StepBrand({
           </p>
         </div>
         <div>
-          <label className="label">brand name (or leave blank to auto-detect)</label>
-          <input className="input-base" value={brandName} onChange={(e) => setBrandName(e.target.value)} placeholder="Acme Co" />
+          <label htmlFor="setup-brand-name" className="label">brand name (or leave blank to auto-detect)</label>
+          <input id="setup-brand-name" className="input-base" value={brandName} onChange={(e) => setBrandName(e.target.value)} placeholder="Acme Co" />
         </div>
         {status && busy ? (
           <div className="border border-live/40 bg-live/5 text-live text-[11px] px-3 py-2 font-mono uppercase tracking-ui-wide flex items-center gap-2">

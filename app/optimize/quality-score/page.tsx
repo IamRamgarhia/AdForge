@@ -5,6 +5,7 @@ import { Section, Pill, Kv } from "@/components/OutputBlocks";
 import { CharBadge } from "@/components/CharBadge";
 import { buildQualityScorePrompt, type QualityScoreInput } from "@/lib/prompts/quality-score";
 import type { GeneratorConfig } from "@/lib/generator-config";
+import { QualityScoreSchema } from "@/lib/schemas/generators";
 
 const config: GeneratorConfig<QualityScoreInput & Record<string, unknown>> = {
   title: "Quality Score Improver",
@@ -89,6 +90,7 @@ const config: GeneratorConfig<QualityScoreInput & Record<string, unknown>> = {
   buildPrompt: (input) => buildQualityScorePrompt(input as unknown as QualityScoreInput),
   buildTitle: (i: any) => `QS · ${i.keyword}`,
   expectJson: true,
+  schema: QualityScoreSchema,
   renderJson: (json) => <QsOutput json={json} />,
 };
 

@@ -4,6 +4,7 @@ import { GeneratorShell } from "@/components/GeneratorShell";
 import { Section, Pill, ScoreBar, Kv } from "@/components/OutputBlocks";
 import { buildFatiguePrompt, type FatigueInput } from "@/lib/prompts/ad-fatigue";
 import type { GeneratorConfig } from "@/lib/generator-config";
+import { AdFatigueSchema } from "@/lib/schemas/generators";
 
 const config: GeneratorConfig<FatigueInput & Record<string, unknown>> = {
   title: "Ad Fatigue Detector",
@@ -69,6 +70,7 @@ const config: GeneratorConfig<FatigueInput & Record<string, unknown>> = {
   buildPrompt: (input) => buildFatiguePrompt(input as unknown as FatigueInput),
   buildTitle: (i: any) => `Fatigue · ${i.platform}`,
   expectJson: true,
+  schema: AdFatigueSchema,
   renderJson: (json) => <FatigueOutput json={json} />,
 };
 

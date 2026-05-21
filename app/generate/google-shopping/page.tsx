@@ -6,6 +6,7 @@ import { CharBadge } from "@/components/CharBadge";
 import { CopyButton } from "@/components/CopyButton";
 import { buildShoppingPrompt, SHOPPING_LIMITS, type ShoppingInput } from "@/lib/prompts/google-shopping";
 import type { GeneratorConfig } from "@/lib/generator-config";
+import { GoogleShoppingSchema } from "@/lib/schemas/generators";
 
 const config: GeneratorConfig<ShoppingInput & Record<string, unknown>> = {
   title: "Google Shopping Optimizer",
@@ -28,6 +29,7 @@ const config: GeneratorConfig<ShoppingInput & Record<string, unknown>> = {
   buildPrompt: (input) => buildShoppingPrompt(input as unknown as ShoppingInput),
   buildTitle: (i: any) => `Shopping · ${i.product_title?.slice(0, 30)}`,
   expectJson: true,
+  schema: GoogleShoppingSchema,
   renderJson: (json) => <ShoppingOutput json={json} />,
 };
 

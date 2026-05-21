@@ -6,6 +6,7 @@ import { CopyButton } from "@/components/CopyButton";
 import { TikTokMockup } from "@/components/AdMockup";
 import { buildTikTokPrompt, type TikTokInput } from "@/lib/prompts/tiktok-ads";
 import type { GeneratorConfig } from "@/lib/generator-config";
+import { TiktokSchema } from "@/lib/schemas/generators";
 
 const config: GeneratorConfig<TikTokInput & Record<string, unknown>> = {
   title: "TikTok — Hooks & UGC",
@@ -32,6 +33,7 @@ const config: GeneratorConfig<TikTokInput & Record<string, unknown>> = {
   buildPrompt: (input) => buildTikTokPrompt(input as unknown as TikTokInput),
   buildTitle: (i: any) => `TikTok · ${i.format} · ${i.product}`,
   expectJson: true,
+  schema: TiktokSchema,
   renderJson: (json) => <TikTokOutput json={json} />,
 };
 

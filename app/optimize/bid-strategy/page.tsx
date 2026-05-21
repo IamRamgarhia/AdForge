@@ -4,6 +4,7 @@ import { GeneratorShell } from "@/components/GeneratorShell";
 import { Section, Pill, Kv } from "@/components/OutputBlocks";
 import { buildBidStrategyPrompt, type BidStrategyInput } from "@/lib/prompts/bid-strategy";
 import type { GeneratorConfig } from "@/lib/generator-config";
+import { BidStrategySchema } from "@/lib/schemas/generators";
 
 const config: GeneratorConfig<BidStrategyInput & Record<string, unknown>> = {
   title: "Bid Strategy Advisor",
@@ -79,6 +80,7 @@ const config: GeneratorConfig<BidStrategyInput & Record<string, unknown>> = {
   buildPrompt: (input) => buildBidStrategyPrompt(input as unknown as BidStrategyInput),
   buildTitle: (i: any) => `Bid · ${i.platform} · ${i.campaign_type_setup}`,
   expectJson: true,
+  schema: BidStrategySchema,
   renderJson: (json) => <BidOutput json={json} />,
 };
 

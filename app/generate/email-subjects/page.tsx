@@ -6,6 +6,7 @@ import { CharBadge } from "@/components/CharBadge";
 import { CopyButton } from "@/components/CopyButton";
 import { buildEmailSubjectsPrompt, EMAIL_SUBJECT_LIMITS, type EmailSubjectInput } from "@/lib/prompts/email-subjects";
 import type { GeneratorConfig } from "@/lib/generator-config";
+import { EmailSubjectsSchema } from "@/lib/schemas/generators";
 
 const config: GeneratorConfig<EmailSubjectInput & Record<string, unknown>> = {
   title: "Email subject lines",
@@ -36,6 +37,7 @@ const config: GeneratorConfig<EmailSubjectInput & Record<string, unknown>> = {
   buildPrompt: (input) => buildEmailSubjectsPrompt(input as unknown as EmailSubjectInput),
   buildTitle: (i: any) => `Email · ${i.campaign_type} · ${i.product_or_topic?.slice(0, 24)}`,
   expectJson: true,
+  schema: EmailSubjectsSchema,
   renderJson: (json) => <EmailOutput json={json} />,
 };
 

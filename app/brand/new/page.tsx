@@ -722,13 +722,14 @@ function Inner() {
                 onChange={(e) => setQuickUrl(e.target.value)}
                 onKeyDown={(e) => { if (e.key === "Enter") quickAddFromUrl(); }}
                 disabled={quickBusy}
+                aria-label="Client website URL or business name"
               />
               <button onClick={quickAddFromUrl} disabled={quickBusy || !quickUrl.trim()} className="btn-primary">
                 {quickBusy ? <Loader2 size={11} className="animate-spin" /> : <Plus size={11} />}
                 {quickBusy ? "extracting" : "extract"}
               </button>
               {quickBusy ? (
-                <button onClick={stopExtraction} className="btn-ghost" title="Cancel the extraction (no charge for partial work)">
+                <button onClick={stopExtraction} className="btn-ghost" title="Cancel the extraction (no charge for partial work)" aria-label="Cancel extraction">
                   <StopCircle size={11} /> stop
                 </button>
               ) : null}
@@ -846,13 +847,14 @@ function Inner() {
                 onChange={(e) => setVisionFile(e.target.files?.[0] ?? null)}
                 disabled={quickBusy}
                 className="text-[11px] font-mono text-ink-muted"
+                aria-label="Upload homepage screenshot for vision extraction"
               />
               <button onClick={quickAddFromVision} disabled={quickBusy || !visionFile} className="btn-primary">
                 {quickBusy ? <Loader2 size={11} className="animate-spin" /> : <ImageIcon size={11} />}
                 {quickBusy ? "reading…" : "extract from image"}
               </button>
               {quickBusy ? (
-                <button onClick={stopExtraction} className="btn-ghost" title="Cancel">
+                <button onClick={stopExtraction} className="btn-ghost" title="Cancel" aria-label="Cancel image extraction">
                   <StopCircle size={11} /> stop
                 </button>
               ) : null}

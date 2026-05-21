@@ -5,6 +5,7 @@ import { Section, Pill } from "@/components/OutputBlocks";
 import { CopyButton } from "@/components/CopyButton";
 import { buildLeadFormPrompt, type LeadFormInput } from "@/lib/prompts/lead-form";
 import type { GeneratorConfig } from "@/lib/generator-config";
+import { LeadFormSchema } from "@/lib/schemas/generators";
 
 const config: GeneratorConfig<LeadFormInput & Record<string, unknown>> = {
   title: "Native Lead Form",
@@ -42,6 +43,7 @@ const config: GeneratorConfig<LeadFormInput & Record<string, unknown>> = {
   buildPrompt: (input) => buildLeadFormPrompt(input as unknown as LeadFormInput),
   buildTitle: (i: any) => `Lead Form · ${i.platform} · ${i.offer?.slice(0, 24)}`,
   expectJson: true,
+  schema: LeadFormSchema,
   renderJson: (json) => <LeadFormOutput json={json} />,
 };
 
