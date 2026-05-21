@@ -31,7 +31,7 @@ INPUT — the ad's promise (what the visitor clicked thinking they'd find):
 
 INPUT — landing page copy:
 """
-${input.landing_copy}
+${(input.landing_copy ?? "").slice(0, 24_000)}
 """
 
 INPUT — performance data:

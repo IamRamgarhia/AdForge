@@ -28,3 +28,24 @@ export function formatTokens(n: number): string {
 export function countChars(s: string | null | undefined): number {
   return (s ?? "").length;
 }
+
+/** Validate an AI-emitted or user-supplied URL before rendering as <a href>.
+ *  Returns the URL only if it's a real http(s) URL — blocks javascript:, data:,
+ *  vbscript:, file:, and other schemes that could exfiltrate keys from
+ *  localStorage if a prompt-injected response slips through. (Audit MEDIUM-1.) */
+export function safeHref(url: unknown): string | null {
+  if (typeof url !== "string" || !url.trim()) return null;
+  const trimmed = url.trim();
+  try {
+    const u = new URL(trimmed);
+    if (u.protocol === "http:" || u.protocol === "https:" || u.protocol === "mailto:" || u.protocol === "tel:") {
+      return trimmed;
+    }
+    return null;
+  } catch {
+    // Relative URLs (no scheme) are also safe — they resolve against the
+    // current origin and can't execute scripts.
+    if (/^[\/.#?]/.test(trimmed) && !trimmed.includes(":")) return trimmed;
+    return null;
+  }
+}

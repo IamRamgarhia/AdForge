@@ -9,10 +9,10 @@ import {
 } from "lucide-react";
 import {
   setActiveProviderId, setProviderKey, setActiveModelId,
-  setActiveBrainId, setOnboarded, markTourSeen,
+  setActiveBrainId, setOnboarded, markTourSeen, addUsage,
 } from "@/lib/settings";
 import { PROVIDERS, type Provider } from "@/lib/providers";
-import { testApiKey, llmCall } from "@/lib/llm";
+import { testApiKey, llmCall, estimateCostUsd } from "@/lib/llm";
 import { emptyBrandBrain, type BrandBrain } from "@/lib/brand-brain";
 import { saveBrain } from "@/lib/storage";
 import { ingestUrl } from "@/lib/url-ingest";
@@ -78,6 +78,11 @@ export default function SetupPage() {
             maxTokens: 3000,
             temperature: 0.4,
           });
+          // Track cost so the StatusBar + Report dashboards reflect this very
+          // first AI call. Audit HIGH-1 found this was previously missing.
+          const cost = estimateCostUsd(res.providerId, res.modelId, res.usage);
+          addUsage(cost, res.usage?.input_tokens ?? 0, res.usage?.output_tokens ?? 0);
+          window.dispatchEvent(new Event("ados:usage"));
           extracted = tryParseJson(res.text);
         }
       }

@@ -31,12 +31,12 @@ INPUT — performance data:
 
 INPUT — Search Terms report (the source of truth for what queries are actually triggering your ads):
 """
-${input.search_terms_report || "(not provided — recommendations will be inference-based, less precise)"}
+${(input.search_terms_report ?? "").slice(0, 20_000) || "(not provided — recommendations will be inference-based, less precise)"}
 """
 
 INPUT — Search Console organic queries (optional, identifies SEO-overlap vs paid-only opportunities):
 """
-${input.search_console_export || "(not provided)"}
+${(input.search_console_export ?? "").slice(0, 20_000) || "(not provided)"}
 """
 
 ${input.search_terms_screenshot ? `IMAGE ATTACHED:

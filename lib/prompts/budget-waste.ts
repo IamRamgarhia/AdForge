@@ -41,10 +41,10 @@ ANTI-VAGUENESS:
 
 INPUT:
 - Platform: ${input.platform}
-- Monthly spend: ${cc} ${input.monthly_spend}
+- Monthly spend: ${cc} ${(input.monthly_spend ?? "").slice(0, 100)}
 - Campaign setup:
 """
-${input.campaign_summary}
+${(input.campaign_summary ?? "").slice(0, 16_000)}
 """
 - Match types in use: ${input.match_types || "not specified"}
 - Negative keyword list: ${input.has_negatives || "not specified"}

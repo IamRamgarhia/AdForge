@@ -48,21 +48,26 @@ YOUR JOB: Echo these fields verbatim in your output AND focus your effort on the
 `
     : "";
 
+  // Hard cap on user-pasted content. URL-ingested content is already capped at
+  // MAX_CHARS=40_000 in lib/url-ingest.ts, but pasted/manual fields had no
+  // limit — a 500KB paste would silently truncate at provider level OR cost
+  // ~$0.40 per call on paid providers. (Audit MEDIUM-2.)
+  const cap = (s: string | undefined, n = 40_000) => (s?.trim() ?? "").slice(0, n);
   return `You are a senior brand strategist + direct-response copywriter with 20 years experience. Your job is to extract a COMPLETE brand intelligence profile from the content below. The user pasted this content trusting you to populate everything you can reasonably deduce — empty fields are a worse outcome than thoughtful inferences.
 
 ${prefilledBlock}${metadataBlock}INPUT — WEBSITE / LANDING CONTENT (body text, after HTML strip):
 """
-${input.website_content?.trim() || "(not provided)"}
+${cap(input.website_content) || "(not provided)"}
 """
 
 INPUT — BUSINESS DESCRIPTION:
-${input.description?.trim() || "(not provided)"}
+${cap(input.description, 8_000) || "(not provided)"}
 
 INPUT — AUDIENCE NOTES:
-${input.audience_notes?.trim() || "(not provided)"}
+${cap(input.audience_notes, 8_000) || "(not provided)"}
 
 INPUT — CUSTOMER REVIEWS / TESTIMONIALS:
-${input.reviews?.trim() || "(not provided)"}
+${cap(input.reviews, 16_000) || "(not provided)"}
 
 ═══════════════════════════════════════════════════════════════
 HOW TO EXTRACT — read carefully, this is the difference between

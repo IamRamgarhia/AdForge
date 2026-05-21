@@ -6,6 +6,7 @@ import { CopyButton } from "@/components/CopyButton";
 import { ExternalLink } from "lucide-react";
 import { buildContentCalendarPrompt, type ContentCalendarInput } from "@/lib/prompts/content-calendar";
 import { IMAGE_TOOLS, VIDEO_TOOLS } from "@/lib/prompts/creative-prompts";
+import { safeHref } from "@/lib/utils";
 import type { GeneratorConfig } from "@/lib/generator-config";
 
 const config: GeneratorConfig<ContentCalendarInput & Record<string, unknown>> = {
@@ -136,7 +137,10 @@ function CalendarOutput({ json }: { json: any }) {
 
 function PostCard({ post }: { post: any }) {
   const tools = (post.recommended_ai_tool?.url ?? "").includes("video") || /runway|pika|luma|sora|kling|heygen|synthesia|captions|descript|canva.*video|canva\.com\/magic-video/i.test(post.recommended_ai_tool?.url ?? "") ? VIDEO_TOOLS : IMAGE_TOOLS;
-  const toolUrl = post.recommended_ai_tool?.url || tools.find((t) => t.name.toLowerCase().includes((post.recommended_ai_tool?.name ?? "").toLowerCase().split(" ")[0]))?.url;
+  // safeHref blocks javascript: / data: / vbscript: schemes that a
+  // prompt-injected page could trick the AI into emitting. AI URLs cannot
+  // be trusted as <a href> without this check. (Audit MEDIUM-1.)
+  const toolUrl = safeHref(post.recommended_ai_tool?.url) || tools.find((t) => t.name.toLowerCase().includes((post.recommended_ai_tool?.name ?? "").toLowerCase().split(" ")[0]))?.url;
   return (
     <div className="border border-base-700 bg-base-900/30 p-3 space-y-2">
       <div className="flex items-center gap-2 flex-wrap">

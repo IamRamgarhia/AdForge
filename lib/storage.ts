@@ -137,8 +137,13 @@ export async function listBrains(opts?: { include_deleted?: boolean }): Promise<
 }
 
 export async function getBrain(id: string): Promise<BrandBrain | undefined> {
+  // Match listBrains semantics: soft-deleted rows must not appear as live.
+  // Multi-tab race + snapshot restore can introduce records with deleted_at
+  // set; without this filter, callers that look up via getActiveBrainId()
+  // would run tools against a "dead" brain. (Audit HIGH-2.)
   const row = await db().brains.get(id);
-  return row ? normalizeBrandBrain(row) : undefined;
+  if (!row || (row as any).deleted_at) return undefined;
+  return normalizeBrandBrain(row);
 }
 
 export async function saveAd(ad: GeneratedAd): Promise<void> {

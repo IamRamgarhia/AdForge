@@ -12,7 +12,7 @@ const NEVER_INTERCEPT_HOSTS = [
   // LLM providers (vision + text)
   "anthropic.com",
   "openai.com",
-  "googleapis.com",        // Gemini lives at generativelanguage.googleapis.com
+  "generativelanguage.googleapis.com",  // Gemini specifically — not all of *.googleapis.com (Audit MEDIUM-3)
   "groq.com",
   "cerebras.ai",
   "together.xyz",
