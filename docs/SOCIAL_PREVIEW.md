@@ -19,7 +19,7 @@ This file documents what to make + how to upload.
 Mirror the `docs/banner.svg` design (already in this repo) but exported as PNG at 1280×640. Specifically:
 
 - **Brand mark**: 80×80 saffron `#ffb020` square with italic serif "A" in `#08080a`
-- **Wordmark**: "AdForge" in Instrument Serif / Georgia italic, ~84 px, color `#e7e7ea`
+- **Wordmark**: "OpenAdKit" in Instrument Serif / Georgia italic, ~84 px, color `#e7e7ea`
 - **Tagline (one line)**: "Open-source AI ad ops cockpit · every platform · BYOK · zero subscriptions" — `#e7e7ea`, 22 px, semibold
 - **Feature row**: `● 17 generators · ● 11 optimizers · ● 9 AI providers · ● browser-only · ● MIT · ● $0/month`
 - **Bottom credit**: small mono caps — "BUILT BY DICECODES · DICECODES.COM"

@@ -1,6 +1,6 @@
 @echo off
-REM AdForge start — opens the launcher control panel in your browser.
-REM From the launcher you click "Start AdForge" and watch progress.
+REM OpenAdKit start — opens the launcher control panel in your browser.
+REM From the launcher you click "Start OpenAdKit" and watch progress.
 
 setlocal EnableDelayedExpansion
 cd /d "%~dp0"
@@ -23,12 +23,12 @@ if exist .env.local (
 
 echo.
 echo ==================================================
-echo  Opening AdForge launcher...
+echo  Opening OpenAdKit launcher...
 echo ==================================================
 echo.
 echo  Launcher (control panel): http://127.0.0.1:!SYNC_PORT!/
 echo.
-echo  In the launcher, click "Start AdForge" to launch the web app.
+echo  In the launcher, click "Start OpenAdKit" to launch the web app.
 echo  Press Ctrl+C in this window or run stop.bat to shut down.
 echo.
 

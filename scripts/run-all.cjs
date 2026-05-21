@@ -42,15 +42,15 @@ const SYNC_PORT = process.env.ADFORGE_SYNC_PORT || "3006";
 const isWin = process.platform === "win32";
 const npx = isWin ? "npx.cmd" : "npx";
 
-console.log(`[adforge] starting local-sync sidecar on http://127.0.0.1:${SYNC_PORT}`);
+console.log(`[openadkit] starting local-sync sidecar on http://127.0.0.1:${SYNC_PORT}`);
 const sync = spawn(process.execPath, [path.join(__dirname, "local-sync.cjs")], {
   cwd: PROJECT_ROOT,
   stdio: ["ignore", "inherit", "inherit"],
   env: { ...process.env, ADFORGE_SYNC_PORT: SYNC_PORT },
 });
 
-console.log(`[adforge] starting Next.js dev server on http://localhost:${PORT}`);
-console.log(`[adforge] try also  http://adforge.localhost:${PORT}  — works in all modern browsers, zero setup`);
+console.log(`[openadkit] starting Next.js dev server on http://localhost:${PORT}`);
+console.log(`[openadkit] try also  http://openadkit.localhost:${PORT}  — works in all modern browsers, zero setup`);
 const next = spawn(npx, ["next", "dev", "-p", PORT], {
   cwd: PROJECT_ROOT,
   stdio: ["ignore", "inherit", "inherit"],
@@ -59,7 +59,7 @@ const next = spawn(npx, ["next", "dev", "-p", PORT], {
 });
 
 function shutdown(signal) {
-  console.log(`\n[adforge] received ${signal} — stopping all processes`);
+  console.log(`\n[openadkit] received ${signal} — stopping all processes`);
   try { sync.kill(); } catch {}
   try { next.kill(); } catch {}
   setTimeout(() => process.exit(0), 600);
@@ -69,10 +69,10 @@ process.on("SIGINT", () => shutdown("SIGINT"));
 process.on("SIGTERM", () => shutdown("SIGTERM"));
 
 sync.on("exit", (code) => {
-  console.log(`[adforge] local-sync exited with code ${code}`);
+  console.log(`[openadkit] local-sync exited with code ${code}`);
 });
 next.on("exit", (code) => {
-  console.log(`[adforge] next dev exited with code ${code}`);
+  console.log(`[openadkit] next dev exited with code ${code}`);
   try { sync.kill(); } catch {}
   process.exit(code ?? 0);
 });

@@ -299,7 +299,7 @@ function Inner<I extends Record<string, unknown>>({ config, scope }: Props<I>) {
                   <div className="text-[13px] text-ink">
                     <div className="font-medium text-live">Output will be generic without a client.</div>
                     <p className="text-ink-muted text-[12px] mt-1 leading-relaxed">
-                      Every AdForge tool reads the active client's brand brain — voice, audience, USP, content pillars. Without one, the AI defaults to neutral DR copy. Takes ~10 seconds to set up by pasting a website URL.
+                      Every OpenAdKit tool reads the active client's brand brain — voice, audience, USP, content pillars. Without one, the AI defaults to neutral DR copy. Takes ~10 seconds to set up by pasting a website URL.
                     </p>
                   </div>
                 </div>

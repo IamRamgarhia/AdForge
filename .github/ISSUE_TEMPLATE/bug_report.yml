@@ -1,11 +1,11 @@
 name: Bug report
-description: Something AdForge does wrong or unexpectedly.
+description: Something OpenAdKit does wrong or unexpectedly.
 labels: ["bug"]
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for the report. Please remember AdForge runs entirely in your browser — there's no server to check. Most bugs reproduce locally.
+        Thanks for the report. Please remember OpenAdKit runs entirely in your browser — there's no server to check. Most bugs reproduce locally.
 
         **Do NOT paste your Claude API key, any other secrets, or your real ad account data here.**
   - type: textarea

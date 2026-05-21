@@ -1,5 +1,5 @@
 /**
- * The AdForge framework stack — applied to EVERY generation via the system prompt.
+ * The OpenAdKit framework stack — applied to EVERY generation via the system prompt.
  *
  * Three-layer playbook backed by:
  *  - Eugene Schwartz, "Breakthrough Advertising" (awareness ladder)

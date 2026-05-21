@@ -3,7 +3,7 @@ import { PLATFORM_HUBS } from "@/lib/platform-hubs";
 import { CONCEPTS } from "@/lib/learn-content";
 import { COURSES } from "@/lib/courses";
 
-const BASE = "https://adforge.dicecodes.com";
+const BASE = "https://openadkit.dicecodes.com";
 
 // Surface only the public, evergreen routes to search engines. Gated app
 // routes (generators, optimizers, settings) sit behind ApiKeyGate and produce

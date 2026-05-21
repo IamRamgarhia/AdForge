@@ -37,7 +37,7 @@ RULES:
 - Recommend with reasons that reference THIS BRAND specifically. No generic "you should run Facebook ads."
 - If the brand is B2B, do not recommend TikTok unless their ICP genuinely skews young/cultural.
 - If budget context is unclear, ask for it AS A POPUP NOTE inside the JSON (field: "open_questions").
-- Tie every campaign to a specific generator in AdForge (use these URLs: /generate/google, /generate/meta, /generate/tiktok, /generate/linkedin, /generate/content-calendar, /launch-guide, /optimize/keywords, /optimize/audience).
+- Tie every campaign to a specific generator in OpenAdKit (use these URLs: /generate/google, /generate/meta, /generate/tiktok, /generate/linkedin, /generate/content-calendar, /launch-guide, /optimize/keywords, /optimize/audience).
 
 Return ONLY valid JSON:
 {

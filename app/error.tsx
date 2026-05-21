@@ -9,7 +9,7 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
 
   useEffect(() => {
     // Surface to console for devtools / launcher log capture. Never sent anywhere.
-    console.error("[adforge:error-boundary]", error);
+    console.error("[openadkit:error-boundary]", error);
   }, [error]);
 
   function openGitHubIssue() {

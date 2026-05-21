@@ -27,11 +27,11 @@ const display = Instrument_Serif({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://adforge.dicecodes.com"),
-  title: "AdForge · open-source AI ad ops",
+  metadataBase: new URL("https://openadkit.dicecodes.com"),
+  title: "OpenAdKit · open source AI marketing tool",
   description:
-    "Browser-only, BYOK AI ad operating system. Every ad platform, every AI provider, zero subscriptions. Built by Dicecodes.",
-  applicationName: "AdForge",
+    "OpenAdKit is the open source AI marketing tool. Every ad platform, every AI provider (BYOK), runs in your browser, zero subscriptions. Built by Dicecodes.",
+  applicationName: "OpenAdKit",
   manifest: "/manifest.webmanifest",
   icons: {
     icon: [
@@ -41,18 +41,18 @@ export const metadata: Metadata = {
     apple: "/icon.svg",
   },
   openGraph: {
-    title: "AdForge · open-source AI ad ops",
+    title: "OpenAdKit · open source AI marketing tool",
     description:
-      "Browser-only, BYOK AI ad operating system. Every ad platform, every AI provider, zero subscriptions.",
+      "OpenAdKit is the open source AI marketing tool. Every ad platform, every AI provider (BYOK), runs in your browser, zero subscriptions.",
     url: "/",
-    siteName: "AdForge",
+    siteName: "OpenAdKit",
     type: "website",
     images: ["/icon.svg"],
   },
   twitter: {
     card: "summary_large_image",
-    title: "AdForge · open-source AI ad ops",
-    description: "Browser-only, BYOK AI ad operating system.",
+    title: "OpenAdKit · open source AI marketing tool",
+    description: "Open source AI marketing tool. Every ad platform, every AI provider (BYOK), browser-only.",
     images: ["/icon.svg"],
   },
 };

@@ -101,7 +101,7 @@ function BrandInner() {
       <PageHeader
         scope="brand"
         title="Clients"
-        subtitle="Your saved brand brains. Click a card to activate it — every tool across AdForge auto-uses the active client's voice, audience, products, and pillars."
+        subtitle="Your saved brand brains. Click a card to activate it — every tool across OpenAdKit auto-uses the active client's voice, audience, products, and pillars."
         actions={
           <div className="flex gap-2">
             <input
@@ -132,7 +132,7 @@ function BrandInner() {
           <div className="text-[10px] font-mono uppercase tracking-ui-mega text-live mb-2">no clients yet</div>
           <h2 className="font-display italic text-3xl text-ink leading-tight mb-2">Add your first client to unlock every tool.</h2>
           <p className="text-sm text-ink-muted max-w-xl mx-auto leading-relaxed mb-5">
-            AdForge's brand brain is what makes every output sound like <em>this</em> client — not generic AI copy. Paste a website URL, search Google by name, or start from an industry template. AI extracts 90% of the intelligence in ~10 seconds; you cross-check and approve.
+            OpenAdKit's brand brain is what makes every output sound like <em>this</em> client — not generic AI copy. Paste a website URL, search Google by name, or start from an industry template. AI extracts 90% of the intelligence in ~10 seconds; you cross-check and approve.
           </p>
           <Link href="/brand/new" className="btn-primary text-base">
             <Plus size={14} /> Add your first client

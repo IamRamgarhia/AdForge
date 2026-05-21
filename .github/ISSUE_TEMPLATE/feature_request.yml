@@ -41,7 +41,7 @@ body:
     id: scope
     attributes:
       label: Scope check — would this require a NEW runtime API?
-      description: AdForge only ever calls your chosen LLM provider (Claude / OpenAI / Gemini / Groq / etc.) + Jina Reader for brand intake. If your idea needs Google Ads API / Meta API / analytics / database, it's out of scope for the core product (but maybe a fork).
+      description: OpenAdKit only ever calls your chosen LLM provider (Claude / OpenAI / Gemini / Groq / etc.) + Jina Reader for brand intake. If your idea needs Google Ads API / Meta API / analytics / database, it's out of scope for the core product (but maybe a fork).
     validations:
       required: true
   - type: textarea

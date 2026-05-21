@@ -1,6 +1,6 @@
 # scripts/ — dev-time tools (optional)
 
-These run on the maintainer's machine. They are not part of the AdForge runtime.
+These run on the maintainer's machine. They are not part of the OpenAdKit runtime.
 The web app stays 100% browser-only.
 
 ## `refresh_knowledge.py`

@@ -197,7 +197,7 @@ export async function pushSnapshotNow(): Promise<{ ok: boolean; bytes?: number; 
     // Use the cross-tab lock when available so concurrent pushes from two tabs
     // serialize on the sidecar. Falls back to in-tab guard on older browsers.
     if (isBrowser() && (navigator as any).locks?.request) {
-      return (navigator as any).locks.request("adforge:snapshot-push", { mode: "exclusive" }, runPush);
+      return (navigator as any).locks.request("openadkit:snapshot-push", { mode: "exclusive" }, runPush);
     }
     return runPush();
   })();

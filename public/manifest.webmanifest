@@ -1,11 +1,11 @@
 {
-  "name": "AdForge — open-source AI ad ops",
-  "short_name": "AdForge",
+  "name": "OpenAdKit — open source AI marketing tool",
+  "short_name": "OpenAdKit",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#08080a",
   "theme_color": "#08080a",
-  "description": "Browser-only, BYOK AI ad operating system. Built by Dicecodes.",
+  "description": "Open source AI marketing tool. Every ad platform, every AI provider (BYOK), browser-only. Built by Dicecodes.",
   "icons": [
     {
       "src": "/icon.svg",

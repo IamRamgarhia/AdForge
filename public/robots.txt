@@ -1,4 +1,4 @@
-# AdForge — open-source AI ad ops cockpit
+# OpenAdKit — open-source AI ad ops cockpit
 # Gated app routes redirect to /setup before they render anything useful, so
 # letting crawlers index them produces low-value pages. Surface only the
 # evergreen pages (landing, about, benchmarks, platform hubs, learn content)
@@ -27,4 +27,4 @@ Disallow: /report
 Disallow: /strategy
 Disallow: /campaigns
 
-Sitemap: https://adforge.dicecodes.com/sitemap.xml
+Sitemap: https://openadkit.dicecodes.com/sitemap.xml

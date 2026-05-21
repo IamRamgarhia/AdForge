@@ -132,14 +132,14 @@ export function Sidebar() {
     >
       {/* Brand block */}
       <div className="flex items-center gap-2.5 px-4 py-5 border-b border-base-700/60">
-        <Link href="/" className="flex items-center gap-2.5 group" aria-label="AdForge dashboard">
+        <Link href="/" className="flex items-center gap-2.5 group" aria-label="OpenAdKit dashboard">
           <div className="relative h-9 w-9 grid place-items-center">
             <div className="absolute inset-0 bg-live rounded-sm" />
             <div className="absolute inset-0 bg-live/40 rounded-sm blur-md group-hover:blur-lg transition-all" />
             <span className="relative text-base-950 font-bold font-display italic text-xl leading-none">A</span>
           </div>
           <div className="leading-tight">
-            <div className="font-display italic text-2xl text-ink group-hover:text-live transition-colors">AdForge</div>
+            <div className="font-display italic text-2xl text-ink group-hover:text-live transition-colors">OpenAdKit</div>
             <div className="text-[10px] text-ink-subtle font-mono uppercase tracking-ui-wide">ai ads · byok · local</div>
           </div>
         </Link>

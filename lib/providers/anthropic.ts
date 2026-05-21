@@ -12,7 +12,7 @@ function headers(apiKey: string): HeadersInit {
   };
 }
 
-/** Translate AdForge's neutral LLMMessage[] into Anthropic's wire format,
+/** Translate OpenAdKit's neutral LLMMessage[] into Anthropic's wire format,
  *  handling both plain text and multimodal (text + image) content. */
 function toAnthropicMessages(messages: LLMMessage[]) {
   return messages.map((m) => {
@@ -147,7 +147,7 @@ export const anthropic: Provider = {
   id: "anthropic",
   name: "Anthropic Claude",
   category: "paid",
-  description: "The model AdForge was originally built for. Strongest at long-context reasoning + safety. No free tier; pay-per-use.",
+  description: "The model OpenAdKit was originally built for. Strongest at long-context reasoning + safety. No free tier; pay-per-use.",
   get_key_url: "https://console.anthropic.com/settings/keys",
   default_model: "claude-sonnet-4-6",
   supports_vision: true,

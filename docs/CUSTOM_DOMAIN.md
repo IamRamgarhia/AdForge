@@ -1,6 +1,6 @@
-# Custom local domain for AdForge
+# Custom local domain for OpenAdKit
 
-Want `http://adforge.local:3005` instead of `http://localhost:3005`? You have three options, ranked easiest first.
+Want `http://openadkit.local:3005` instead of `http://localhost:3005`? You have three options, ranked easiest first.
 
 ---
 
@@ -11,7 +11,7 @@ Want `http://adforge.local:3005` instead of `http://localhost:3005`? You have th
 So you can open these RIGHT NOW with no setup:
 
 ```
-http://adforge.localhost:3005/
+http://openadkit.localhost:3005/
 http://acme.localhost:3005/
 http://anything-you-want.localhost:3005/
 ```
@@ -27,8 +27,8 @@ This is what most people want.
 
 ## Option 2 · Hosts-file entry · pretty URL with no port
 
-Want `http://adforge.local/` (no port at all)? You need two things:
-1. **A hosts-file entry** mapping `adforge.local` → `127.0.0.1`
+Want `http://openadkit.local/` (no port at all)? You need two things:
+1. **A hosts-file entry** mapping `openadkit.local` → `127.0.0.1`
 2. **The web app running on port 80** (browser's default for HTTP)
 
 Port 80 needs root/admin privileges to bind. So this requires admin rights, every time you start.
@@ -47,10 +47,10 @@ sudo bash scripts/set-domain.sh
 
 This adds one line to your hosts file:
 ```
-127.0.0.1   adforge.local
+127.0.0.1   openadkit.local
 ```
 
-### Run AdForge on port 80
+### Run OpenAdKit on port 80
 
 ```bash
 # .env.local
@@ -61,7 +61,7 @@ Then start with admin/sudo:
 - Windows: right-click `start.bat` → Run as administrator
 - Mac/Linux: `sudo bash start.sh`
 
-Open `http://adforge.local/` and you're in.
+Open `http://openadkit.local/` and you're in.
 
 **Pros:** clean URL, no port shown
 **Cons:** needs admin to start every time (port 80 is privileged); hosts file is global to your machine; one entry per app
@@ -71,11 +71,11 @@ Open `http://adforge.local/` and you're in.
 **Windows:**
 1. Right-click Notepad → "Run as administrator"
 2. Open `C:\Windows\System32\drivers\etc\hosts`
-3. Delete the line containing `adforge.local`
+3. Delete the line containing `openadkit.local`
 
 **Mac / Linux:**
 ```bash
-sudo sed -i.bak '/adforge\.local/d' /etc/hosts
+sudo sed -i.bak '/openadkit\.local/d' /etc/hosts
 ```
 
 ---
@@ -86,12 +86,12 @@ If you already run a local reverse proxy:
 
 ```
 # Caddyfile
-adforge.local {
+openadkit.local {
   reverse_proxy localhost:3005
 }
 ```
 
-Then `caddy run` from this folder, open `https://adforge.local/` (Caddy auto-issues a local cert). Same pattern with nginx.
+Then `caddy run` from this folder, open `https://openadkit.local/` (Caddy auto-issues a local cert). Same pattern with nginx.
 
 This is overkill for most people but lovely if you already use a local reverse proxy for other projects.
 
@@ -99,7 +99,7 @@ This is overkill for most people but lovely if you already use a local reverse p
 
 ## Recommendation
 
-- **Just starting?** Use `adforge.localhost:3005`. Done.
+- **Just starting?** Use `openadkit.localhost:3005`. Done.
 - **Want it pretty for a demo or daily use?** Hosts entry + port 80.
 - **Run lots of local projects?** Set up Caddy once, route everything.
 
@@ -107,4 +107,4 @@ This is overkill for most people but lovely if you already use a local reverse p
 
 ## What about HTTPS?
 
-AdForge's runtime doesn't need HTTPS — everything runs locally and the API keys are localStorage-only, never sent over the network except to your chosen LLM provider (which IS HTTPS). For a polished demo, Caddy (option 3) gives you trusted local HTTPS automatically.
+OpenAdKit's runtime doesn't need HTTPS — everything runs locally and the API keys are localStorage-only, never sent over the network except to your chosen LLM provider (which IS HTTPS). For a polished demo, Caddy (option 3) gives you trusted local HTTPS automatically.

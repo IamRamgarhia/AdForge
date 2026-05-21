@@ -61,7 +61,7 @@ function sidecarOrigin(): string {
   // 3006). The browser app is on a different port (3005), so we hit
   // http://127.0.0.1:3006 directly. CORS is allowed by the sidecar.
   // We can't read env vars in the browser; default to 3006 and trust the
-  // sidecar to be where AdForge launcher put it.
+  // sidecar to be where OpenAdKit launcher put it.
   return "http://127.0.0.1:3006";
 }
 
@@ -85,7 +85,7 @@ async function trySidecar(target: string, signal?: AbortSignal): Promise<IngestO
           ok: false,
           recoverable: true,
           message:
-            "Sidecar is outdated (missing /ingest endpoint). Click 🧹 Clean rebuild in the launcher, OR close & relaunch via AdForge.bat / AdForge.command, to pick up new code.",
+            "Sidecar is outdated (missing /ingest endpoint). Click 🧹 Clean rebuild in the launcher, OR close & relaunch via OpenAdKit.bat / OpenAdKit.command, to pick up new code.",
         };
       }
     }
@@ -203,7 +203,7 @@ function dbg(stage: string, payload?: unknown): void {
   if (typeof window === "undefined") return;
   if (process.env.NODE_ENV === "production") return;
   // eslint-disable-next-line no-console
-  console.debug("[adforge:url-ingest]", stage, payload ?? "");
+  console.debug("[openadkit:url-ingest]", stage, payload ?? "");
 }
 
 export async function ingestUrl(rawUrl: string, signal?: AbortSignal): Promise<IngestOutcome> {

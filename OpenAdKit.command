@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# AdForge desktop launcher (macOS / Linux).
+# OpenAdKit desktop launcher (macOS / Linux).
 #
-# Same behavior as AdForge.bat: detects port conflicts with other AdForge
+# Same behavior as OpenAdKit.bat: detects port conflicts with other OpenAdKit
 # installs (or unrelated processes) and auto-shifts to a free port pair.
 # First run installs deps + writes default .env.local + creates Desktop
 # shortcut. Subsequent runs just open the launcher.
@@ -13,7 +13,7 @@ cd "$(dirname "$0")"
 if ! command -v node >/dev/null 2>&1; then
   echo
   echo "[ERROR] Node.js is not installed."
-  echo "  Install Node 20+ from https://nodejs.org/en/download then run AdForge again."
+  echo "  Install Node 20+ from https://nodejs.org/en/download then run OpenAdKit again."
   echo
   read -p "Press enter to exit…" _ || true
   exit 1
@@ -38,22 +38,22 @@ mkdir -p data
 # 4. Desktop shortcut on first run
 if [ -d "$HOME/Desktop" ]; then
   if [ "$(uname)" = "Darwin" ]; then
-    if [ ! -e "$HOME/Desktop/AdForge.command" ]; then
-      cp -f AdForge.command "$HOME/Desktop/AdForge.command" 2>/dev/null && \
-        chmod +x "$HOME/Desktop/AdForge.command" 2>/dev/null
+    if [ ! -e "$HOME/Desktop/OpenAdKit.command" ]; then
+      cp -f OpenAdKit.command "$HOME/Desktop/OpenAdKit.command" 2>/dev/null && \
+        chmod +x "$HOME/Desktop/OpenAdKit.command" 2>/dev/null
     fi
   else
-    if [ ! -e "$HOME/Desktop/AdForge.desktop" ]; then
-      cat > "$HOME/Desktop/AdForge.desktop" <<DESK
+    if [ ! -e "$HOME/Desktop/OpenAdKit.desktop" ]; then
+      cat > "$HOME/Desktop/OpenAdKit.desktop" <<DESK
 [Desktop Entry]
 Type=Application
-Name=AdForge
+Name=OpenAdKit
 Comment=Local AI ad operations cockpit
-Exec=bash $(pwd)/AdForge.command
+Exec=bash $(pwd)/OpenAdKit.command
 Terminal=true
 Categories=Office;Development;
 DESK
-      chmod +x "$HOME/Desktop/AdForge.desktop" 2>/dev/null
+      chmod +x "$HOME/Desktop/OpenAdKit.desktop" 2>/dev/null
     fi
   fi
 fi
@@ -104,7 +104,7 @@ fi
 
 if [ "$ACTION" = "shifted" ]; then
   echo
-  echo " Default ports were taken by another AdForge install or process."
+  echo " Default ports were taken by another OpenAdKit install or process."
   echo " This install will use:  web=$WEB_PORT  sync=$SYNC_PORT"
   echo " Saved to .env.local so future launches reuse these."
   echo

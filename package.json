@@ -1,8 +1,8 @@
 {
-  "name": "adforge",
+  "name": "openadkit",
   "version": "0.1.0",
   "private": true,
-  "description": "AdForge — open-source AI ad ops cockpit. Every ad platform, every AI provider (BYOK), zero subscriptions. Built by Dicecodes.",
+  "description": "OpenAdKit — open source AI marketing tool. Every ad platform, every AI provider (BYOK), runs in your browser, zero subscriptions. Built by Dicecodes.",
   "license": "MIT",
   "homepage": "https://github.com/IamRamgarhia/AdForge",
   "repository": {

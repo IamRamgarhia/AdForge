@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>AdForge · Launcher</title>
+<title>OpenAdKit · Launcher</title>
 <style>
   :root {
     --bg: #08080a; --panel: #101013; --panel2: #16161b;
@@ -82,7 +82,7 @@
   <header>
     <div class="logo">A</div>
     <div class="brand">
-      <h1>AdForge</h1>
+      <h1>OpenAdKit</h1>
       <small>Control panel · by Dicecodes</small>
     </div>
     <div class="scope" id="scope">~/launcher</div>
@@ -107,7 +107,7 @@
   <!-- Update progress modal — covers the page while git pull + npm install run. -->
   <div id="update-progress" style="display:none;position:fixed;inset:0;z-index:50;background:rgba(8,8,10,0.92);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:24px">
     <div style="max-width:680px;width:100%;background:#101013;border:1px solid #ffb020;padding:20px">
-      <div style="font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-size:24px;color:#e7e7ea;margin-bottom:6px">Updating AdForge…</div>
+      <div style="font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-size:24px;color:#e7e7ea;margin-bottom:6px">Updating OpenAdKit…</div>
       <p id="update-step" style="margin:0 0 14px;font-size:13px;color:#9a9aa3">Stopping web app…</p>
       <pre id="update-log" style="font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.5;color:#9a9aa3;background:#0a0a0d;border:1px solid #1c1c22;padding:10px;max-height:50vh;overflow:auto;white-space:pre-wrap;margin:0"></pre>
       <div id="update-done-actions" style="display:none;margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
@@ -129,8 +129,8 @@
       <div class="progress-bar" id="progress-bar"></div>
     </div>
     <div class="btns">
-      <button id="btn-start" class="primary">▶ Start AdForge</button>
-      <button id="btn-open" class="btn" style="display:none">↗ Open AdForge</button>
+      <button id="btn-start" class="primary">▶ Start OpenAdKit</button>
+      <button id="btn-open" class="btn" style="display:none">↗ Open OpenAdKit</button>
       <button id="btn-stop" class="danger" style="display:none">■ Stop</button>
       <button id="btn-restart" style="display:none">⟳ Restart</button>
     </div>
@@ -177,7 +177,7 @@
   </div>
 
   <footer>
-    AdForge · MIT · <a href="https://dicecodes.com" target="_blank">Built by Dicecodes</a> · <a href="https://github.com/IamRamgarhia/AdForge" target="_blank">GitHub</a>
+    OpenAdKit · MIT · <a href="https://dicecodes.com" target="_blank">Built by Dicecodes</a> · <a href="https://github.com/IamRamgarhia/AdForge" target="_blank">GitHub</a>
   </footer>
 </div>
 
@@ -228,7 +228,7 @@
   function renderUrls(port) {
     urlList.innerHTML = `
       <a href="http://localhost:${port}/" target="_blank">http://localhost:${port}/ <small>plain localhost</small></a>
-      <a href="http://adforge.localhost:${port}/" target="_blank">http://adforge.localhost:${port}/ <small>nice subdomain · zero setup</small></a>
+      <a href="http://openadkit.localhost:${port}/" target="_blank">http://openadkit.localhost:${port}/ <small>nice subdomain · zero setup</small></a>
       <a href="http://127.0.0.1:${port}/" target="_blank">http://127.0.0.1:${port}/ <small>IP</small></a>
     `;
   }
@@ -241,7 +241,7 @@
     const trouble = s.web === "down" || s.web === "stopping" || (s.web === "starting" && Date.now() - progressStart > 25000);
     troubleRow.style.display = trouble ? "flex" : "none";
     if (s.web === "up") {
-      label.textContent = "AdForge is running";
+      label.textContent = "OpenAdKit is running";
       progressWrap.style.display = "none";
       btnStart.style.display = "none";
       btnOpen.style.display = "inline-flex";
@@ -253,7 +253,7 @@
     } else if (s.web === "starting") {
       const elapsed = Date.now() - progressStart;
       const pct = Math.min(95, (elapsed / 12000) * 100);
-      label.textContent = "Starting AdForge…";
+      label.textContent = "Starting OpenAdKit…";
       progressWrap.style.display = "block";
       progressBar.style.width = pct + "%";
       btnStart.style.display = "none";
@@ -270,7 +270,7 @@
       btnStop.style.display = "inline-flex";
       btnStop.disabled = true;
     } else {
-      label.textContent = "AdForge is stopped";
+      label.textContent = "OpenAdKit is stopped";
       progressWrap.style.display = "none";
       btnStart.style.display = "inline-flex";
       btnStart.disabled = false;
@@ -286,7 +286,7 @@
       const s = await api("GET", "/status");
       applyStatus(s);
     } catch (e) {
-      label.textContent = "Sidecar unreachable — relaunch AdForge.bat / AdForge.command";
+      label.textContent = "Sidecar unreachable — relaunch OpenAdKit.bat / OpenAdKit.command";
       dot.className = "dot down";
       troubleRow.style.display = "flex";
     }
@@ -333,7 +333,7 @@
     try {
       const r = await api("POST", "/web/start");
       if (!r.ok) showToast(r.error || "Couldn't start");
-      else showToast("Starting AdForge…");
+      else showToast("Starting OpenAdKit…");
     } catch (e) {
       showToast("Couldn't reach the sidecar");
     }
@@ -458,7 +458,7 @@
     updateCard.style.display = "none";
     // Persist dismissal for the current sha so the banner doesn't return on
     // every page load. Cleared the next time a newer commit appears.
-    try { sessionStorage.setItem("adforge:update_dismissed_sha", lastLatestSha || ""); } catch {}
+    try { sessionStorage.setItem("openadkit:update_dismissed_sha", lastLatestSha || ""); } catch {}
   });
   btnUpdateReload.addEventListener("click", () => { location.reload(); });
   btnUpdateClose.addEventListener("click", () => { updateProgress.style.display = "none"; });
@@ -472,7 +472,7 @@
       if (r?.status !== "available") return;
       // Honor a session-scoped "later" dismissal so the banner doesn't pester
       // users who already saw it this session for the same incoming sha.
-      const dismissed = sessionStorage.getItem("adforge:update_dismissed_sha");
+      const dismissed = sessionStorage.getItem("openadkit:update_dismissed_sha");
       if (dismissed && dismissed === lastLatestSha) return;
       // Render banner with the data we already have — saves a second fetch.
       const shortNew = lastLatestSha.slice(0, 7);
@@ -499,7 +499,7 @@
     try {
       const r = await api("POST", "/config", { PORT, ADFORGE_SYNC_PORT: SYNC_PORT });
       if (r.ok) {
-        showToast("Saved. Restart AdForge to apply the new port.");
+        showToast("Saved. Restart OpenAdKit to apply the new port.");
         loadConfig();
         poll();
       } else {
@@ -514,7 +514,7 @@
   poll();
   setInterval(poll, 1500);
 
-  // Browser auto-refresh: when the user relaunches AdForge from the desktop,
+  // Browser auto-refresh: when the user relaunches OpenAdKit from the desktop,
   // the sidecar restarts with a fresh SESSION_TOKEN. Detect the change here
   // so an already-open tab reloads itself — turns "click app icon" into
   // "app opens / refreshes" with no manual F5.

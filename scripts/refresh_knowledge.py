@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-AdForge knowledge-refresh script (OPTIONAL — maintainer / power-user tool).
+OpenAdKit knowledge-refresh script (OPTIONAL — maintainer / power-user tool).
 
 Pulls current platform specs, benchmarks, and best-practice updates from public
 ad-platform documentation using ScrapeGraphAI + an LLM, then emits a JSON delta
 the maintainer can review before merging into `lib/benchmarks.ts` and the prompt
 constants in `lib/prompts/*-ads.ts`.
 
-This script does NOT run at runtime. It is offline. It is opt-in. The AdForge web
+This script does NOT run at runtime. It is offline. It is opt-in. The OpenAdKit web
 app never calls it. The browser-only architecture stays intact.
 
 USAGE

@@ -63,7 +63,7 @@ function Inner({ courseSlug, lessonSlug }: { courseSlug: string; lessonSlug: str
 
           <div className="border border-base-600 bg-base-900/40 p-4">
             <div className="text-[10px] font-mono uppercase tracking-ui-mega text-ink-muted mb-2 flex items-center gap-1.5">
-              <BookOpen size={11} /> practice with AdForge
+              <BookOpen size={11} /> practice with OpenAdKit
             </div>
             <p className="text-sm text-ink-muted leading-relaxed">{lesson.ai_practice_prompt}</p>
           </div>

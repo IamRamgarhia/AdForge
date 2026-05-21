@@ -350,7 +350,7 @@ function SettingsInner() {
                 autoComplete="off"
               />
               <p className="text-[11px] text-ink-muted mt-1.5">
-                AdForge uses Jina Reader to pull a website's content when you add a brand by URL. The free tier hits ~20 req/min limits and may 401 on bursts; paid keys lift that. Get one at <a href="https://jina.ai/reader" target="_blank" rel="noreferrer" className="text-info hover:underline">jina.ai/reader</a>. AllOrigins is used as a free fallback automatically.
+                OpenAdKit uses Jina Reader to pull a website's content when you add a brand by URL. The free tier hits ~20 req/min limits and may 401 on bursts; paid keys lift that. Get one at <a href="https://jina.ai/reader" target="_blank" rel="noreferrer" className="text-info hover:underline">jina.ai/reader</a>. AllOrigins is used as a free fallback automatically.
               </p>
             </div>
           </section>

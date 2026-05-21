@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# AdForge stop — kills the Next dev server + local-sync sidecar.
+# OpenAdKit stop — kills the Next dev server + local-sync sidecar.
 # Run: bash stop.sh
 
 cd "$(dirname "$0")"
 
-echo "Stopping AdForge..."
+echo "Stopping OpenAdKit..."
 
 # Kill PID we saved on start
 if [ -f .ados-sync.pid ]; then

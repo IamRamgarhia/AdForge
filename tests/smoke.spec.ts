@@ -97,7 +97,7 @@ test.describe("Smoke: every route renders without runtime errors", () => {
           const text = msg.text();
           if (text.includes("Failed to load resource")) return;
           if (text.includes("ServiceWorker")) return;
-          if (text.includes("[adforge:")) return; // our own dev debug logs
+          if (text.includes("[openadkit:")) return; // our own dev debug logs
           errors.push(text);
         }
       });

@@ -146,7 +146,7 @@ function HistoryInner() {
     const md = filtered.map((a) =>
       `## ${a.title}\n\n- **Platform**: ${a.platform} · ${a.campaign_type}\n- **Status**: ${a.status}${a.starred ? " · ⭐" : ""}\n- **When**: ${new Date(a.created_at).toLocaleString()}\n- **Model**: \`${a.model_id}\` · in ${a.usage_input_tokens} · out ${a.usage_output_tokens} · $${a.cost_usd.toFixed(4)}\n${a.notes ? `- **Notes**: ${a.notes}\n` : ""}\n\`\`\`\n${a.output_text}\n\`\`\`\n`
     ).join("\n---\n\n");
-    download(`ados-history-${Date.now()}.md`, `# AdForge History Export\n\nGenerated ${new Date().toISOString()} · ${filtered.length} entries\n\n${md}`, "text/markdown");
+    download(`ados-history-${Date.now()}.md`, `# OpenAdKit History Export\n\nGenerated ${new Date().toISOString()} · ${filtered.length} entries\n\n${md}`, "text/markdown");
   }
 
   async function setStatusOn(id: string, s: GeneratedAd["status"]) {

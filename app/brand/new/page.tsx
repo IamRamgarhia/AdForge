@@ -216,7 +216,7 @@ function Inner() {
     // template so the user never sees a half-empty cross-check screen. The
     // user can edit anything before saving.
     const { brain: fallbackBrain, filled, templateSlug } = applyIndustryFallback(merged as BrandBrain);
-    dlog("[adforge:brand-extract] industry-fallback:", { templateSlug, filledCount: filled.length, filled });
+    dlog("[openadkit:brand-extract] industry-fallback:", { templateSlug, filledCount: filled.length, filled });
 
     setPendingExtraction({ brain: fallbackBrain, source, sourceLabel });
     setQuickStatus(null);
@@ -303,16 +303,16 @@ function Inner() {
         const subpages = await ingestSubpages(r, signal, 3);
         if (subpages.pages.length) {
           aggregatedContent = r.content + subpages.extraContent;
-          dlog("[adforge:brand-extract] subpages-ingested:", subpages.pages);
+          dlog("[openadkit:brand-extract] subpages-ingested:", subpages.pages);
         }
       } catch (subErr) {
-        dlog("[adforge:brand-extract] subpage-ingest failed:", subErr);
+        dlog("[openadkit:brand-extract] subpage-ingest failed:", subErr);
       }
 
       setQuickStatus("③ Reading page metadata (title, OG tags, social links, schema)…");
       const deterministic = deterministicFillFromMetadata(r.metadata, r.url);
-      dlog("[adforge:brand-extract] deterministic fill:", deterministic);
-      dlog("[adforge:brand-extract] raw metadata:", r.metadata);
+      dlog("[openadkit:brand-extract] deterministic fill:", deterministic);
+      dlog("[openadkit:brand-extract] raw metadata:", r.metadata);
       const sourceLabel = `${r.url} (via ${
         r.source === "sidecar" ? "local sidecar" :
         r.source === "allorigins" ? "AllOrigins fallback" :
@@ -337,12 +337,12 @@ function Inner() {
         temperature: 0.7,
         signal,
       });
-      dlog("[adforge:brand-extract] raw AI response text:", res.text);
+      dlog("[openadkit:brand-extract] raw AI response text:", res.text);
       const cost = estimateCostUsd(res.providerId, res.modelId, res.usage);
       addUsage(cost, res.usage?.input_tokens ?? 0, res.usage?.output_tokens ?? 0);
       window.dispatchEvent(new Event("ados:usage"));
       const parsed = tryParseJson<any>(res.text) ?? {};
-      dlog("[adforge:brand-extract] parsed AI JSON (pass 1):", parsed);
+      dlog("[openadkit:brand-extract] parsed AI JSON (pass 1):", parsed);
       const fallback = new URL(r.url).hostname.replace(/^www\./, "");
 
       // Pass 2 — gap-fill. Any inference field still empty gets a focused
@@ -381,12 +381,12 @@ function Inner() {
             temperature: 0.8,
             signal,
           });
-          dlog("[adforge:brand-extract] raw AI response text (gap-fill):", gapRes.text);
+          dlog("[openadkit:brand-extract] raw AI response text (gap-fill):", gapRes.text);
           const gapCost = estimateCostUsd(gapRes.providerId, gapRes.modelId, gapRes.usage);
           addUsage(gapCost, gapRes.usage?.input_tokens ?? 0, gapRes.usage?.output_tokens ?? 0);
           window.dispatchEvent(new Event("ados:usage"));
           const gapParsed = tryParseJson<any>(gapRes.text) ?? {};
-          dlog("[adforge:brand-extract] parsed AI JSON (gap-fill):", gapParsed);
+          dlog("[openadkit:brand-extract] parsed AI JSON (gap-fill):", gapParsed);
           // Coerce each gap-fill value to the BrandBrain schema's expected type.
           // The model often returns "Instagram, LinkedIn" (string) for an array
           // field; without coercion, brain.platforms.join(...) downstream throws.
@@ -403,7 +403,7 @@ function Inner() {
             parsed.objection_handling = handles.slice(0, len);
           }
         } catch (gapErr) {
-          console.warn("[adforge:brand-extract] gap-fill pass failed:", gapErr);
+          console.warn("[openadkit:brand-extract] gap-fill pass failed:", gapErr);
         }
       }
 
@@ -428,7 +428,7 @@ function Inner() {
           const searchUrl = `https://s.jina.ai/${encodeURIComponent(baseQuery)}`;
           const searchRes = await ingestUrl(searchUrl, signal);
           if (searchRes.ok && searchRes.content && searchRes.content.length > 500) {
-            dlog("[adforge:brand-extract] auto-search content (length):", searchRes.content.length);
+            dlog("[openadkit:brand-extract] auto-search content (length):", searchRes.content.length);
             const augRes = await llmCall({
               messages: [{ role: "user", content: buildSearchAugmentedPrompt({
                 business_name: searchableName,
@@ -442,12 +442,12 @@ function Inner() {
               temperature: 0.7,
               signal,
             });
-            dlog("[adforge:brand-extract] raw AI response text (search-augmented):", augRes.text);
+            dlog("[openadkit:brand-extract] raw AI response text (search-augmented):", augRes.text);
             const augCost = estimateCostUsd(augRes.providerId, augRes.modelId, augRes.usage);
             addUsage(augCost, augRes.usage?.input_tokens ?? 0, augRes.usage?.output_tokens ?? 0);
             window.dispatchEvent(new Event("ados:usage"));
             const augParsed = tryParseJson<any>(augRes.text) ?? {};
-            dlog("[adforge:brand-extract] parsed AI JSON (search-augmented):", augParsed);
+            dlog("[openadkit:brand-extract] parsed AI JSON (search-augmented):", augParsed);
             // For fields already filled by pass 1+2, search-augmented values
             // do NOT overwrite — only fills empty fields. Pass 1 result wins.
             for (const f of searchTargets) {
@@ -464,10 +464,10 @@ function Inner() {
               parsed.objection_handling = handles2.slice(0, len);
             }
           } else {
-            dlog("[adforge:brand-extract] auto-search returned too little content; skipping");
+            dlog("[openadkit:brand-extract] auto-search returned too little content; skipping");
           }
         } catch (searchErr) {
-          console.warn("[adforge:brand-extract] auto-search pass failed:", searchErr);
+          console.warn("[openadkit:brand-extract] auto-search pass failed:", searchErr);
         }
       }
 
@@ -508,14 +508,14 @@ function Inner() {
         temperature: 0.4,
         signal,
       });
-      dlog("[adforge:brand-extract] raw AI response text (paste):", res.text);
+      dlog("[openadkit:brand-extract] raw AI response text (paste):", res.text);
       const cost = estimateCostUsd(res.providerId, res.modelId, res.usage);
       addUsage(cost, res.usage?.input_tokens ?? 0, res.usage?.output_tokens ?? 0);
       window.dispatchEvent(new Event("ados:usage"));
       const parsed = tryParseJson<any>(res.text) ?? {};
-      dlog("[adforge:brand-extract] parsed AI JSON (paste):", parsed);
+      dlog("[openadkit:brand-extract] parsed AI JSON (paste):", parsed);
       if (!parsed.business_name && !Object.keys(parsed).length) {
-        setQuickStatus("AI returned no usable JSON. Check DevTools [adforge:brand-extract] logs and try again, or fall back to Method 3 / 4.");
+        setQuickStatus("AI returned no usable JSON. Check DevTools [openadkit:brand-extract] logs and try again, or fall back to Method 3 / 4.");
         return;
       }
       const fallbackName = quickUrl ? (() => { try { return new URL(/^https?:\/\//i.test(quickUrl) ? quickUrl : `https://${quickUrl}`).hostname.replace(/^www\./, ""); } catch { return "My Brand"; } })() : "My Brand";
@@ -569,7 +569,7 @@ function Inner() {
         temperature: 0.7,
         signal,
       });
-      dlog("[adforge:brand-extract] raw AI response text (vision):", res.text);
+      dlog("[openadkit:brand-extract] raw AI response text (vision):", res.text);
       const cost = estimateCostUsd(res.providerId, res.modelId, res.usage);
       addUsage(cost, res.usage?.input_tokens ?? 0, res.usage?.output_tokens ?? 0);
       window.dispatchEvent(new Event("ados:usage"));
@@ -615,12 +615,12 @@ function Inner() {
         temperature: 0.4,
         signal,
       });
-      dlog("[adforge:brand-extract] raw AI response text (google):", res.text);
+      dlog("[openadkit:brand-extract] raw AI response text (google):", res.text);
       const cost = estimateCostUsd(res.providerId, res.modelId, res.usage);
       addUsage(cost, res.usage?.input_tokens ?? 0, res.usage?.output_tokens ?? 0);
       window.dispatchEvent(new Event("ados:usage"));
       const parsed = tryParseJson<any>(res.text) ?? {};
-      dlog("[adforge:brand-extract] parsed AI JSON (google):", parsed);
+      dlog("[openadkit:brand-extract] parsed AI JSON (google):", parsed);
       if (!parsed.business_name && !Object.keys(parsed).length) {
         setQuickStatus("AI returned no usable JSON from search results. Try a more specific query or fall back to Method 3 / 4.");
         return;
@@ -712,7 +712,7 @@ function Inner() {
               <span className="text-[12px] font-semibold uppercase tracking-wider text-live">Method 1 · paste the client's website URL</span>
             </div>
             <p className="text-[12px] text-ink-muted mb-2 leading-relaxed">
-              Best when the brand has a public site. AdForge reads the page via Jina Reader and extracts the brand brain.
+              Best when the brand has a public site. OpenAdKit reads the page via Jina Reader and extracts the brand brain.
             </p>
             <div className="flex flex-wrap gap-2">
               <input
@@ -807,7 +807,7 @@ function Inner() {
               <span className="text-[12px] font-semibold uppercase tracking-wider text-info">Method 2 · search Google by business name</span>
             </div>
             <p className="text-[12px] text-ink-muted mb-2 leading-relaxed">
-              Use this when the client has no website, or when the site blocks scrapers (most Instagram and Facebook profiles). AdForge runs a Google search via Jina, then extracts from the top results.
+              Use this when the client has no website, or when the site blocks scrapers (most Instagram and Facebook profiles). OpenAdKit runs a Google search via Jina, then extracts from the top results.
             </p>
             <div className="flex flex-wrap gap-2">
               <input
@@ -865,7 +865,7 @@ function Inner() {
               <span className="text-[12px] font-semibold uppercase tracking-wider text-ink-muted">Method 3 · start from an industry template</span>
             </div>
             <p className="text-[12px] text-ink-muted mb-3 leading-relaxed">
-              No website, no Google footprint, or just want a starting skeleton? Pick the closest industry — AdForge pre-fills typical audience, tone, and positioning that you can refine.
+              No website, no Google footprint, or just want a starting skeleton? Pick the closest industry — OpenAdKit pre-fills typical audience, tone, and positioning that you can refine.
             </p>
             <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
               {INDUSTRY_TEMPLATES.map((t) => (

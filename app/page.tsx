@@ -90,8 +90,8 @@ export default function Dashboard() {
       <FeatureTour />
       <PageHeader
         scope="dashboard"
-        title="Cockpit"
-        subtitle="Your browser-only AI ads operating system. Everything you generate stays on this device."
+        title="OpenAdKit — open source AI marketing tool"
+        subtitle="Every ad platform, every AI provider (BYOK), runs in your browser. Everything you generate stays on this device."
       />
 
       {/* First-touch CTA: a fresh install has no brand brain yet. Without it,
@@ -104,7 +104,7 @@ export default function Dashboard() {
             <div className="text-[10px] font-mono uppercase tracking-ui-mega text-live mb-1">step 1 of 1</div>
             <h2 className="font-display italic text-2xl text-ink leading-tight">Add your first client to unlock everything.</h2>
             <p className="text-sm text-ink-muted mt-2 leading-relaxed max-w-xl">
-              AdForge's brand brain is what makes every output sound like <em>this</em> client — not generic AI copy. Paste a website URL and the AI auto-extracts the niche, products, platforms, content pillars, and tone in ~10 seconds.
+              OpenAdKit's brand brain is what makes every output sound like <em>this</em> client — not generic AI copy. Paste a website URL and the AI auto-extracts the niche, products, platforms, content pillars, and tone in ~10 seconds.
             </p>
           </div>
           <Link

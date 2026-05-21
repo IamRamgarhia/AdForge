@@ -176,7 +176,7 @@ Google Ads has three ways to track conversions:
 **Pick at least one. Two is better.** Without conversion data:
 - Smart Bidding has nothing to optimize toward → wasted spend
 - You can't see CPA → you can't know if a campaign is profitable
-- AdForge's /optimize/budget will refuse to give specific recommendations (it has a STOP condition for "tracking not verified")
+- OpenAdKit's /optimize/budget will refuse to give specific recommendations (it has a STOP condition for "tracking not verified")
 
 **Setup checklist**:
 - [ ] Conversion action created in Ads
@@ -268,7 +268,7 @@ What tests do you want to run? What questions did this audit raise?
 
 **The point**: you do this every Monday, every Monday, every Monday. The compounding is the whole game.`,
         quick_action: "Put a 45-min calendar block titled \"Google Ads Monday\" recurring weekly. That's it. Just the block.",
-        ai_practice_prompt: "AdForge has /checklist/weekly — every Monday this turns into a 45-min checked-off ritual instead of an ad-hoc poke.",
+        ai_practice_prompt: "OpenAdKit has /checklist/weekly — every Monday this turns into a 45-min checked-off ritual instead of an ad-hoc poke.",
       },
     ],
   },
@@ -428,7 +428,7 @@ Meta defaults to **7-day click + 1-day view** attribution. That means:
 
 **Conversion API (CAPI)**: server-side conversion tracking. If you don't have it, set it up. Recovers 5-15% of lost conversion signal.`,
         quick_action: "Check whether your account has CAPI configured. If not, that's your week-after-next priority.",
-        ai_practice_prompt: "Future versions of AdForge will compare reported vs modeled conversions; for now, /report gives an honest write-up of the numbers you have.",
+        ai_practice_prompt: "Future versions of OpenAdKit will compare reported vs modeled conversions; for now, /report gives an honest write-up of the numbers you have.",
       },
       {
         slug: "fatigue",

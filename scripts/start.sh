@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# AdForge start — opens the launcher control panel in your browser.
-# From the launcher you click "Start AdForge" and watch progress.
+# OpenAdKit start — opens the launcher control panel in your browser.
+# From the launcher you click "Start OpenAdKit" and watch progress.
 
 set -e
 cd "$(dirname "$0")"
@@ -20,12 +20,12 @@ fi
 
 echo
 echo "=================================================="
-echo " Opening AdForge launcher..."
+echo " Opening OpenAdKit launcher..."
 echo "=================================================="
 echo
 echo "  Launcher (control panel): http://127.0.0.1:$SYNC_PORT/"
 echo
-echo "  In the launcher, click 'Start AdForge' to launch the web app."
+echo "  In the launcher, click 'Start OpenAdKit' to launch the web app."
 echo "  Press Ctrl+C in this window or run  bash stop.sh  to shut down."
 echo
 
@@ -42,5 +42,5 @@ open_url() {
 ( sleep 1.5 && open_url "http://127.0.0.1:$SYNC_PORT/" ) &
 
 # Run the sidecar in the foreground (it serves the launcher + manages Next)
-trap 'echo; echo "Stopping AdForge..."; exit 0' INT TERM
+trap 'echo; echo "Stopping OpenAdKit..."; exit 0' INT TERM
 ADFORGE_SYNC_PORT="$SYNC_PORT" node scripts/local-sync.cjs

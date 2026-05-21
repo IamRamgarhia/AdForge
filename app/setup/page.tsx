@@ -123,7 +123,7 @@ export default function SetupPage() {
             <div className="h-10 w-10 bg-live grid place-items-center text-base-950 font-display italic text-xl">A</div>
             <div>
               <div className="scope-prefix">~/setup</div>
-              <div className="font-display italic text-2xl text-ink leading-none mt-1">AdForge</div>
+              <div className="font-display italic text-2xl text-ink leading-none mt-1">OpenAdKit</div>
             </div>
           </div>
           <Stepper current={step} total={5} />
@@ -194,9 +194,9 @@ function StepWelcome() {
   return (
     <div>
       <div className="text-[10px] font-mono uppercase tracking-ui-mega text-ink-faint mb-1">welcome</div>
-      <h2 className="font-display italic text-4xl text-ink leading-tight">An ad ops cockpit that runs in your browser.</h2>
+      <h2 className="font-display italic text-4xl text-ink leading-tight">The open source AI marketing tool that runs in your browser.</h2>
       <p className="text-sm text-ink-muted mt-4 leading-relaxed max-w-lg">
-        AdForge replaces a stack of $49–$499/month AI marketing tools with one open-source app.
+        OpenAdKit replaces a stack of $49–$499/month AI marketing tools with one open-source app.
         No backend, no accounts, no telemetry. You bring your own AI key — free or paid, your choice — and everything runs locally.
       </p>
       <ul className="mt-5 space-y-2 text-sm text-ink">

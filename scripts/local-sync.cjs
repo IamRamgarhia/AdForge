@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * AdForge local-sync + launcher sidecar.
+ * OpenAdKit local-sync + launcher sidecar.
  *
  * Tiny Node HTTP server (zero npm dependencies — only Node stdlib) that does two jobs:
  *
@@ -34,9 +34,9 @@ const { spawn } = require("child_process");
 const PORT = Number(process.env.ADFORGE_SYNC_PORT || process.env.ADOS_SYNC_PORT || 3006);
 const PROJECT_ROOT = path.resolve(__dirname, "..");
 // Per-user data dir: snapshots + lock file live in the OS's user-level
-// config dir (%APPDATA%\AdForge on Windows, ~/Library/Application Support
-// /AdForge on macOS, ~/.config/adforge on Linux). This means upgrading
-// AdForge — even re-cloning into a new folder — never loses the user's
+// config dir (%APPDATA%\OpenAdKit on Windows, ~/Library/Application Support
+// /OpenAdKit on macOS, ~/.config/openadkit on Linux). This means upgrading
+// OpenAdKit — even re-cloning into a new folder — never loses the user's
 // saved snapshot. Aligns with native-app conventions.
 //
 // First boot migrates any legacy ./data/snapshot.json from the install
@@ -47,32 +47,57 @@ function resolveUserDataDir() {
   const plat = process.platform;
   const home = os.homedir();
   if (plat === "win32") {
-    return path.join(process.env.APPDATA || path.join(home, "AppData", "Roaming"), "AdForge");
+    return path.join(process.env.APPDATA || path.join(home, "AppData", "Roaming"), "OpenAdKit");
   }
   if (plat === "darwin") {
-    return path.join(home, "Library", "Application Support", "AdForge");
+    return path.join(home, "Library", "Application Support", "OpenAdKit");
   }
   // Linux + others: XDG_CONFIG_HOME or fallback to ~/.config
-  return path.join(process.env.XDG_CONFIG_HOME || path.join(home, ".config"), "adforge");
+  return path.join(process.env.XDG_CONFIG_HOME || path.join(home, ".config"), "openadkit");
 }
 
 const DATA_DIR = resolveUserDataDir();
 const LEGACY_DATA_DIR = path.join(PROJECT_ROOT, "data");
 const SNAPSHOT_PATH = path.join(DATA_DIR, "snapshot.json");
 
+// Pre-rebrand per-user dirs (when the tool was called AdForge). Existing users
+// have their snapshot here from the previous version — migrate it forward so
+// the rename is transparent.
+function resolveLegacyBrandDataDirs() {
+  const home = os.homedir();
+  const plat = process.platform;
+  const out = [];
+  if (plat === "win32") {
+    out.push(path.join(process.env.APPDATA || path.join(home, "AppData", "Roaming"), "AdForge"));
+  } else if (plat === "darwin") {
+    out.push(path.join(home, "Library", "Application Support", "AdForge"));
+  } else {
+    out.push(path.join(process.env.XDG_CONFIG_HOME || path.join(home, ".config"), "adforge"));
+  }
+  return out;
+}
+
 // One-time migration: if the user has a legacy ./data/snapshot.json from a
-// previous AdForge version AND no new-location snapshot yet, move it.
+// previous OpenAdKit version AND no new-location snapshot yet, move it.
+// Also migrates from the pre-rebrand AdForge per-user data dir.
 function migrateLegacyDataDirOnce() {
   try {
     if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
-    const legacy = path.join(LEGACY_DATA_DIR, "snapshot.json");
-    if (fs.existsSync(legacy) && !fs.existsSync(SNAPSHOT_PATH)) {
-      fs.copyFileSync(legacy, SNAPSHOT_PATH);
-      // Don't delete the legacy file — leaves a breadcrumb if user wants it.
-      console.log(`[adforge] migrated legacy snapshot ${legacy} → ${SNAPSHOT_PATH}`);
+    if (!fs.existsSync(SNAPSHOT_PATH)) {
+      const candidates = [
+        path.join(LEGACY_DATA_DIR, "snapshot.json"),
+        ...resolveLegacyBrandDataDirs().map((d) => path.join(d, "snapshot.json")),
+      ];
+      for (const legacy of candidates) {
+        if (fs.existsSync(legacy)) {
+          fs.copyFileSync(legacy, SNAPSHOT_PATH);
+          console.log(`[openadkit] migrated legacy snapshot ${legacy} → ${SNAPSHOT_PATH}`);
+          break;
+        }
+      }
     }
   } catch (e) {
-    console.warn(`[adforge] data-dir migration failed (non-fatal): ${e?.message ?? e}`);
+    console.warn(`[openadkit] data-dir migration failed (non-fatal): ${e?.message ?? e}`);
   }
 }
 migrateLegacyDataDirOnce();
@@ -106,7 +131,7 @@ function appendUpdateLog(line) {
   const t = new Date().toISOString();
   updateState.log.push(`[${t}] ${line}`);
   if (updateState.log.length > 200) updateState.log.shift();
-  console.log(`[adforge:update] ${line}`);
+  console.log(`[openadkit:update] ${line}`);
 }
 const GH_REPO = "IamRamgarhia/AdForge"; // public, no auth required
 
@@ -133,7 +158,7 @@ function writeEnvLocal(updates) {
   const current = readEnvLocal();
   const next = { ...current, ...updates };
   const body = [
-    "# AdForge configuration (managed by the launcher)",
+    "# OpenAdKit configuration (managed by the launcher)",
     `PORT=${next.PORT}`,
     `ADFORGE_SYNC_PORT=${next.ADFORGE_SYNC_PORT}`,
   ].join("\n") + "\n";
@@ -277,7 +302,7 @@ function startWeb() {
     webLastLog = s.trim().split("\n").slice(-3).join("\n");
   });
   webChild.on("exit", (code) => {
-    console.log(`[adforge] next dev exited with code ${code}`);
+    console.log(`[openadkit] next dev exited with code ${code}`);
     webChild = null;
     webStatus = "down";
   });
@@ -472,7 +497,7 @@ function fetchLatestFromGitHub() {
         path: `/repos/${GH_REPO}/commits/main`,
         method: "GET",
         headers: {
-          "User-Agent": "AdForge-Updater/1.0",
+          "User-Agent": "OpenAdKit-Updater/1.0",
           Accept: "application/vnd.github+json",
         },
         timeout: 8000,
@@ -653,7 +678,7 @@ const server = http.createServer(async (req, res) => {
       // capabilities array lets the browser confirm which endpoints this
       // sidecar supports — useful for diagnosing "stale sidecar" issues
       // without having to grep the source.
-      // cwd lets AdForge.bat/AdForge.command distinguish "MY install's
+      // cwd lets OpenAdKit.bat/OpenAdKit.command distinguish "MY install's
       // sidecar" from "SOMEONE ELSE'S install on this same port" — needed
       // for multi-install port routing.
       return json(res, 200, {
@@ -805,7 +830,7 @@ const server = http.createServer(async (req, res) => {
         const lib = u.protocol === "https:" ? require("https") : require("http");
         const opts = {
           headers: {
-            "User-Agent": "Mozilla/5.0 (compatible; AdForge/1.0; +https://github.com/IamRamgarhia/AdForge)",
+            "User-Agent": "Mozilla/5.0 (compatible; OpenAdKit/1.0; +https://github.com/IamRamgarhia/AdForge)",
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
             "Accept-Language": "en-US,en;q=0.5",
           },
@@ -900,7 +925,7 @@ const server = http.createServer(async (req, res) => {
       let pkgVersion = "unknown";
       try { pkgVersion = JSON.parse(fs.readFileSync(path.join(PROJECT_ROOT, "package.json"), "utf8")).version || "unknown"; } catch {}
       return json(res, 200, {
-        adforge_version: pkgVersion,
+        openadkit_version: pkgVersion,
         node_version: process.version,
         platform: process.platform,
         arch: process.arch,
@@ -967,9 +992,9 @@ try { webPort = envPort(readEnvLocal().PORT, 3005); } catch {}
 
 // Single-instance lock. If another sidecar from THIS install is already
 // running (same PID still alive), exit early — the launcher script will
-// open the browser. Prevents the "user double-clicks AdForge.bat twice in
+// open the browser. Prevents the "user double-clicks OpenAdKit.bat twice in
 // 2 seconds" race where two processes both try to writeEnvLocal.
-const LOCK_FILE = path.join(DATA_DIR, ".adforge.pid");
+const LOCK_FILE = path.join(DATA_DIR, ".openadkit.pid");
 function acquireSingletonLock() {
   try {
     if (fs.existsSync(LOCK_FILE)) {
@@ -979,7 +1004,7 @@ function acquireSingletonLock() {
           // Signal 0 → exists check, throws ESRCH if dead. Cross-platform.
           process.kill(oldPid, 0);
           // Process alive → another instance owns the lock.
-          console.error(`[adforge] another sidecar (pid ${oldPid}) is already running for this install. Exiting.`);
+          console.error(`[openadkit] another sidecar (pid ${oldPid}) is already running for this install. Exiting.`);
           process.exit(0);
         } catch {
           // Process dead → stale lock, safe to take over.
@@ -995,14 +1020,14 @@ function acquireSingletonLock() {
   } catch (e) {
     // Non-fatal — if the lockfile can't be created, fall through and let
     // listen() fail with EADDRINUSE if there really is a duplicate.
-    console.warn(`[adforge] could not acquire singleton lock: ${e?.message ?? e}`);
+    console.warn(`[openadkit] could not acquire singleton lock: ${e?.message ?? e}`);
   }
 }
 acquireSingletonLock();
 
 // Session token bumps every time the sidecar starts. The browser polls
 // /health (via /status), sees a new SESSION_TOKEN, and reloads itself.
-// That means "user clicks AdForge.bat after a system restart" gives them
+// That means "user clicks OpenAdKit.bat after a system restart" gives them
 // a fresh page in the already-open browser tab — no manual refresh needed.
 const SESSION_TOKEN = String(Date.now());
 
@@ -1011,19 +1036,19 @@ const SESSION_TOKEN = String(Date.now());
 // window, this is the only place the user gets a clear message. (Audit finding #42.)
 server.on("error", (err) => {
   if (err && err.code === "EADDRINUSE") {
-    console.error(`[adforge] FATAL: port ${PORT} is already in use.`);
-    console.error("[adforge] Another AdForge install or process bound it between the launcher's port-free check and this listen() call.");
-    console.error("[adforge] Re-run AdForge.bat / AdForge.command — resolve-ports.cjs will pick a fresh free pair on the next try.");
+    console.error(`[openadkit] FATAL: port ${PORT} is already in use.`);
+    console.error("[openadkit] Another OpenAdKit install or process bound it between the launcher's port-free check and this listen() call.");
+    console.error("[openadkit] Re-run OpenAdKit.bat / OpenAdKit.command — resolve-ports.cjs will pick a fresh free pair on the next try.");
     process.exit(1);
   }
-  console.error("[adforge] server error:", err);
+  console.error("[openadkit] server error:", err);
   process.exit(1);
 });
 server.listen(PORT, "127.0.0.1", () => {
-  console.log(`[adforge] launcher + sync listening on http://127.0.0.1:${PORT}`);
-  console.log(`[adforge] open the launcher: http://127.0.0.1:${PORT}/`);
-  console.log(`[adforge] snapshot file:     ${SNAPSHOT_PATH}`);
+  console.log(`[openadkit] launcher + sync listening on http://127.0.0.1:${PORT}`);
+  console.log(`[openadkit] open the launcher: http://127.0.0.1:${PORT}/`);
+  console.log(`[openadkit] snapshot file:     ${SNAPSHOT_PATH}`);
 });
 
-process.on("SIGINT", () => { stopWeb(); console.log("[adforge] shutting down"); server.close(() => process.exit(0)); });
+process.on("SIGINT", () => { stopWeb(); console.log("[openadkit] shutting down"); server.close(() => process.exit(0)); });
 process.on("SIGTERM", () => { stopWeb(); server.close(() => process.exit(0)); });

@@ -14,7 +14,7 @@ const mistralCfg = { baseUrl: "https://api.mistral.ai/v1", testModel: "mistral-s
 const openrouterCfg = {
   baseUrl: "https://openrouter.ai/api/v1",
   testModel: "meta-llama/llama-3.3-70b-instruct:free",
-  extraHeaders: { "HTTP-Referer": typeof window !== "undefined" ? window.location.origin : "https://adforge.local", "X-Title": "AdForge" },
+  extraHeaders: { "HTTP-Referer": typeof window !== "undefined" ? window.location.origin : "https://openadkit.local", "X-Title": "OpenAdKit" },
 };
 
 export const openai: Provider = {

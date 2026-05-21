@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * AdForge port resolver — runs before the sidecar starts to figure out which
- * ports THIS install should use, given that other AdForge installs (or
+ * OpenAdKit port resolver — runs before the sidecar starts to figure out which
+ * ports THIS install should use, given that other OpenAdKit installs (or
  * unrelated processes) may already occupy the default ports.
  *
  * Decision logic:
@@ -15,10 +15,10 @@
  *        - No response AND port is free                             → "start"
  *
  * When shifting, .env.local is updated atomically with the new port pair so
- * downstream code (AdForge.bat / launcher / web app) all read the same values.
+ * downstream code (OpenAdKit.bat / launcher / web app) all read the same values.
  *
  * Stdout is a single line: ACTION=<verb>  (reuse | restart_stale | start | shifted | error)
- * The caller (AdForge.bat / AdForge.command) parses that one token and reacts.
+ * The caller (OpenAdKit.bat / OpenAdKit.command) parses that one token and reacts.
  *
  * Zero dependencies — Node stdlib only.
  */
@@ -32,12 +32,12 @@ const ENV_LOCAL = path.join(PROJECT_ROOT, ".env.local");
 
 // Default port range: 41573-49999. Chosen because:
 //   - 3000-9000 is the most-collided range (every Next.js / Express / Rails /
-//     Flask / Vite dev server lives there). New AdForge users hit collisions
+//     Flask / Vite dev server lives there). New OpenAdKit users hit collisions
 //     immediately and the resolver has to shift on every launch.
 //   - 41573+ is in IANA's "registered but rarely used" range. Almost nothing
 //     else binds there.
 //   - We derive a starting offset from a hash of the install folder so two
-//     AdForge installs in different folders begin at different bases and
+//     OpenAdKit installs in different folders begin at different bases and
 //     don't race to claim the same pair before the OS-probe step.
 function defaultStartPort() {
   let h = 0;
@@ -68,7 +68,7 @@ function writeEnv(updates) {
   const cur = readEnv();
   const next = { ...cur, ...updates };
   const body = [
-    "# AdForge configuration (auto-resolved by scripts/resolve-ports.cjs)",
+    "# OpenAdKit configuration (auto-resolved by scripts/resolve-ports.cjs)",
     `PORT=${next.PORT}`,
     `ADFORGE_SYNC_PORT=${next.ADFORGE_SYNC_PORT}`,
   ].join("\n") + "\n";
@@ -213,7 +213,7 @@ function normalize(p) {
       return;
     }
 
-    // One or both ports are bound by something non-AdForge (a different web app,
+    // One or both ports are bound by something non-OpenAdKit (a different web app,
     // a stalled process, etc.). Shift to the next free pair.
     const pair = await findFreePair(Math.max(DEFAULT_PORT_RANGE_START, desiredSync + 2));
     if (!pair) {

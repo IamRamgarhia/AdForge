@@ -36,7 +36,7 @@ function main() {
   }
   const stamped = sw.replace(/__BUILD_ID__/g, buildId);
   fs.writeFileSync(SW_PATH, stamped, "utf8");
-  console.log(`[sw-stamp] sw.js VERSION → adforge-${buildId}`);
+  console.log(`[sw-stamp] sw.js VERSION → openadkit-${buildId}`);
 }
 
 main();

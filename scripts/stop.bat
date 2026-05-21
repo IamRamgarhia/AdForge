@@ -1,10 +1,10 @@
 @echo off
-REM AdForge stop — kills the Next.js dev server (port 3005) and sync sidecar (port 3006).
+REM OpenAdKit stop — kills the Next.js dev server (port 3005) and sync sidecar (port 3006).
 REM Double-click this file.
 
 setlocal
 
-echo Stopping AdForge...
+echo Stopping OpenAdKit...
 
 REM Kill anything listening on port 3005 (Next dev)
 for /f "tokens=5" %%P in ('netstat -ano ^| findstr ":3005 .*LISTENING"') do (
@@ -19,7 +19,7 @@ for /f "tokens=5" %%P in ('netstat -ano ^| findstr ":3006 .*LISTENING"') do (
 )
 
 REM Kill any leftover Node windows started by start.bat
-taskkill /FI "WINDOWTITLE eq adforge sync" /F >nul 2>&1
+taskkill /FI "WINDOWTITLE eq openadkit sync" /F >nul 2>&1
 
 echo Done.
 timeout /t 2 >nul

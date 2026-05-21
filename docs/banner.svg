@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 320" width="1280" height="320" role="img" aria-labelledby="title desc">
-  <title id="title">AdForge — Open-source AI Ad Ops Cockpit</title>
-  <desc id="desc">Hero banner showing the AdForge name, tagline, and made-by-Dicecodes attribution on a near-black background with a saffron accent block.</desc>
+  <title id="title">OpenAdKit — Open-source AI Ad Ops Cockpit</title>
+  <desc id="desc">Hero banner showing the OpenAdKit name, tagline, and made-by-Dicecodes attribution on a near-black background with a saffron accent block.</desc>
 
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
@@ -27,14 +27,14 @@
   <rect width="1280" height="320" fill="url(#glow2)"/>
 
   <!-- Top scope-prefix line -->
-  <text x="80" y="62" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="14" fill="#9a9aa3" letter-spacing="0.5">~/adforge · v0.1</text>
+  <text x="80" y="62" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="14" fill="#9a9aa3" letter-spacing="0.5">~/openadkit · v0.1</text>
 
-  <!-- AdForge logo block -->
+  <!-- OpenAdKit logo block -->
   <rect x="80" y="86" width="80" height="80" fill="#ffb020"/>
   <text x="120" y="148" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-style="italic" font-size="56" font-weight="700" fill="#08080a">A</text>
 
   <!-- Title -->
-  <text x="180" y="146" font-family="Georgia, 'Times New Roman', serif" font-style="italic" font-size="84" font-weight="400" fill="#e7e7ea" letter-spacing="-1">AdForge</text>
+  <text x="180" y="146" font-family="Georgia, 'Times New Roman', serif" font-style="italic" font-size="84" font-weight="400" fill="#e7e7ea" letter-spacing="-1">OpenAdKit</text>
 
   <!-- Tagline -->
   <text x="80" y="208" font-family="-apple-system, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="22" font-weight="600" fill="#e7e7ea">

@@ -1,8 +1,8 @@
 @echo off
-REM AdForge desktop launcher (Windows).
+REM OpenAdKit desktop launcher (Windows).
 REM
-REM Double-click this file to launch AdForge. On every launch we:
-REM   1. Inspect any AdForge sidecar already running on the configured port.
+REM Double-click this file to launch OpenAdKit. On every launch we:
+REM   1. Inspect any OpenAdKit sidecar already running on the configured port.
 REM      If it's THIS install's current sidecar  → reuse, open browser.
 REM      If it's THIS install's stale sidecar    → kill, restart on same port.
 REM      If it's ANOTHER install's sidecar       → shift to a free port pair.
@@ -12,7 +12,7 @@ REM   2. On first run, install deps + write default .env.local + create Desktop 
 REM   3. Spawn sidecar hidden (PowerShell Start-Process -WindowStyle Hidden).
 REM   4. Wait for /health, open browser to the launcher.
 REM
-REM Two AdForge installs in different folders never fight over port 3006 —
+REM Two OpenAdKit installs in different folders never fight over port 3006 —
 REM the second one detects the first and auto-shifts to the next free pair.
 
 setlocal EnableDelayedExpansion
@@ -23,7 +23,7 @@ where node >nul 2>&1
 if errorlevel 1 (
     echo.
     echo [ERROR] Node.js is not installed.
-    echo   Install from https://nodejs.org/en/download then double-click AdForge again.
+    echo   Install from https://nodejs.org/en/download then double-click OpenAdKit again.
     echo.
     pause
     exit /b 1
@@ -51,12 +51,12 @@ if not exist data mkdir data
 REM Desktop shortcut on first run
 powershell -NoProfile -Command ^
   "$d = [Environment]::GetFolderPath('Desktop');" ^
-  "$lnk = Join-Path $d 'AdForge.lnk';" ^
+  "$lnk = Join-Path $d 'OpenAdKit.lnk';" ^
   "if (-not (Test-Path $lnk)) {" ^
-  "  $t = Join-Path '%CD%' 'AdForge.bat';" ^
+  "  $t = Join-Path '%CD%' 'OpenAdKit.bat';" ^
   "  $s = (New-Object -ComObject WScript.Shell).CreateShortcut($lnk);" ^
   "  $s.TargetPath = $t; $s.WorkingDirectory = '%CD%';" ^
-  "  $s.Description = 'Launch AdForge'; $s.WindowStyle = 7; $s.Save();" ^
+  "  $s.Description = 'Launch OpenAdKit'; $s.WindowStyle = 7; $s.Save();" ^
   "}" 2>nul
 
 REM --- Resolve ports (handles multi-install conflicts) ---
@@ -98,14 +98,14 @@ if "!ACTION!"=="restart_stale" (
 
 if "!ACTION!"=="shifted" (
     echo.
-    echo  Default ports were taken by another AdForge install or process.
+    echo  Default ports were taken by another OpenAdKit install or process.
     echo  This install will use:  web=!PORT!  sync=!SYNC!
     echo  Saved to .env.local so future launches reuse these.
     echo.
 )
 
 REM --- Spawn sidecar detached + hidden ---
-echo Starting AdForge sidecar on :!SYNC!...
+echo Starting OpenAdKit sidecar on :!SYNC!...
 powershell -NoProfile -Command ^
   "$env:ADFORGE_SYNC_PORT='!SYNC!'; $env:PORT='!PORT!';" ^
   "Start-Process -FilePath 'node' -ArgumentList 'scripts\local-sync.cjs' -WorkingDirectory (Get-Location) -WindowStyle Hidden"

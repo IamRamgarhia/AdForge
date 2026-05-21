@@ -1,10 +1,10 @@
 <div align="center">
 
-<img src="docs/banner.svg" alt="AdForge — free open-source AI ad generator, ad copy tool, and marketing cockpit. 18 generators, 11 optimizers, 9 AI providers including Claude, GPT, Gemini, Groq, OpenAI, DeepSeek. Browser-only, BYOK, MIT-licensed. Open-source alternative to Jasper, AdCreative, Anyword, and Copy.ai. Built by Dicecodes." width="100%" />
+<img src="docs/banner.svg" alt="OpenAdKit — free open-source AI ad generator, ad copy tool, and marketing cockpit. 18 generators, 11 optimizers, 9 AI providers including Claude, GPT, Gemini, Groq, OpenAI, DeepSeek. Browser-only, BYOK, MIT-licensed. Open-source alternative to Jasper, AdCreative, Anyword, and Copy.ai. Built by Dicecodes." width="100%" />
 
-# AdForge — Free, Open-Source AI Ad Generator
+# OpenAdKit — Open Source AI Marketing Tool
 
-### Open-source AI ad ops cockpit · every platform · bring your own AI key · zero subscriptions
+### The open source AI marketing tool · every ad platform · bring your own AI key · zero subscriptions
 
 *The open-source alternative to Jasper, AdCreative, Anyword, Pencil & Copy.ai · runs in your browser · MIT-licensed · built by [Dicecodes](https://dicecodes.com)*
 
@@ -32,9 +32,9 @@
 
 ---
 
-## What is AdForge?
+## What is OpenAdKit?
 
-**AdForge is a free, open-source AI ad generator** that replaces a **$49–$499/month stack** of paid AI marketing tools (Jasper · AdCreative · Anyword · Pencil · Copy.ai · Marpipe) with **one app that runs entirely in your browser**.
+**OpenAdKit is the open source AI marketing tool** that replaces a **$49–$499/month stack** of paid AI marketing tools (Jasper · AdCreative · Anyword · Pencil · Copy.ai · Marpipe) with **one app that runs entirely in your browser**.
 
 You **bring your own AI key** — free-tier (Groq · Gemini · Cerebras · OpenRouter) or paid (Claude · GPT · Mistral · DeepSeek) — and get every paid-tool feature for **$0/month, forever**.
 
@@ -45,7 +45,7 @@ You **bring your own AI key** — free-tier (Groq · Gemini · Cerebras · OpenR
 ```
 ┌──────────────────────────────────────────────────────────────────────────┐
 │                                                                          │
-│   Paste a client URL    ─►   AdForge auto-extracts a Brand Brain         │
+│   Paste a client URL    ─►   OpenAdKit auto-extracts a Brand Brain         │
 │                                                                          │
 │   ▼                                                                      │
 │                                                                          │
@@ -62,7 +62,7 @@ You **bring your own AI key** — free-tier (Groq · Gemini · Cerebras · OpenR
 
 ## Who's it for?
 
-| You are… | AdForge gives you… |
+| You are… | OpenAdKit gives you… |
 |---|---|
 | 🧑‍💻 **A solo founder or indie maker** | Free AI ad copy across Google / Meta / TikTok / LinkedIn / YouTube / X without paying $49–125/mo for Jasper. |
 | 🏢 **A marketing agency** | Multi-client brand brains, batch mode (generate the same asset for 5 clients in one parallel run), per-client cost rollup, and Markdown/PDF campaign export for client handoff. |
@@ -90,20 +90,20 @@ iwr -useb https://raw.githubusercontent.com/IamRamgarhia/AdForge/main/scripts/in
 curl -fsSL https://raw.githubusercontent.com/IamRamgarhia/AdForge/main/scripts/install/install.sh | bash
 ```
 
-That single command: installs Node + git if missing (Windows uses winget), clones the repo into `~/AdForge`, runs `npm install`, asks for a port, then opens the launcher control panel in your browser. Click **▶ Start AdForge** and you're live.
+That single command: installs Node + git if missing (Windows uses winget), clones the repo into `~/OpenAdKit`, runs `npm install`, asks for a port, then opens the launcher control panel in your browser. Click **▶ Start OpenAdKit** and you're live.
 
 ### Manual · Windows · 2 double-clicks
 1. **Download** this repo (green "Code" button → "Download ZIP" → extract)
-2. **Double-click `AdForge.bat`** — that's it. First run installs Node dependencies, writes a default `.env.local`, drops an `AdForge` shortcut on your Desktop, then opens the launcher. From the second run onwards it's a single click → browser opens to the launcher.
+2. **Double-click `OpenAdKit.bat`** — that's it. First run installs Node dependencies, writes a default `.env.local`, drops an `OpenAdKit` shortcut on your Desktop, then opens the launcher. From the second run onwards it's a single click → browser opens to the launcher.
 
-The launcher is a control panel: hit **▶ Start AdForge**, watch the progress bar, then click **↗ Open AdForge** when it's up. From the launcher you can stop, restart, change ports, see update notices, and open three different local URLs.
+The launcher is a control panel: hit **▶ Start OpenAdKit**, watch the progress bar, then click **↗ Open OpenAdKit** when it's up. From the launcher you can stop, restart, change ports, see update notices, and open three different local URLs.
 
 To shut everything down: close the launcher tab and run `scripts\stop.bat` (or just close the hidden sidecar via Task Manager).
 
 ### Manual · Mac / Linux · 2 commands
 ```bash
-git clone https://github.com/IamRamgarhia/AdForge.git adforge && cd adforge
-bash AdForge.command             # first run installs + creates Desktop shortcut · subsequent runs just launch
+git clone https://github.com/IamRamgarhia/AdForge.git openadkit && cd openadkit
+bash OpenAdKit.command             # first run installs + creates Desktop shortcut · subsequent runs just launch
 # bash scripts/stop.sh           # to force-stop later
 ```
 
@@ -119,8 +119,8 @@ npm run start:all      # web app + local-sync sidecar together
 The default is **3005** for the web app and **3006** for the sidecar. Change either from the launcher's **Settings** card any time — no editor needed. Pick anything 1024–65535 (avoid 80 unless you want admin rights).
 
 ### Want a prettier URL?
-- **Zero setup:** open `http://adforge.localhost:3005/` instead of `http://localhost:3005/`. Works in Chrome / Firefox / Safari / Edge today — all modern browsers auto-resolve `*.localhost` to 127.0.0.1.
-- **Hosts-file option:** for `http://adforge.local/` with no port shown, run `scripts/set-domain.bat` (Windows, as admin) or `sudo bash scripts/set-domain.sh` (Mac/Linux). Full guide: [docs/CUSTOM_DOMAIN.md](docs/CUSTOM_DOMAIN.md).
+- **Zero setup:** open `http://openadkit.localhost:3005/` instead of `http://localhost:3005/`. Works in Chrome / Firefox / Safari / Edge today — all modern browsers auto-resolve `*.localhost` to 127.0.0.1.
+- **Hosts-file option:** for `http://openadkit.local/` with no port shown, run `scripts/set-domain.bat` (Windows, as admin) or `sudo bash scripts/set-domain.sh` (Mac/Linux). Full guide: [docs/CUSTOM_DOMAIN.md](docs/CUSTOM_DOMAIN.md).
 
 ### Your data lives in this folder
 After install, **everything you do** (brand brains, generated ads, campaigns, checklists, performance logs) auto-saves to `data/snapshot.json` in the project folder.
@@ -155,7 +155,7 @@ Pick where you're running ads first ("I'm doing Meta this week"), then see every
 **Full Campaign Kit** · **Hashtags (any language)** · **Email Subjects** · **Lead Forms** · **AI Image/Video Prompts** · **Social Content Calendar** · **Steal & Beat** competitor ad teardown · **Compare 2 Ads** · **Budget Waste Analyzer** · **Budget Planner** · **A/B Test Planner**
 
 ### Multi-client management
-- Add a client by **pasting a website URL** — AdForge auto-extracts the Brand Brain (tone, audience, USP, VOC, words to use/avoid) using Jina Reader + your chosen LLM
+- Add a client by **pasting a website URL** — OpenAdKit auto-extracts the Brand Brain (tone, audience, USP, VOC, words to use/avoid) using Jina Reader + your chosen LLM
 - 10 **industry templates** for instant brand creation (local restaurant, B2B SaaS, e-commerce fashion, agency, etc.)
 - One-click switcher in the top bar
 - History + checklists scope to active client automatically
@@ -165,7 +165,7 @@ Pick where you're running ads first ("I'm doing Meta this week"), then see every
 - **Compare 2 ads** — head-to-head AI teardown · picks the winner · proposes a hybrid
 
 ### Step-by-step launch guides
-Pick a platform + experience level + budget — AdForge walks you through **every click, every field, every dropdown** in Meta Ads Manager / Google Ads / TikTok Ads Manager / LinkedIn Campaign Manager. For non-technical users who've never launched an ad before.
+Pick a platform + experience level + budget — OpenAdKit walks you through **every click, every field, every dropdown** in Meta Ads Manager / Google Ads / TikTok Ads Manager / LinkedIn Campaign Manager. For non-technical users who've never launched an ad before.
 
 ### Routines + learning
 - **Daily / Weekly / Monthly** checklists with streak counters and custom items
@@ -175,7 +175,7 @@ Pick a platform + experience level + budget — AdForge walks you through **ever
 - **Industry benchmarks** for CTR/CPC/CVR/ROAS across 8 verticals
 
 ### Performance feedback loop
-Log impressions / clicks / conversions / spend / revenue per ad → AdForge computes CTR / CPA / ROAS → surfaces **winning angles per brand** in future Suggested Campaigns.
+Log impressions / clicks / conversions / spend / revenue per ad → OpenAdKit computes CTR / CPA / ROAS → surfaces **winning angles per brand** in future Suggested Campaigns.
 
 ### Ad mockups · what they'll look like
 Every Google / Meta / TikTok generation includes a **live realistic mockup** — Feed cards, Reels overlays, Search SERP previews, For-You-page mockups. No more guessing the visual.
@@ -202,7 +202,7 @@ Pick during onboarding · switch any time in Settings · one app, every API.
 
 ## Why this vs the $49-499/mo stack
 
-| Feature | Jasper $49+ | AdCreative $39+ | Anyword $49+ | Pencil $119+ | **AdForge · free** |
+| Feature | Jasper $49+ | AdCreative $39+ | Anyword $49+ | Pencil $119+ | **OpenAdKit · free** |
 |---|:-:|:-:|:-:|:-:|:-:|
 | Visual ad mockups | ❌ | ✅ | ❌ | ✅ | ✅ |
 | Multi-platform copy | ✅ | partial | ✅ | Meta-only | ✅ (18 generators) |
@@ -228,7 +228,7 @@ Pick during onboarding · switch any time in Settings · one app, every API.
 
 ## Architecture
 
-<img src="docs/architecture.svg" alt="AdForge architecture diagram. Browser-only Next.js app talks directly to your chosen LLM provider, Jina Reader for URL ingest, and a zero-dependency Node local-sync sidecar that persists all your work to data/snapshot.json in the project folder." width="100%" />
+<img src="docs/architecture.svg" alt="OpenAdKit architecture diagram. Browser-only Next.js app talks directly to your chosen LLM provider, Jina Reader for URL ingest, and a zero-dependency Node local-sync sidecar that persists all your work to data/snapshot.json in the project folder." width="100%" />
 
 <details>
 <summary>Text version (for screen readers)</summary>
@@ -258,7 +258,7 @@ Pick during onboarding · switch any time in Settings · one app, every API.
 3. AllOrigins (`api.allorigins.win`) · only as a fallback if Jina is rate-limited
 4. The competitor ad libraries (`facebook.com/ads/library`, `adstransparency.google.com`, `ads.tiktok.com`, `linkedin.com/ad-library`) · only when YOU click "Open" — they open in YOUR new tab, never proxied through us.
 
-**No backend AdForge owns. No telemetry. No analytics. No accounts.**
+**No backend OpenAdKit owns. No telemetry. No analytics. No accounts.**
 
 ---
 
@@ -272,7 +272,7 @@ Pick during onboarding · switch any time in Settings · one app, every API.
 - **Soft-delete + undo.** Accidental deletes get a 7-second undo toast.
 - **Wipe & export.** Settings includes full export (JSON/CSV/Markdown) and "wipe all local data."
 
-> ⚠️ Because keys are in `localStorage`, treat AdForge like your password manager: only install on devices you trust, don't paste keys on shared machines.
+> ⚠️ Because keys are in `localStorage`, treat OpenAdKit like your password manager: only install on devices you trust, don't paste keys on shared machines.
 
 See [SECURITY.md](SECURITY.md) for the threat model + responsible-disclosure flow.
 
@@ -281,7 +281,7 @@ See [SECURITY.md](SECURITY.md) for the threat model + responsible-disclosure flo
 ## Project layout
 
 ```
-adforge/
+openadkit/
 ├── app/                         Next.js App Router (56 routes)
 │   ├── generate/*               18 ad generators (Reel Ideas, Spark Ads, BHC, etc.)
 │   ├── optimize/*               11 data-first optimization tools
@@ -325,7 +325,7 @@ adforge/
 │   └── refresh_knowledge.py     Optional maintainer tool
 │
 ├── data/                        Your snapshot lives here (gitignored)
-├── AdForge.bat / AdForge.command  Click-to-launch (Desktop shortcut points here)
+├── OpenAdKit.bat / OpenAdKit.command  Click-to-launch (Desktop shortcut points here)
 ├── scripts/install/install.ps1    One-line online bootstrap (Windows · PowerShell · iwr | iex)
 ├── scripts/install/install.sh     One-line online bootstrap (Mac / Linux / WSL · curl | bash)
 ├── scripts/start.bat / start.sh    Manual sidecar runner (advanced)
@@ -355,7 +355,7 @@ Production build: 56 statically prerendered routes · 87 KB shared JS · 130-160
 
 | Action | Windows | Mac / Linux | Cross-platform |
 |---|---|---|---|
-| Install + Launch | double-click `AdForge.bat` — first run installs, every run after just launches | `bash AdForge.command` (same: first run sets up, after that it just launches) | `npm install && npm run start:all` |
+| Install + Launch | double-click `OpenAdKit.bat` — first run installs, every run after just launches | `bash OpenAdKit.command` (same: first run sets up, after that it just launches) | `npm install && npm run start:all` |
 | Force-stop everything | `scripts\stop.bat` | `bash scripts/stop.sh` | Ctrl+C in the sidecar window |
 | Manual sidecar (visible log) | `scripts\start.bat` | `bash scripts/start.sh` | `npm run start:all` |
 | Web only | `npm run dev` | `npm run dev` | `npm run dev` |
@@ -373,11 +373,11 @@ Most problems come down to one of four things: a port already in use, Node missi
 
 ### Sidecar won't start
 
-**Symptom:** Double-clicking `AdForge` does nothing, or the cmd window flashes and disappears.
+**Symptom:** Double-clicking `OpenAdKit` does nothing, or the cmd window flashes and disappears.
 
 1. Open a terminal in the install folder and run `node --version`. If it reports anything below **v20.0.0** or "command not found," install Node 20+ from <https://nodejs.org/en/download>.
 2. Run `scripts\start.bat` (Windows) or `bash scripts/start.sh` (Mac/Linux) directly — the window stays open and prints the real error.
-3. If you see `Input Error: There is no script engine for file extension ".vbs"`, your Windows Script Host is disabled. The current `AdForge.bat` uses PowerShell instead — make sure you have the latest version from this repo.
+3. If you see `Input Error: There is no script engine for file extension ".vbs"`, your Windows Script Host is disabled. The current `OpenAdKit.bat` uses PowerShell instead — make sure you have the latest version from this repo.
 
 ### Port already in use
 
@@ -389,16 +389,16 @@ Most problems come down to one of four things: a port already in use, Node missi
 
 ### Port mismatch between `.env.local` and the launcher
 
-**Symptom:** Launcher's "Open AdForge" button points at the wrong port.
+**Symptom:** Launcher's "Open OpenAdKit" button points at the wrong port.
 
 - Open `.env.local` in the install folder. It should have two lines: `PORT=3005` and `ADFORGE_SYNC_PORT=3006` (use whatever values you picked at install).
 - If both ports match what the launcher shows, you're fine. If they don't, save the correct values in `.env.local` and force-stop everything (`scripts\stop.bat` or `bash scripts/stop.sh`), then relaunch.
 
 ### Windows Defender / SmartScreen warning
 
-**Symptom:** "Windows protected your PC" dialog when running `AdForge.bat`.
+**Symptom:** "Windows protected your PC" dialog when running `OpenAdKit.bat`.
 
-- Click **More info → Run anyway**. The warning appears for any unsigned script downloaded from the internet — AdForge is open source and reviewable.
+- Click **More info → Run anyway**. The warning appears for any unsigned script downloaded from the internet — OpenAdKit is open source and reviewable.
 - For zero warnings: clone the repo with `git clone` instead of downloading the ZIP. Files created locally don't carry the "mark of the web."
 
 ### Auto-update from GitHub
@@ -442,11 +442,11 @@ This is a stale `.next/` build-cache problem — usually caused by running `npm 
 2. Scroll to the **🧹 Clean rebuild** button in the trouble row
 3. Click it → confirms → wipes `.next/`, restarts the web app on a clean cache
 
-**Manual fix** (no launcher available): delete the `.next/` folder in the install directory and re-run `AdForge.bat` (or `bash AdForge.command` on Mac/Linux).
+**Manual fix** (no launcher available): delete the `.next/` folder in the install directory and re-run `OpenAdKit.bat` (or `bash OpenAdKit.command` on Mac/Linux).
 
 ### Web app stays on "Starting…" past 30 seconds
 
-**Symptom:** Launcher shows "Starting AdForge…" with progress bar that never completes.
+**Symptom:** Launcher shows "Starting OpenAdKit…" with progress bar that never completes.
 
 - First boot compiles 56 routes; this can take 15-30 seconds on slow disks. Wait a full minute.
 - If it's still stuck, click **⚠ Report a problem** in the launcher — the GitHub issue will include `web_last_log` which usually shows the exact compile error.
@@ -454,16 +454,16 @@ This is a stale `.next/` build-cache problem — usually caused by running `npm 
 
 ### Browser says "site can't be reached"
 
-**Symptom:** Clicking "Open AdForge" shows `ERR_CONNECTION_REFUSED`.
+**Symptom:** Clicking "Open OpenAdKit" shows `ERR_CONNECTION_REFUSED`.
 
 - The web app isn't running. Go back to the launcher and check the status dot — orange means starting, gray means stopped. Click **Start**.
 - If the dot is green but the page still fails, your browser may have cached an old port. Try `http://127.0.0.1:<port>/` directly with the port shown in the launcher.
 
 ### Where do I find the logs?
 
-- **Launcher (sidecar) logs:** the launcher page shows the last 3 lines of the Next.js output in the gray log box. For full logs, run `scripts\start.bat` / `bash scripts/start.sh` in a visible window instead of `AdForge.bat`.
+- **Launcher (sidecar) logs:** the launcher page shows the last 3 lines of the Next.js output in the gray log box. For full logs, run `scripts\start.bat` / `bash scripts/start.sh` in a visible window instead of `OpenAdKit.bat`.
 - **Web app errors in the browser:** open DevTools (F12) → Console.
-- **Data file:** `data/snapshot.json` in the install folder is everything AdForge has saved.
+- **Data file:** `data/snapshot.json` in the install folder is everything OpenAdKit has saved.
 
 ### Reporting a bug
 
@@ -473,35 +473,35 @@ Click **⚠ Report a problem on GitHub** in the launcher — it pre-fills [githu
 
 ## Frequently Asked Questions
 
-### Is AdForge really free?
-Yes. **Forever, no asterisk.** Released under the **MIT license**. We make money from custom builds at [Dicecodes](https://dicecodes.com) — not from this tool. You only pay your chosen AI provider, and several of them (Groq, Gemini Flash, Cerebras, OpenRouter `:free` models) cost **$0/month** for typical AdForge usage.
+### Is OpenAdKit really free?
+Yes. **Forever, no asterisk.** Released under the **MIT license**. We make money from custom builds at [Dicecodes](https://dicecodes.com) — not from this tool. You only pay your chosen AI provider, and several of them (Groq, Gemini Flash, Cerebras, OpenRouter `:free` models) cost **$0/month** for typical OpenAdKit usage.
 
-### Is AdForge a real Jasper / AdCreative / Copy.ai alternative?
-For ad-copy generation across Google, Meta, TikTok, LinkedIn, YouTube, and X — yes. AdForge has 18 generators covering every major ad format, plus 11 data-driven optimizers, multi-client brand brains, competitor teardowns, content calendars, and a 10-minute launch wizard. The one thing it doesn't do is *image generation* — for that, AdForge writes prompts for Midjourney / Runway / DALL-E / Pika instead of running its own image model.
+### Is OpenAdKit a real Jasper / AdCreative / Copy.ai alternative?
+For ad-copy generation across Google, Meta, TikTok, LinkedIn, YouTube, and X — yes. OpenAdKit has 18 generators covering every major ad format, plus 11 data-driven optimizers, multi-client brand brains, competitor teardowns, content calendars, and a 10-minute launch wizard. The one thing it doesn't do is *image generation* — for that, OpenAdKit writes prompts for Midjourney / Runway / DALL-E / Pika instead of running its own image model.
 
 ### Where does my data go?
 **Nowhere except your own browser.** All your brand brains, generated ads, campaigns, and history live in your browser's IndexedDB. The folder-sync sidecar mirrors everything to `data/snapshot.json` *in the project directory on your own machine*. No analytics, no telemetry, no accounts, no cloud sync.
 
 ### What about my AI API key?
-Stored in your browser's `localStorage`, same as 1Password's browser extension stores your session. Every LLM call goes **directly from your browser to the provider** (api.anthropic.com, api.openai.com, etc.) — never proxied through any AdForge server (we don't run one). Treat your install like a password manager: only set it up on devices you trust.
+Stored in your browser's `localStorage`, same as 1Password's browser extension stores your session. Every LLM call goes **directly from your browser to the provider** (api.anthropic.com, api.openai.com, etc.) — never proxied through any OpenAdKit server (we don't run one). Treat your install like a password manager: only set it up on devices you trust.
 
 ### Which AI provider should I pick if I want it free?
 **Groq** for speed, **Gemini 2.5 Flash** for free-tier generosity, or **OpenRouter** for free community models (`meta-llama/llama-3.3-70b-instruct:free`, `deepseek/deepseek-chat-v3:free`). All four are first-class. Add multiple keys in Settings and switch between them per project.
 
-### Can I run AdForge on a server / for my whole team?
+### Can I run OpenAdKit on a server / for my whole team?
 Out of the box it's designed for one person on one machine. You *can* expose it on a LAN by changing the bind from `127.0.0.1` to `0.0.0.0` in `scripts/local-sync.cjs`, but it has no auth layer — anyone on the network would have full access including your API keys. For team use, fork it and add your own auth, or wait for a multi-user fork (or [hire us](mailto:Contact@dicecodes.com) to build one).
 
-### How do I move AdForge to another machine?
-Zip the entire folder → copy to the new machine → run `AdForge.bat` / `AdForge.command`. Every brand brain, ad, campaign, checklist, and performance log comes with you in `data/snapshot.json`. API keys are excluded by default (re-paste them on the new machine for safety).
+### How do I move OpenAdKit to another machine?
+Zip the entire folder → copy to the new machine → run `OpenAdKit.bat` / `OpenAdKit.command`. Every brand brain, ad, campaign, checklist, and performance log comes with you in `data/snapshot.json`. API keys are excluded by default (re-paste them on the new machine for safety).
 
 ### Does it work offline?
 The Service Worker caches the app shell + all 56 routes, so the UI loads offline. AI generation needs internet (every LLM provider is online-only). URL ingest (Jina Reader) and Google search (Jina Search) also need internet. Everything else — viewing history, editing brands, browsing campaigns — works fully offline.
 
 ### Can the AI read screenshots of my Google Ads dashboard?
-**Yes**, on vision-capable providers (Claude, OpenAI GPT-4.1+, Gemini). Drop a screenshot into CTR Optimizer / Quality Score / Audience / Landing Page / Keywords / Bid Strategy / Ad Fatigue and the AI extracts metrics + recommendations directly from the image. If your active provider is text-only (Groq, DeepSeek, Mistral, Cerebras, Together), AdForge auto-falls-back to a vision-capable provider you've configured a key for, just for that one generation.
+**Yes**, on vision-capable providers (Claude, OpenAI GPT-4.1+, Gemini). Drop a screenshot into CTR Optimizer / Quality Score / Audience / Landing Page / Keywords / Bid Strategy / Ad Fatigue and the AI extracts metrics + recommendations directly from the image. If your active provider is text-only (Groq, DeepSeek, Mistral, Cerebras, Together), OpenAdKit auto-falls-back to a vision-capable provider you've configured a key for, just for that one generation.
 
-### How is AdForge different from ChatGPT or Claude itself?
-ChatGPT/Claude are general models — they'll write ad copy if you prompt them, but you do all the framework selection, character-limit validation, platform-specific rules, and JSON structuring yourself. AdForge wraps the model with **30+ task-specific prompts** that bake in Schwartz's awareness ladder, Google RSA character limits, Meta primary-text rules, TikTok hook formulas, 4 U's headline scoring, and 20 years of direct-response copywriting patterns. You paste a URL + a goal; AdForge writes you a launch-ready campaign.
+### How is OpenAdKit different from ChatGPT or Claude itself?
+ChatGPT/Claude are general models — they'll write ad copy if you prompt them, but you do all the framework selection, character-limit validation, platform-specific rules, and JSON structuring yourself. OpenAdKit wraps the model with **30+ task-specific prompts** that bake in Schwartz's awareness ladder, Google RSA character limits, Meta primary-text rules, TikTok hook formulas, 4 U's headline scoring, and 20 years of direct-response copywriting patterns. You paste a URL + a goal; OpenAdKit writes you a launch-ready campaign.
 
 ### Is the code production-quality?
 Production build is **56 static routes · 87 KB shared JS · 130-160 KB first-load JS per route**. Strict TypeScript across the entire codebase. Vitest unit tests for the highest-risk pure functions (smart-fill, brand-brain normalization, framework stack, next-steps routing, LLM helpers — 43 tests total). CI runs typecheck + tests + production build + lint on Node 18 / 20 / 22 for every PR.
@@ -518,15 +518,15 @@ See [CONTRIBUTING.md](CONTRIBUTING.md). Most generators are a single prompt file
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). Most contributions are a single prompt + a single page using the shared `GeneratorShell` framework — aim for 10-minute PRs.
 
-Pattern grounding: AdForge prompts borrow patterns (with attribution) from open-source skill repos. See [NOTICE.md](NOTICE.md) for the full source list.
+Pattern grounding: OpenAdKit prompts borrow patterns (with attribution) from open-source skill repos. See [NOTICE.md](NOTICE.md) for the full source list.
 
 ---
 
 ## About
 
-AdForge is built by **[Dicecodes](https://dicecodes.com)** — a digital studio combining creative design with advanced technology for measurable business growth.
+OpenAdKit is built by **[Dicecodes](https://dicecodes.com)** — a digital studio combining creative design with advanced technology for measurable business growth.
 
-We make money from custom builds, not from this tool. **AdForge will always be free.**
+We make money from custom builds, not from this tool. **OpenAdKit will always be free.**
 
 Need a private fork, a white-labeled agency edition, or something we haven't built? **[Get in touch →](https://dicecodes.com)** · 📧 [Contact@dicecodes.com](mailto:Contact@dicecodes.com) · 💬 [WhatsApp +91 98884 04991](https://wa.me/919888404991)
 
