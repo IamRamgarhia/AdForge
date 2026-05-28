@@ -179,6 +179,100 @@ export default function AlternativesPage() {
         </p>
       </section>
 
+      <section className="space-y-4">
+        <h2 className="font-display italic text-3xl text-ink">What you actually get — screenshots</h2>
+        <p className="text-sm text-ink-muted">
+          Real production UI, not mockups. Same browser app whether you self-host or use the hosted
+          deploy.
+        </p>
+        <div className="grid md:grid-cols-2 gap-4">
+          <figure className="border border-base-700 bg-base-900/30 overflow-hidden">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/screenshots/08-cockpit-dashboard.png"
+              alt="OpenAdKit dashboard cockpit showing 18 AI ad generators and 11 optimizers organized by ad platform"
+              loading="lazy"
+              width={1600}
+              height={1000}
+              className="w-full h-auto"
+            />
+            <figcaption className="text-[11px] font-mono uppercase tracking-ui-wide text-ink-faint px-3 py-2 border-t border-base-700">
+              Dashboard — every tool one click away
+            </figcaption>
+          </figure>
+          <figure className="border border-base-700 bg-base-900/30 overflow-hidden">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/screenshots/09-settings-providers.png"
+              alt="OpenAdKit settings showing all 9 supported AI providers — Claude, GPT, Gemini, Groq, Cerebras, OpenRouter, Together AI, DeepSeek, Mistral — with BYOK API key fields"
+              loading="lazy"
+              width={1600}
+              height={1000}
+              className="w-full h-auto"
+            />
+            <figcaption className="text-[11px] font-mono uppercase tracking-ui-wide text-ink-faint px-3 py-2 border-t border-base-700">
+              Settings — 9 AI providers, your keys
+            </figcaption>
+          </figure>
+          <figure className="border border-base-700 bg-base-900/30 overflow-hidden">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/screenshots/10-generator-meta-ads.png"
+              alt="OpenAdKit Meta Ads generator producing 3 angle-distinct Facebook and Instagram ad copy variants with character count validation"
+              loading="lazy"
+              width={1600}
+              height={1000}
+              className="w-full h-auto"
+            />
+            <figcaption className="text-[11px] font-mono uppercase tracking-ui-wide text-ink-faint px-3 py-2 border-t border-base-700">
+              Meta Ads generator — 3 angles per request
+            </figcaption>
+          </figure>
+          <figure className="border border-base-700 bg-base-900/30 overflow-hidden">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/screenshots/11-optimizer-creative-score.png"
+              alt="OpenAdKit Creative Score optimizer with 5-lever scoring rubric and named-phrase fixes for paid social and search ads"
+              loading="lazy"
+              width={1600}
+              height={1000}
+              className="w-full h-auto"
+            />
+            <figcaption className="text-[11px] font-mono uppercase tracking-ui-wide text-ink-faint px-3 py-2 border-t border-base-700">
+              Creative Score — brutal 5-lever rubric
+            </figcaption>
+          </figure>
+          <figure className="border border-base-700 bg-base-900/30 overflow-hidden">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/screenshots/12-research-competitors.png"
+              alt="OpenAdKit competitor research linking to Meta Ads Library, Google Ads Transparency, TikTok Top Ads, and LinkedIn Ad Library"
+              loading="lazy"
+              width={1600}
+              height={1000}
+              className="w-full h-auto"
+            />
+            <figcaption className="text-[11px] font-mono uppercase tracking-ui-wide text-ink-faint px-3 py-2 border-t border-base-700">
+              Competitor research — link to public ad libraries
+            </figcaption>
+          </figure>
+          <figure className="border border-base-700 bg-base-900/30 overflow-hidden">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/screenshots/06-learn-frameworks-trainer.png"
+              alt="OpenAdKit ad copywriting framework trainer covering PAS, AIDA, BAB, 4 U's, and Schwartz awareness ladder"
+              loading="lazy"
+              width={1600}
+              height={1000}
+              className="w-full h-auto"
+            />
+            <figcaption className="text-[11px] font-mono uppercase tracking-ui-wide text-ink-faint px-3 py-2 border-t border-base-700">
+              Learn — built-in ad copywriting trainer
+            </figcaption>
+          </figure>
+        </div>
+      </section>
+
       {COMPETITORS.map((c) => (
         <section key={c.slug} id={`vs-${c.slug}`} className="space-y-4 scroll-mt-16">
           <header className="space-y-1 border-b border-base-700 pb-3">

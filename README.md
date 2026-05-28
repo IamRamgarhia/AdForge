@@ -22,10 +22,11 @@
 **One tool. Every ad platform. Zero subscriptions.**
 *Your key · your data · your folder.*
 
-[Install in 60 seconds](#install-in-60-seconds) ·
+[Use it now — two paths](#use-it-now--two-paths) ·
+[Screenshots](#screenshots) ·
 [Who's it for](#whos-it-for) ·
 [What's inside](#whats-inside) ·
-[vs paid AI ad tools](#why-this-vs-the-49-499mo-stack) ·
+[vs Jasper / AdCreative / Anyword / Copy.ai](#openadkit-vs-jasper-adcreative-anyword-copyai--feature-comparison) ·
 [FAQ](#frequently-asked-questions) ·
 [Architecture](#architecture) ·
 [Star this repo ⭐](https://github.com/IamRamgarhia/AdForge/stargazers)
@@ -59,6 +60,60 @@ You **bring your own AI key** — free-tier (Groq · Gemini · Cerebras · OpenR
 │                                                                          │
 └──────────────────────────────────────────────────────────────────────────┘
 ```
+
+---
+
+## Screenshots
+
+> Real screenshots of the production app — no mockups. All UI runs in your browser; the only thing we can't show is your own AI provider's output (BYOK — bring your own API key).
+
+### The cockpit — every tool one click away
+
+<img src="public/screenshots/08-cockpit-dashboard.png" alt="OpenAdKit dashboard cockpit showing 18 AI ad generators and 11 optimizers organized by ad platform — Meta, Google, TikTok, LinkedIn, YouTube, X — with quick access to brand brain, history, and AI campaign suggestions" width="100%" />
+
+### 5-step onboarding wizard — pick a provider, paste a key, done
+
+<img src="public/screenshots/01-setup-wizard.png" alt="OpenAdKit free 5-step setup wizard for the open-source AI marketing tool — welcome screen explaining browser-only architecture, bring your own AI key (BYOK), and zero subscriptions positioning vs Jasper, AdCreative, Anyword" width="100%" />
+
+### Settings — switch between 9 AI providers (free + paid) in one click
+
+<img src="public/screenshots/09-settings-providers.png" alt="OpenAdKit settings page with all 9 supported AI providers — Anthropic Claude, OpenAI GPT, Google Gemini, Groq, Cerebras, OpenRouter, Together AI, DeepSeek, Mistral — each with BYOK API key field, model selector, and usage tracking" width="100%" />
+
+### Meta + Facebook + Instagram ad generator
+
+<img src="public/screenshots/10-generator-meta-ads.png" alt="OpenAdKit Meta Ads generator producing 3 angle-distinct Facebook and Instagram ad copy variants — pain, desire, and social proof angles — with character count validation for Meta primary text, headline, and description fields" width="100%" />
+
+### Creative Score — brutal 5-lever scoring + 3 named fixes
+
+<img src="public/screenshots/11-optimizer-creative-score.png" alt="OpenAdKit Creative Score optimizer showing a 5-lever scoring rubric — hook strength, specificity, urgency, brand fit, conversion potential — with named-phrase fixes and predicted CTR band for paid social and search ads" width="100%" />
+
+### Competitor research — link straight to Meta, Google, TikTok, LinkedIn ad libraries
+
+<img src="public/screenshots/12-research-competitors.png" alt="OpenAdKit competitor research tool with direct deep links to Meta Ads Library, Google Ads Transparency Center, TikTok Top Ads, and LinkedIn Ad Library — paste competitor ads to get a teardown plus three beat-their-ad variants" width="100%" />
+
+### Compare — side-by-side OpenAdKit vs Jasper / AdCreative / Anyword / Copy.ai
+
+<img src="public/screenshots/02-alternatives-comparison.png" alt="OpenAdKit alternatives comparison page showing the free open-source AI marketing tool versus Jasper, AdCreative.ai, Anyword, Copy.ai, and Pencil — feature-by-feature matrix with monthly cost rows and per-competitor strengths and shortfalls" width="100%" />
+
+### Built-in benchmarks — real CTR / CPC / CVR / ROAS bands by industry
+
+<img src="public/screenshots/03-benchmarks-industry-data.png" alt="OpenAdKit benchmarks page with industry-specific Google Ads and Meta Ads performance bands — click-through rate (CTR), cost per click (CPC), conversion rate (CVR), return on ad spend (ROAS) — for SaaS, e-commerce, B2B, local services, education, finance" width="100%" />
+
+### Platform hub — every ad format, character limit, best practice in one place
+
+<img src="public/screenshots/04-platforms-hub.png" alt="OpenAdKit platforms hub showing every supported ad platform — Meta Facebook and Instagram, Google Search and Performance Max and Shopping, TikTok In-Feed and Spark, LinkedIn Sponsored, YouTube In-Stream, X Twitter — each linking to format-specific generators and character-limit references" width="100%" />
+
+### Platform deep-dive — Meta ad formats explained
+
+<img src="public/screenshots/05-platform-meta-detail.png" alt="OpenAdKit Meta platform detail page explaining every Facebook and Instagram ad format — Feed, Reels, Stories, Carousel, Collection — with exact character limits, image dimensions, and AI generator links for each format" width="100%" />
+
+### Learn — ad copywriting framework trainer (PAS, AIDA, BAB, 4 U's, Schwartz awareness ladder)
+
+<img src="public/screenshots/06-learn-frameworks-trainer.png" alt="OpenAdKit ad copywriting framework trainer covering PAS Problem-Agitate-Solution, AIDA Attention-Interest-Desire-Action, BAB Before-After-Bridge, the 4 U's, and Schwartz awareness ladder — interactive lessons for marketers learning paid media" width="100%" />
+
+### Launch guide — step-by-step Facebook / Google UI walkthroughs
+
+<img src="public/screenshots/07-launch-guide-walkthrough.png" alt="OpenAdKit step-by-step launch guide walking through the Facebook Ads Manager and Google Ads UI from campaign creation to publish — for first-time advertisers learning paid media" width="100%" />
 
 ---
 
