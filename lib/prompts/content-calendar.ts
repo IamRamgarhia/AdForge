@@ -1,4 +1,4 @@
-import { VIDEO_HOOK_RULE } from "./common-rules";
+import { VIDEO_HOOK_RULE, ANTI_FABRICATION_RULE } from "./common-rules";
 
 export interface ContentCalendarInput {
   duration: "1_week" | "2_weeks" | "1_month";
@@ -25,6 +25,13 @@ export function buildContentCalendarPrompt(input: ContentCalendarInput): string 
   return `Generate an organic social media content calendar — full post specs, captions, hashtags, visual + video creative briefs with AI-tool recommendations.
 
 ${VIDEO_HOOK_RULE}
+
+${ANTI_FABRICATION_RULE}
+
+TOOL-URL RULE: the "recommended_ai_tool.url" field MUST be either:
+- A canonical homepage you are certain of (e.g. "https://midjourney.com", "https://runwayml.com"), OR
+- null — if you're not certain of the canonical URL.
+Never invent a path like "https://runwayml.com/templates/specific-feature" — those break when users click them and erode trust.
 
 INPUT:
 - Total duration: ${days} days
@@ -101,7 +108,7 @@ Return ONLY valid JSON:
       "visual_brief": "string (ready to paste into AI image/video tool)",
       "recommended_ai_tool": {
         "name": "string",
-        "url": "string",
+        "url": "string or null (canonical homepage only — leave null if uncertain, never invent paths)",
         "tier": "free|freemium|paid",
         "why_this_tool": "string"
       },

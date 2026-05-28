@@ -16,7 +16,7 @@ export interface MetaInput {
   cta: string;
 }
 
-import { WAVE_BATCH_RULE, VIDEO_HOOK_RULE, RETARGETING_MATRIX } from "./common-rules";
+import { WAVE_BATCH_RULE, VIDEO_HOOK_RULE, RETARGETING_MATRIX, CHAR_COUNT_SELF_VALIDATION, ANTI_FABRICATION_RULE } from "./common-rules";
 
 export function buildMetaPrompt(input: MetaInput): string {
   const isVideo = ["video", "reels", "stories"].includes(input.format);
@@ -52,6 +52,16 @@ For each variant include:
 - cta_button (one of: Shop Now, Learn More, Sign Up, Subscribe, Download, Get Offer, Book Now)
 - char_counts: { primary, headline, description }
 
+${CHAR_COUNT_SELF_VALIDATION}
+
+For each variant, after writing the copy, also emit a "status" field per text field:
+- primary_status: "ok" if char_counts.primary ≤ ${META_LIMITS.primary_max} else "over"
+- headline_status: "ok" if char_counts.headline ≤ ${META_LIMITS.headline_mobile} else "over"
+- description_status: "ok" if char_counts.description ≤ ${META_LIMITS.description} else "over"
+- If any field is "over": include a "*_trimmed_alt" field with a version that fits.
+
+${ANTI_FABRICATION_RULE}
+
 If format is "video" or "reels" or "stories" include:
 - video_script: { hook_0_3s, value_3_15s, cta_final_5s, b_roll: [], overlays: [{ time, text }] }
 
@@ -69,6 +79,12 @@ Return ONLY valid JSON:
       "description": "string",
       "cta_button": "string",
       "char_counts": { "primary": 0, "headline": 0, "description": 0 },
+      "primary_status": "ok|over",
+      "headline_status": "ok|over",
+      "description_status": "ok|over",
+      "primary_trimmed_alt": "string or null",
+      "headline_trimmed_alt": "string or null",
+      "description_trimmed_alt": "string or null",
       "video_script": null,
       "cards": null
     }

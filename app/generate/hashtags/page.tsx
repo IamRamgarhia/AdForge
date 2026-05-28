@@ -87,7 +87,7 @@ function HashtagOutput({ json }: { json: any }) {
                   <Pill text={tier} tone={toneMap[tier]} />
                   <span className="text-ink font-medium font-mono">{t.tag}</span>
                   {t.casing_variant ? <span className="text-ink-subtle font-mono">/ {t.casing_variant}</span> : null}
-                  <span className="text-ink-faint text-[10px] font-mono uppercase tracking-ui-wide ml-auto">{t.estimated_volume}</span>
+                  <span className="text-ink-faint text-[10px] font-mono uppercase tracking-ui-wide ml-auto">{t.volume_estimate ?? t.estimated_volume ?? ""}</span>
                   <CopyButton text={t.tag} label="" />
                 </li>
               ))}

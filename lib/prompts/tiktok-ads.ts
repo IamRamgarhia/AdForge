@@ -11,7 +11,7 @@ export interface TikTokInput {
   vibe: string;
 }
 
-import { VIDEO_HOOK_RULE } from "./common-rules";
+import { VIDEO_HOOK_RULE, CHAR_COUNT_SELF_VALIDATION, ANTI_FABRICATION_RULE } from "./common-rules";
 
 export function buildTikTokPrompt(input: TikTokInput): string {
   if (input.format === "hooks") {
@@ -70,9 +70,15 @@ RULES:
 Generate 3 distinct UGC scripts. For each:
 - creator_brief: what to wear, where to film, what NOT to do.
 - script_beats: array of beats with timestamp + spoken_line + visual + on_screen_text.
-- caption (≤ ${TIKTOK_LIMITS.text} chars).
+- caption (≤ ${TIKTOK_LIMITS.text} chars — VALIDATE per the rule below).
 - hashtags: 5–8, mix broad and niche.
 - b_roll: 3 shot ideas.
+
+${CHAR_COUNT_SELF_VALIDATION}
+
+CAPTION CHAR LIMIT: ${TIKTOK_LIMITS.text} chars (TikTok hard cap).
+
+${ANTI_FABRICATION_RULE}
 
 Return ONLY valid JSON:
 {
@@ -82,11 +88,12 @@ Return ONLY valid JSON:
       "creator_brief": "string",
       "script_beats": [{ "t": "0:00", "spoken": "string", "visual": "string", "overlay": "string" }],
       "caption": "string",
+      "caption_chars": 0,
+      "caption_status": "ok|over",
+      "caption_trimmed_alt": "string or null (only set if caption_status is 'over')",
       "hashtags": ["#string"],
       "b_roll": ["string"]
     }
-  ],
-  "hook_rate_target": "≥ 30% (thumb-stop rate to scale)",
-  "completion_rate_target": "≥ 25% (otherwise kill — bad hook)"
+  ]
 }`;
 }

@@ -292,6 +292,10 @@ export const EmailSubjectsSchema = z
 const HashtagItem = Loose({
   tag: z.string(),
   casing_variant: z.string(),
+  // New enum after the anti-fabrication rewrite of hashtags.ts. Accept both
+  // the new field (volume_estimate) and legacy (estimated_volume) so old
+  // history rows still parse cleanly.
+  volume_estimate: z.string(),
   estimated_volume: z.string(),
   use_for: z.string(),
   usage_hint: z.string(),

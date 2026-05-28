@@ -1,3 +1,5 @@
+import { ANTI_FABRICATION_RULE } from "./common-rules";
+
 export interface HashtagInput {
   title: string;
   platform: "instagram" | "tiktok" | "twitter" | "linkedin" | "youtube" | "pinterest" | "any";
@@ -39,18 +41,27 @@ RULES:
 - Branded tags should match the brand from context; if no brand provided, suggest tag patterns based on the title.
 - DO NOT generate hashtags about restricted topics (illegal substances, weapons, hate, adult content).
 
+${ANTI_FABRICATION_RULE}
+
+HASHTAG-VOLUME RULE (most important — read carefully):
+You do NOT have live access to current hashtag post counts. Stating "10M+ posts" or "850k posts" as a fact is fabrication. Use the "volume_estimate" enum below instead — it captures the tier without inventing precision:
+- "high"    → broadly used, 1M+ posts (use for top-of-funnel discovery tags)
+- "mid"     → moderately used, ~100k–1M (use for the bulk of your post mix)
+- "low"     → niche, < ~100k (use for engaged-community tags)
+- "unknown" → you genuinely don't know, do not guess
+
 Return ONLY valid JSON:
 {
   "language_used": "string e.g. 'Spanish (es)' or 'Hindi (hi) — with English romanization'",
   "tiers": {
     "broad": [
-      { "tag": "#string", "estimated_volume": "string e.g. '10M+ posts'", "use_for": "string", "casing_variant": "string or null (e.g. CamelCase version)" }
+      { "tag": "#string", "volume_estimate": "high|mid|low|unknown", "use_for": "string", "casing_variant": "string or null (e.g. CamelCase version)" }
     ],
     "medium": [
-      { "tag": "#string", "estimated_volume": "string", "use_for": "string", "casing_variant": "string or null" }
+      { "tag": "#string", "volume_estimate": "high|mid|low|unknown", "use_for": "string", "casing_variant": "string or null" }
     ],
     "niche": [
-      { "tag": "#string", "estimated_volume": "string", "use_for": "string", "casing_variant": "string or null" }
+      { "tag": "#string", "volume_estimate": "high|mid|low|unknown", "use_for": "string", "casing_variant": "string or null" }
     ],
     "branded": [
       { "tag": "#string", "usage_hint": "string" }

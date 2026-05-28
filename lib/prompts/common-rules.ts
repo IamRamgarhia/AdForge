@@ -24,6 +24,50 @@ HONESTY CONSTRAINT (non-negotiable):
 - Never invent industry awards, certifications, or third-party validations.
 `.trim();
 
+/**
+ * Global anti-fabrication rule for numeric ranges + URLs + product feature
+ * names. Imported by every generator that returns "predicted_*", "expected_*",
+ * "estimated_*", or URL fields. Without this, models cheerfully invent
+ * "1.2-1.8% CTR for Meta Feed in this audience" or runwayml.com/some/path
+ * with no way for downstream code to distinguish real from fabricated.
+ */
+export const ANTI_FABRICATION_RULE = `
+ANTI-FABRICATION (apply to every number, range, and URL you output):
+
+1. NUMBERS / RANGES — any percentage, dollar amount, audience size, or rate range you state must be one of:
+   (a) Derived from inputs the user provided. SHOW THE MATH in an adjacent field or inline parenthetical ("$120 AOV × 30% margin → CPA ceiling $36").
+   (b) An industry benchmark. CITE THE BENCHMARK BAND, not a fake precision ("WordStream B2B SaaS reports 2-4%" — not "3.2%").
+   (c) Marked directional: prefix with "directional:" or set "directional_estimate": true in the field. Example: "directional: 0.8-1.4% CTR band, anchor your actual to your provider's data".
+   NEVER state a percentage or dollar figure as fact without (a), (b), or (c). Confident invented numbers are the #1 trust-eroder in AI marketing output.
+
+2. URLs — never invent a URL. If you reference an external tool, brand, or article and you are not certain of the canonical URL:
+   - Return the field as null, empty string, or omit it.
+   - Or set it to the homepage you ARE certain of (e.g., "https://runwayml.com" not "https://runwayml.com/feature/specific-thing-you-guess-at").
+   Broken/wrong links pasted into briefs damage the user's credibility with their team.
+
+3. PRODUCT / PLATFORM FEATURE NAMES — when naming a specific ad-platform feature ("Meta Advantage+ Audience", "Google Performance Max signals"), only use names you are confident exist. If unsure, describe the capability ("audience-expansion targeting") instead of naming a feature.
+
+4. UNKNOWN INPUTS — when the user provided no data for a section, do NOT fabricate filler. Return that section as null/empty, or include an "info_needed" note describing what the user should add to unlock it.
+`.trim();
+
+/**
+ * Char-count self-validation pattern, lifted from google-ads.ts. Add to any
+ * platform generator that emits text with hard character limits — without
+ * this, the model silently overshoots Meta's 27-char mobile headlines or
+ * TikTok's 100-char caption cap. Caller should reference this then list
+ * the specific limits.
+ */
+export const CHAR_COUNT_SELF_VALIDATION = `
+CHAR-COUNT SELF-VALIDATION (do NOT skip):
+For every text field with a stated char limit, after writing the text:
+1. Count the characters (including spaces, excluding leading/trailing whitespace).
+2. Return the count in a "chars" field next to the text.
+3. Set "status": "ok" if chars ≤ limit, "over" if chars > limit.
+4. If "over": write a "trimmed_alt" version that fits the limit. Do NOT silently truncate the original — keep both so the user can choose.
+
+This catches the most common AI ad-copy failure mode: confident output that gets rejected by the ad platform at submission time.
+`.trim();
+
 export const BANNED_WORDS_RULE = `
 WORDS / PHRASES TO AVOID (will be flagged as low-quality output):
 - Vague verbs: ${BANNED_WORDS.vague_verbs.join(", ")}

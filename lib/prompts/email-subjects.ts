@@ -12,6 +12,8 @@ export interface EmailSubjectInput {
   primary_outcome: string;
 }
 
+import { CHAR_COUNT_SELF_VALIDATION } from "./common-rules";
+
 export function buildEmailSubjectsPrompt(input: EmailSubjectInput): string {
   return `Generate 12 email subject lines + paired preheaders for a ${input.campaign_type.replace("_", " ")} email.
 
@@ -38,6 +40,14 @@ EVERY subject must:
 - Front-load the hook (first ${EMAIL_SUBJECT_LIMITS.subject_mobile_cutoff} chars do the work)
 - Avoid spam triggers: ALL CAPS, multiple "!", "$$$$", "FREE!!!", "Re: " fakes
 - Have a complementary preheader that ADDS to the subject (not duplicates it)
+- Be exactly 12 items in the array — no more, no less.
+
+${CHAR_COUNT_SELF_VALIDATION}
+
+CHAR-COUNT DEFINITIONS:
+- subject_chars: total length of the subject string (every visible character).
+- subject_chars_visible_mobile: how many of those chars fit in the mobile inbox preview = min(subject_chars, ${EMAIL_SUBJECT_LIMITS.subject_mobile_cutoff}). If subject_chars > ${EMAIL_SUBJECT_LIMITS.subject_mobile_cutoff}, this is exactly ${EMAIL_SUBJECT_LIMITS.subject_mobile_cutoff} and "subject_status" must be "over_mobile".
+- preheader_chars: total length of the preheader string.
 
 Return ONLY valid JSON:
 {
@@ -47,9 +57,12 @@ Return ONLY valid JSON:
       "angle": "curiosity | specificity | personal | urgency | contrarian | benefit",
       "subject": "string",
       "subject_chars": 0,
-      "subject_chars_mobile_visible": 0,
+      "subject_chars_visible_mobile": 0,
+      "subject_status": "ok|over_mobile|over_desktop",
+      "subject_trimmed_alt": "string or null (only set if status is over_mobile or over_desktop)",
       "preheader": "string",
       "preheader_chars": 0,
+      "preheader_status": "ok|over",
       "spam_risk": "low | medium | high",
       "spam_risk_reason": "string or empty"
     }
