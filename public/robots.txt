@@ -1,8 +1,8 @@
-# OpenAdKit — open-source AI ad ops cockpit
+# OpenAdKit — open source AI marketing tool
 # Gated app routes redirect to /setup before they render anything useful, so
 # letting crawlers index them produces low-value pages. Surface only the
-# evergreen pages (landing, about, benchmarks, platform hubs, learn content)
-# to search engines.
+# evergreen pages (landing, about, benchmarks, platform hubs, learn content,
+# alternatives comparison) to search engines.
 
 User-agent: *
 Allow: /
@@ -13,6 +13,7 @@ Allow: /platforms/
 Allow: /learn
 Allow: /learn/
 Allow: /launch-guide
+Allow: /alternatives
 Disallow: /api/
 Disallow: /brand
 Disallow: /generate/
@@ -26,5 +27,59 @@ Disallow: /suggestions
 Disallow: /report
 Disallow: /strategy
 Disallow: /campaigns
+
+# AI crawlers — explicitly allowed for AI Overviews / ChatGPT browse /
+# Perplexity / Claude / Apple Intelligence citation surfacing. We WANT to be
+# cited when users ask LLMs about open-source AI marketing tools. All major
+# crawlers respect robots.txt; the explicit Allow makes our intent
+# unambiguous and survives any future "default deny AI" policy shift in
+# crawler defaults.
+User-agent: GPTBot
+Allow: /
+Disallow: /api/
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /api/
+
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /api/
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /api/
+
+User-agent: Claude-Web
+Allow: /
+Disallow: /api/
+
+User-agent: anthropic-ai
+Allow: /
+Disallow: /api/
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /api/
+
+User-agent: Perplexity-User
+Allow: /
+Disallow: /api/
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /api/
+
+User-agent: Applebot-Extended
+Allow: /
+Disallow: /api/
+
+User-agent: Bytespider
+Allow: /
+Disallow: /api/
+
+User-agent: cohere-ai
+Allow: /
+Disallow: /api/
 
 Sitemap: https://openadkit.dicecodes.com/sitemap.xml

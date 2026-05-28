@@ -17,6 +17,7 @@ const BASE_URL = process.env.BASE_URL ?? "http://localhost:3005";
 const PUBLIC_ROUTES = [
   "/",
   "/about",
+  "/alternatives",
   "/setup",
   "/benchmarks",
   "/platforms",

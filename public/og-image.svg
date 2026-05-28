@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="OpenAdKit — free open-source alternative to Jasper, AdCreative, Anyword. 18 AI ad generators across every platform. BYOK, browser-only.">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0a0a0c"/>
+      <stop offset="1" stop-color="#101015"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ffb020"/>
+      <stop offset="1" stop-color="#ff8a00"/>
+    </linearGradient>
+    <style>
+      .display { font: 700 italic 78px "Instrument Serif","Times New Roman",Georgia,serif; fill: #f4f4f6; }
+      .sub     { font: 500 28px "JetBrains Mono","Menlo","Consolas",monospace; fill: #9c9caa; letter-spacing: 0.02em; }
+      .pill    { font: 600 16px "JetBrains Mono","Menlo","Consolas",monospace; fill: #08080a; letter-spacing: 0.1em; }
+      .meta    { font: 500 18px "JetBrains Mono","Menlo","Consolas",monospace; fill: #6b6b78; letter-spacing: 0.05em; }
+      .brand   { font: 600 22px "JetBrains Mono","Menlo","Consolas",monospace; fill: #ffb020; letter-spacing: 0.05em; }
+      .price   { font: 700 italic 130px "Instrument Serif","Times New Roman",Georgia,serif; fill: #ffb020; }
+    </style>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <!-- Subtle grid for depth -->
+  <g opacity="0.06" stroke="#ffffff" stroke-width="1">
+    <line x1="0"   y1="105" x2="1200" y2="105"/>
+    <line x1="0"   y1="210" x2="1200" y2="210"/>
+    <line x1="0"   y1="315" x2="1200" y2="315"/>
+    <line x1="0"   y1="420" x2="1200" y2="420"/>
+    <line x1="0"   y1="525" x2="1200" y2="525"/>
+    <line x1="240" y1="0"   x2="240"  y2="630"/>
+    <line x1="480" y1="0"   x2="480"  y2="630"/>
+    <line x1="720" y1="0"   x2="720"  y2="630"/>
+    <line x1="960" y1="0"   x2="960"  y2="630"/>
+  </g>
+  <!-- Logo mark + brand wordmark -->
+  <g transform="translate(70 70)">
+    <rect width="44" height="44" fill="url(#accent)"/>
+    <text x="22" y="33" text-anchor="middle" font-family="Instrument Serif,Times New Roman,Georgia,serif" font-size="32" font-style="italic" font-weight="700" fill="#08080a">A</text>
+    <text x="60" y="30" class="brand">OPENADKIT</text>
+  </g>
+  <!-- Main headline -->
+  <text x="70" y="290" class="display">Open source AI</text>
+  <text x="70" y="370" class="display">marketing tool.</text>
+  <!-- Sub line -->
+  <text x="70" y="430" class="sub">Every ad platform · every AI provider (BYOK) · zero subscriptions</text>
+  <!-- Replaces line -->
+  <text x="70" y="490" class="meta">REPLACES JASPER · ADCREATIVE · ANYWORD · COPY.AI</text>
+  <!-- Pills row -->
+  <g transform="translate(70 525)">
+    <g>
+      <rect width="120" height="36" fill="url(#accent)"/>
+      <text x="60" y="24" text-anchor="middle" class="pill">FREE FOREVER</text>
+    </g>
+    <g transform="translate(135 0)">
+      <rect width="110" height="36" fill="none" stroke="#ffb020" stroke-width="1.5"/>
+      <text x="55" y="24" text-anchor="middle" class="pill" fill="#ffb020">MIT LICENSE</text>
+    </g>
+    <g transform="translate(255 0)">
+      <rect width="90" height="36" fill="none" stroke="#ffb020" stroke-width="1.5"/>
+      <text x="45" y="24" text-anchor="middle" class="pill" fill="#ffb020">BYOK</text>
+    </g>
+    <g transform="translate(355 0)">
+      <rect width="150" height="36" fill="none" stroke="#ffb020" stroke-width="1.5"/>
+      <text x="75" y="24" text-anchor="middle" class="pill" fill="#ffb020">BROWSER-ONLY</text>
+    </g>
+  </g>
+  <!-- Right side: price callout -->
+  <g transform="translate(840 220)">
+    <text x="0" y="0" class="meta" fill="#6b6b78">Paid stack:</text>
+    <text x="0" y="50" font-family="JetBrains Mono,Menlo,Consolas,monospace" font-size="42" font-weight="700" fill="#6b6b78" text-decoration="line-through">$49–499/mo</text>
+    <text x="0" y="110" class="meta" fill="#6b6b78">OpenAdKit:</text>
+    <text x="0" y="240" class="price">$0</text>
+    <text x="0" y="280" class="sub" fill="#ffb020">forever</text>
+  </g>
+  <!-- Bottom meta -->
+  <text x="70" y="595" class="meta">openadkit.dicecodes.com · github.com/IamRamgarhia/AdForge · built by Dicecodes</text>
+</svg>

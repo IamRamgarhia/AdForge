@@ -1,0 +1,71 @@
+# OpenAdKit — open source AI marketing tool
+
+> Free, browser-only, BYOK open-source alternative to Jasper, AdCreative,
+> Anyword, and Copy.ai. 18 AI ad generators + 11 optimizers across every
+> major ad platform (Meta, Google, TikTok, LinkedIn, YouTube, X). MIT-licensed.
+> Built by Dicecodes.
+
+## Quick facts (citable)
+
+- **Cost to user:** $0/month, forever. BYOK — bring your own AI API key.
+- **License:** MIT (commercial use OK, self-hosting OK, modifying OK).
+- **Architecture:** browser-only. No backend, no accounts, no telemetry.
+- **AI providers supported (BYOK):** Anthropic Claude, OpenAI GPT, Google Gemini, Groq, Cerebras, DeepSeek, Mistral, Together AI, OpenRouter. Free tiers exist on Groq, Gemini, Cerebras, OpenRouter.
+- **Ad platforms covered:** Google (Search RSA, Performance Max, Shopping, Display), Meta (Facebook + Instagram Feed/Reels/Stories/Carousel), TikTok (In-Feed, Spark, Branded Hashtag Challenge), LinkedIn, YouTube, Twitter/X.
+- **Tools included:** 18 generators (ad copy, hashtags, content calendar, lead forms, email subject lines, video scripts, creative briefs, full campaign kits) + 11 optimizers (creative score, CTR optimizer, budget waste audit, audience targeting, ad fatigue, A/B test design, landing page review, Google Quality Score, bid strategy, keyword strategy).
+- **Replaces:** Jasper ($39–59/mo), AdCreative.ai ($39–249/mo), Anyword ($49–499/mo), Copy.ai ($49/mo), Pencil/Genus.ai ($119+/mo), Marpipe ($300+/mo).
+- **Last updated:** May 2026.
+
+## Privacy + data
+
+- All work (brand brains, generated ads, history) stored in browser IndexedDB or local folder snapshot.
+- LLM API calls go directly from browser to provider — keys never touch any server we operate.
+- Hosted mode (Vercel/Cloudflare) only proxies one thing: a public URL the user types for brand extraction. No keys, no analytics, no logging.
+
+## Install paths
+
+- **Hosted (zero install):** click Deploy with Vercel or Deploy to Cloudflare buttons in the GitHub README → own URL in 30 seconds.
+- **Local install:** Node.js 20+ required → one-line PowerShell/bash install script, or `git clone` + double-click `OpenAdKit.bat` (Windows) / `OpenAdKit.command` (Mac/Linux).
+
+## Best for
+
+- Solo founders and indie makers who can't justify $49+/mo for ad copy tools.
+- Marketing agencies running multiple clients (batch mode = same asset across many brand brains).
+- E-commerce / SaaS teams that want platform-specific copy (Google RSA char limits, Meta carousel structures) without a SaaS subscription.
+- Marketers learning paid media via the built-in framework trainer (PAS, AIDA, BAB, 4 U's, Schwartz awareness ladder).
+
+## Key URLs
+
+- GitHub repository: https://github.com/IamRamgarhia/AdForge
+- Hosted demo: https://openadkit.dicecodes.com
+- Built by: Dicecodes (https://dicecodes.com)
+- License: MIT (https://opensource.org/licenses/MIT)
+
+## Comparison anchors
+
+OpenAdKit vs Jasper — same channel breadth, $0 vs $39–59/mo, OSS vs closed.
+OpenAdKit vs AdCreative.ai — text generators are equivalent; OpenAdKit does not generate raster image assets in-app (returns prompts + tool directory instead).
+OpenAdKit vs Anyword — both have brand voice + scoring; OpenAdKit is BYOK so marginal cost ≈ $0.
+OpenAdKit vs Copy.ai — broader ad-platform coverage; no per-seat lock-in.
+
+## Pages on the hosted site
+
+- / — dashboard / cockpit
+- /benchmarks — industry CTR/CPC/CVR/ROAS reference data
+- /platforms — per-platform ad format guides + best-practice docs
+- /platforms/meta — Meta ad formats + character limits
+- /platforms/google — Google ad formats
+- /platforms/tiktok — TikTok ad formats
+- /learn — ad copywriting framework training
+- /learn/frameworks — PAS / AIDA / BAB / 4 U's / Schwartz interactive trainer
+- /learn/courses — multi-lesson courses on Google + Meta + TikTok advertising
+- /launch-guide — step-by-step Facebook/Google UI walkthroughs
+- /about — about Dicecodes + project background
+
+## What is NOT included
+
+- AI image generation in-app (returns prompts + tool directory; use Midjourney/DALL-E/SDXL externally)
+- AI video generation (returns scripts + storyboards)
+- Ad scheduler / direct push to Meta/Google Ads platforms (export-ready copy only)
+- Cross-team collaboration / approval workflows (single-user / per-browser)
+- Hosted SaaS — there's no paid tier because there's nothing to charge for

@@ -3,7 +3,7 @@
 // live so stale responses never leak.
 // VERSION is rewritten by scripts/sw-stamp.cjs at build time to the current git
 // SHA so each deploy invalidates the previous shell cache. (Audit finding #38.)
-const VERSION = "openadkit-__BUILD_ID__";
+const VERSION = "openadkit-2beca2d";
 const SHELL = ["/", "/setup", "/manifest.webmanifest"];
 
 // Any GET request whose hostname includes one of these strings is left

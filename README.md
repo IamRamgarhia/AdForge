@@ -4,6 +4,8 @@
 
 # OpenAdKit — Open Source AI Marketing Tool
 
+<!-- Last updated: 2026-05-28 · keep this fresh on every meaningful README edit; AI citation engines treat it as a freshness signal -->
+
 ### The open source AI marketing tool · every ad platform · bring your own AI key · zero subscriptions
 
 *The open-source alternative to Jasper, AdCreative, Anyword, Pencil & Copy.ai · runs in your browser · MIT-licensed · built by [Dicecodes](https://dicecodes.com)*
@@ -218,7 +220,18 @@ Pick during onboarding · switch any time in Settings · one app, every API.
 
 ---
 
-## Why this vs the $49-499/mo stack
+## OpenAdKit vs Jasper, AdCreative, Anyword, Copy.ai — Feature Comparison
+
+> Looking for one specifically? Jump to:
+> [OpenAdKit vs Jasper](#openadkit-vs-jasper) ·
+> [OpenAdKit vs AdCreative](#openadkit-vs-adcreativeai) ·
+> [OpenAdKit vs Anyword](#openadkit-vs-anyword) ·
+> [OpenAdKit vs Copy.ai](#openadkit-vs-copyai) ·
+> [OpenAdKit vs Pencil](#openadkit-vs-pencil--genusai)
+>
+> Or read the full side-by-side at [openadkit.dicecodes.com/alternatives](https://openadkit.dicecodes.com/alternatives).
+
+### Full feature matrix
 
 | Feature | Jasper $49+ | AdCreative $39+ | Anyword $49+ | Pencil $119+ | **OpenAdKit · free** |
 |---|:-:|:-:|:-:|:-:|:-:|
@@ -241,6 +254,26 @@ Pick during onboarding · switch any time in Settings · one app, every API.
 | Browser-only · MIT · self-host | ❌ | ❌ | ❌ | ❌ | ✅ |
 | Folder-portable data | ❌ | ❌ | ❌ | ❌ | ✅ |
 | **Monthly cost** | **$49–125** | **$39–299** | **$49–999** | **$119–999** | **$0** |
+
+### OpenAdKit vs Jasper
+
+Jasper ($39–59/seat/mo) is the polished long-form + ad-copy generator with brand-voice training. It's strong on consistency across blog/email/social, but **lacks platform-specific format enforcement** — generic copy ignores Meta's 27-char mobile-headline cap, Google PMax asset groups, and TikTok Spark Ad mechanics. Per-seat pricing scales painfully for agencies. **OpenAdKit covers the same ad-copy surfaces plus 11 dedicated optimizers** (creative score, CTR, ad fatigue, quality score) that Jasper doesn't have, and BYOK across 9 providers means you match Jasper's Claude/GPT-4 quality at $0 marginal cost.
+
+### OpenAdKit vs AdCreative.ai
+
+AdCreative ($39–249+/mo) is best for **AI-generated visual ad creatives** (banners, video) with a 'conversion probability' score — capabilities OpenAdKit does NOT have in-app. Their scoring is opaque (no audit of how it's computed) and they lock you into their LLM choices. **OpenAdKit beats AdCreative on copy generation breadth** (18 generators vs ~6 in their copy module) and optimizer count. For visuals, OpenAdKit returns ready-to-paste prompts for Midjourney / DALL-E / Runway / Pika plus a directory of free + paid tools — you keep choice and avoid lock-in.
+
+### OpenAdKit vs Anyword
+
+Anyword ($49–499/seat/mo) is known for **per-variant predictive scoring** correlated with historical performance + brand-voice training. Steep tier gap — enterprise features paywalled at $499/mo. No platform-specific format generators (no PMax, no Spark Ads, no Branded Hashtag Challenge). **OpenAdKit's Creative Score optimizer** covers similar scoring ground (5-lever score + named fixes + predicted CTR band) without per-seat fees. Anyword's brand-voice training maps to OpenAdKit's **Brand Brain** (auto-extracted from any URL — no manual setup).
+
+### OpenAdKit vs Copy.ai
+
+Copy.ai (Free 2k words/mo, Pro $49/mo, Team $249/mo) offers **multi-step GTM workflows** and sales-prospecting agents. The free tier burns through in a single content-calendar generation. Workflows paywalled at $249/mo. **OpenAdKit has no word/credit caps** because you pay your LLM provider directly (free tiers on Groq, Gemini, Cerebras, OpenRouter). The Launch Wizard handles the same multi-step orchestration Copy.ai charges $249/mo for, and the 18 generators each include platform-specific format enforcement Copy.ai's generic templates don't.
+
+### OpenAdKit vs Pencil / Genus.ai
+
+Pencil (~$119+/mo, enterprise) does **AI ad creative generation with performance prediction** and feedback loops from real ad-platform data. They pivoted to enterprise — out of reach for solo / SMB marketers. **OpenAdKit is the right tool for that abandoned segment**: same copy + optimizer breadth, $0 instead of $119+/mo, MIT-licensed so your work and brand data stay yours forever.
 
 ---
 
